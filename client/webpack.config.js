@@ -33,6 +33,7 @@ module.exports = {
         extensions: ['.ts', '.tsx',  '.js', '.json'],
         alias: {
             '@client': path.resolve(__dirname, 'source/@client'),
+            '@game': path.resolve(__dirname, 'source/@game'),
             '@shared': path.resolve(__dirname, '../shared/@shared/'),
             '@env': path.resolve(__dirname, '../shared/@env/'),
         },

@@ -13,6 +13,7 @@
         "jsx": "react-jsx",
         "paths": {
             "@client/*": ["./@client/*"],
+            "@game/*": ["./@game/*"],
             "@env/*": ["../../shared/@env/*"],
             "@shared/*": ["../../shared/@shared/*"]
         }
