@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "sourceMap": true,
+    "noImplicitAny": false,
+    "skipLibCheck": true,
+    "target": "es2023",
+    "module": "commonjs",
+    "baseUrl": "./",
+    "moduleResolution": "node",
+    "lib": ["es2023"],
+    "paths": {
+      "@env/*": ["./@env/*"],
+      "@shared/*": ["./@shared/*"]
+    }
+  },
+  "include": [
+    "./**/*"
+  ]
+}

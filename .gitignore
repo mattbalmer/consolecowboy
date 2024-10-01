@@ -1,0 +1,20 @@
+# IDE
+.idea/
+*.iml
+.c9/
+.DS_STORE
+
+# deploy / logs
+logs/
+
+# Deps / build files
+dist/
+node_modules/
+yarn-error.log
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions

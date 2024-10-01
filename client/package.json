@@ -1,0 +1,50 @@
+{
+  "name": "netrunner-client",
+  "version": "0.1.0",
+  "scripts": {
+    "start": "./start.sh local",
+    "build:prod": "./build.sh production"
+  },
+  "resolutions": {
+    "@types/react": "^18.2.6",
+    "@types/react-dom": "^18.2.4",
+    "react": "^18.2.0"
+  },
+  "devDependencies": {
+    "@date-io/date-fns": "^2.17.0",
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@mui/icons-material": "^5.15.19",
+    "@mui/lab": "^5.0.0-alpha.170",
+    "@mui/material": "^5.15.19",
+    "@mui/system": "^5.15.15",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@types/react-transition-group": "^4.4.10",
+    "@types/uuid": "^9.0.8",
+    "@yootil/capsule": "^0.5.0",
+    "@yootil/events": "^0.1.0",
+    "browserify": "^17.0.0",
+    "concurrently": "^8.2.2",
+    "gulp": "^4.0.2",
+    "gulp-clean": "^0.4.0",
+    "gulp-concat": "^2.6.1",
+    "gulp-plumber": "^1.2.1",
+    "gulp-stylint": "^4.0.2",
+    "gulp-stylus": "^3.0.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.23.1",
+    "react-transition-group": "^4.4.5",
+    "source-map-loader": "^4.0.2",
+    "string-replace-loader": "^3.1.0",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.4.5",
+    "use-persisted-state": "^0.3.3",
+    "uuid": "^10.0.0",
+    "vinyl-source-stream": "^2.0.0",
+    "webpack": "^5.91.0",
+    "webpack-cli": "^5.1.4"
+  },
+  "packageManager": "yarn@4.2.2"
+}
