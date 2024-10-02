@@ -39,7 +39,7 @@ const GameSchema = new mongoose.Schema({
 });
 
 // @ts-ignore
-const GameModel = mongoose.model('Game', GameSchema);
+const GameModel = mongoose.model('GameScreen', GameSchema);
 
 export {
   GameModel,
