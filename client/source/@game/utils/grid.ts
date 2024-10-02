@@ -1,8 +1,8 @@
-import { Dir } from '@game/types';
+import { Coord, CoordString, Dir } from '@game/types';
 
-export const coordToString = ({ x, y }) => `${x},${y}`;
+export const coordToString = ({ x, y }: Coord): CoordString => `${x},${y}`;
 
-export const getEdgeDirs = (nodeMap: Record<string, string>, { x, y }: { x: number, y: number }): Dir[] => {
+export const getEdgeDirs = (nodeMap: Record<string, string>, { x, y }: Coord): Dir[] => {
   let output: Dir[] = [];
 
   if (coordToString({ x: x - 0.5, y }) in nodeMap && coordToString({ x: x + 0.5, y }) in nodeMap) {

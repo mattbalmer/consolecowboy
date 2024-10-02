@@ -1,24 +1,30 @@
 import { FlexCol } from '@client/components/FlexCol';
 import * as React from 'react';
-import { Dir, NodeID } from '@game/types';
-import { Box } from '@mui/material';
+import { Dir, NodeID, NodeMap } from '@game/types';
+import { Box, Typography } from '@mui/material';
 import { coordToString, getEdgeDirs } from '@game/utils/grid';
 
-const Node = ({ id, selected, exist }: {
+const Node = ({ id, coord, selected, exist }: {
   id: string,
+  coord: string,
   selected: boolean,
   exist?: boolean,
 }) => {
   return <Box
-    data-key={id}
+    data-key={coord}
     sx={{
       width: 50,
       height: 50,
       background: selected ? 'red' : exist === true ? 'blue' : '#222',
       border: '1px solid white',
       borderRadius: '50%',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
     }}
-  />
+  >
+    <Typography variant={'subtitle1'}>{id}</Typography>
+  </Box>
 }
 
 const Edge = ({ id, dirs }: {
@@ -55,12 +61,12 @@ const Edge = ({ id, dirs }: {
 
 export const Grid = ({
   size,
-  hoveredNode,
+  hoveredNodeXY,
   nodeMap,
 }: {
   size: [number, number],
-  hoveredNode: NodeID,
-  nodeMap: Record<string, string>,
+  hoveredNodeXY: NodeID,
+  nodeMap: NodeMap,
 }) => {
   const sizeList = Array
     .from({ length: size[1] - size[0] + 1 }, (_, i) => i + size[0])
@@ -77,9 +83,10 @@ export const Grid = ({
           const coordStr = coordToString({ x, y });
           if (x % 1 === 0 && y % 1 === 0) {
             return <Node
-              id={coordStr}
+              id={nodeMap[coordStr]}
+              coord={coordStr}
               key={coordStr}
-              selected={coordStr === hoveredNode}
+              selected={coordStr === hoveredNodeXY}
               exist={coordStr in nodeMap}
             />
           } else {
