@@ -231,7 +231,6 @@ export const Game = () => {
                 />
               } else {
                 const dirs = getEdgeDirs(nodeMap, { x, y });
-                console.log('dirs', x, y, dirs);
                 return <Edge
                   id={coordStr}
                   key={coordStr}
