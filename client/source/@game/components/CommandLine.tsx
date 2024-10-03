@@ -24,7 +24,8 @@ export const CommandLine = ({
     }
   }
 
-  const onKeyDown = (event: KeyboardEvent) => {
+  // @ts-ignore TODO
+  const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key === 'Enter') {
       onSubmit();
     }
@@ -51,7 +52,13 @@ export const CommandLine = ({
           id='command-line'
           freeSolo
           fullWidth
-          renderInput={(params) => <TextField autoFocus variant={'standard'} {...params} onKeyDown={onKeyDown} />}
+          renderInput={(params) =>
+            <TextField
+              autoFocus
+              variant={'standard'} {...params}
+              onKeyDown={onKeyDown}
+            />
+          }
           value={value}
           onChange={(event: any, newValue: string | null) => {
             setValue((newValue || '').toLowerCase());

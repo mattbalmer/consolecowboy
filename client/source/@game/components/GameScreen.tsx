@@ -1,12 +1,15 @@
 import * as React from 'react';
 import { FlexCol } from '@client/components/FlexCol';
 import { FlexRow } from '@client/components/FlexRow';
-import { useEffect, useMemo, useState } from 'react';
-import { Command, CoordString, Dir, Game, NodeID, NodeMap } from '@game/types';
+import { useMemo, useState } from 'react';
+import { Command, CoordString, Dir, Game, NodeMap } from '@game/types';
 import { coordToString } from '@game/utils/grid';
 import { Grid } from '@game/components/Grid';
 import { Typography } from '@mui/material';
 import { CommandLine } from '@game/components/CommandLine';
+import { ICE } from '@game/constants/ice';
+import { Installations } from '@game/constants/installations';
+import { Traps } from '@game/constants/traps';
 
 const getAdjacentCoords = (game: Game): CoordString[] => {
   const allDirs: Dir[] = ['up', 'left', 'down', 'right'];
@@ -34,10 +37,10 @@ const getAdjacentCoords = (game: Game): CoordString[] => {
 const useGame = () => {
   const [game, setGame] = useState<Game>({
     nodes: {
-      'A': { x: 0, y: 0 },
-      'B': { x: 0, y: 1 },
+      'A': { x: 0, y: 0, isVisited: true, },
+      'B': { x: 0, y: 1, ice: ICE.NeuralKatana, content: { type: 'installation', ...Installations.Wallet } },
       'C': { x: 1, y: 0 },
-      'D': { x: 1, y: 1 },
+      'D': { x: 1, y: 1, ice: ICE.NeuralKatana, content: { type: 'trap', ...Traps.RabbitHole } },
       'E': { x: 2, y: 0 },
     },
     edges: {
@@ -48,6 +51,11 @@ const useGame = () => {
       'C:E': 'bi',
     },
     hovered: 'A',
+    player: {
+      mental: 10,
+      ram: 3,
+      money: 0,
+    },
   });
 
   return {
@@ -87,6 +95,7 @@ export const GameScreen = () => {
         const node = prev.nodes[hovered];
         const y = node.y - 1;
         const coordStr = coordToString({ x: node.x, y });
+        prev.nodes[nodeMap[coordStr]].isVisited = true;
         if (coordStr in nodeMap) {
           return {
             ...prev,
@@ -102,6 +111,7 @@ export const GameScreen = () => {
         const node = prev.nodes[hovered];
         const y = node.y + 1;
         const coordStr = coordToString({ x: node.x, y });
+        prev.nodes[nodeMap[coordStr]].isVisited = true;
         if (coordStr in nodeMap) {
           return {
             ...prev,
@@ -117,6 +127,7 @@ export const GameScreen = () => {
         const node = prev.nodes[hovered];
         const x = node.x - 1;
         const coordStr = coordToString({ x, y: node.y });
+        prev.nodes[nodeMap[coordStr]].isVisited = true;
         if (coordStr in nodeMap) {
           return {
             ...prev,
@@ -132,6 +143,7 @@ export const GameScreen = () => {
         const node = prev.nodes[hovered];
         const x = node.x + 1;
         const coordStr = coordToString({ x, y: node.y });
+        prev.nodes[nodeMap[coordStr]].isVisited = true;
         if (coordStr in nodeMap) {
           return {
             ...prev,
@@ -165,6 +177,11 @@ export const GameScreen = () => {
         console.log('cannot move to', target);
       }
     }
+
+    if (command === 'open' && hoveredNode.content) {
+      // or instead of auto, seeing the content is another progression system
+      console.log('open the hovered node. trigger trap effects or capture effects. this should maybe be auto? dunno');
+    }
   }
 
   // Assign key down
@@ -181,9 +198,30 @@ export const GameScreen = () => {
     <FlexCol
       sx={{ flexGrow: 1, height: '100vh', background: '#111' }}
     >
-      <FlexRow sx={{ p: 2, alignItems: 'center' }}>
-        <Typography variant={'h4'} sx={{ mr: 1 }}>{game.hovered}</Typography>
-        <Typography variant={'h6'}>({hoveredNode.x}, {hoveredNode.y})</Typography>
+      <FlexRow sx={{ p: 2, justifyContent: 'space-between' }}>
+        <FlexCol>
+          <FlexRow sx={{ alignItems: 'center' }}>
+            <Typography variant={'h4'} sx={{ mr: 1 }}>{game.hovered}</Typography>
+            <Typography variant={'h6'}>({hoveredNode.x}, {hoveredNode.y})</Typography>
+          </FlexRow>
+          <FlexRow sx={{ alignItems: 'center' }}>
+            <Typography variant={'h6'}>ICE: {hoveredNode.ice ? hoveredNode.ice.id : 'n/a'}</Typography>
+          </FlexRow>
+          <FlexRow sx={{ alignItems: 'center' }}>
+            <Typography variant={'h6'}>Content: {hoveredNode.content ? hoveredNode.content.type : 'n/a'}</Typography>
+          </FlexRow>
+        </FlexCol>
+        <FlexCol>
+          <FlexRow sx={{ alignItems: 'center' }}>
+            <Typography variant={'h6'}>Mental: {game.player.mental}</Typography>
+          </FlexRow>
+          <FlexRow sx={{ alignItems: 'center' }}>
+            <Typography variant={'h6'} sx={{ ml: 2 }}>RAM: {game.player.ram}</Typography>
+          </FlexRow>
+          <FlexRow sx={{ alignItems: 'center' }}>
+            <Typography variant={'h6'} sx={{ ml: 2 }}>Money: {game.player.money}</Typography>
+          </FlexRow>
+        </FlexCol>
       </FlexRow>
       <FlexCol sx={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}>
         <FlexRow sx={{ alignItems: 'center' }}>
