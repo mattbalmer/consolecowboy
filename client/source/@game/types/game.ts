@@ -1,11 +1,11 @@
-export type IceEffect = {
-  type: 'damage.mental',
-  amount: number,
-} | {};
+import { GameEffect } from '@game/constants/effects';
+import { Game } from '@game/types/index';
 
-export type Ice = {
-  id: string,
-  effects: IceEffect[]
+export type Ice<ID extends string = string> = {
+  id: ID,
+  effects: (GameEffect[])[],
+  activationCount: number,
+  activate: (game: Game) => Game;
 }
 
 export type Content = {

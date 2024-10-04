@@ -1,11 +1,27 @@
+import { GameEffect, GameEffects } from '@game/constants/effects';
 import { Ice } from '@game/types/game';
+import { Game } from '@game/types';
 
 export const ICE = {
-  NeuralKatana: {
+  NeuralKatana: () => ({
     id: 'NeuralKatana',
-    effects: [{
-      type: 'damage.mental',
-      amount: 3,
-    }]
-  }
-} as const satisfies Record<string, Ice>;
+    activationCount: 0,
+    effects: [
+      [GameEffects.MentalDamage({ amount: 3 })],
+    ],
+    activate(game: Game): Game {
+      if (this.activationCount < 1) {
+        this.activationCount += 1;
+        return {
+          ...game,
+          stack: [
+            ...this.effects.flat(),
+            ...game.stack
+          ]
+        };
+      } else {
+        return game;
+      }
+    }
+  })
+} as const satisfies Record<string, (...args: unknown[]) => Ice>;

@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FlexCol } from '@client/components/FlexCol';
 import { FlexRow } from '@client/components/FlexRow';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Command, CoordString, Dir, Game, NodeMap } from '@game/types';
 import { coordToString } from '@game/utils/grid';
 import { Grid } from '@game/components/Grid';
@@ -38,9 +38,9 @@ const useGame = () => {
   const [game, setGame] = useState<Game>({
     nodes: {
       'A': { x: 0, y: 0, isVisited: true, },
-      'B': { x: 0, y: 1, ice: ICE.NeuralKatana, content: { type: 'installation', ...Installations.Wallet } },
+      'B': { x: 0, y: 1, ice: ICE.NeuralKatana(), content: { type: 'installation', ...Installations.Wallet } },
       'C': { x: 1, y: 0 },
-      'D': { x: 1, y: 1, ice: ICE.NeuralKatana, content: { type: 'trap', ...Traps.RabbitHole } },
+      'D': { x: 1, y: 1, ice: ICE.NeuralKatana(), content: { type: 'trap', ...Traps.RabbitHole } },
       'E': { x: 2, y: 0 },
     },
     edges: {
@@ -56,6 +56,7 @@ const useGame = () => {
       ram: 3,
       money: 0,
     },
+    stack: [],
   });
 
   return {
@@ -68,6 +69,8 @@ const useGame = () => {
 export const GameScreen = () => {
   const { game, setGame } = useGame();
   const [history, setHistory] = useState<string[]>([]);
+
+  console.log('game', { ...game });
 
   const hoveredNodeXY = useMemo(() => coordToString(game.nodes[game.hovered]), [game.nodes, game.hovered]);
   const nodeMap = useMemo(() => {
@@ -168,6 +171,12 @@ export const GameScreen = () => {
       if (validMoveCoords.includes(targetCoord)) {
         setHistory((prev) => [...prev, `move ${args.join(' ')}`]);
         setGame((prev) => {
+          prev.nodes[target].isVisited = true;
+
+          if (prev.nodes[target].ice) {
+            prev = prev.nodes[target].ice.activate(prev) ?? prev;
+          }
+
           return {
             ...prev,
             hovered: target,
@@ -181,6 +190,11 @@ export const GameScreen = () => {
     if (command === 'open' && hoveredNode.content) {
       // or instead of auto, seeing the content is another progression system
       console.log('open the hovered node. trigger trap effects or capture effects. this should maybe be auto? dunno');
+      setHistory((prev) => [...prev, `open (${game.hovered})`]);
+      setGame((prev) => {
+        prev.nodes[prev.hovered].isOpened = true;
+        return prev;
+      });
     }
   }
 
@@ -194,6 +208,21 @@ export const GameScreen = () => {
   //   }
   // }, []);
 
+  useEffect(() => {
+    const effect = game.stack[0];
+
+    if (effect) {
+      console.log('trigger effect!', effect.id, { ...effect, trigger: null });
+      setGame((prev) => {
+        prev.stack = prev.stack.slice(1);
+        return {
+          ...prev,
+          ...effect.trigger(prev),
+        };
+      });
+    }
+  }, [game.stack]);
+
   return <div>
     <FlexCol
       sx={{ flexGrow: 1, height: '100vh', background: '#111' }}
@@ -205,7 +234,9 @@ export const GameScreen = () => {
             <Typography variant={'h6'}>({hoveredNode.x}, {hoveredNode.y})</Typography>
           </FlexRow>
           <FlexRow sx={{ alignItems: 'center' }}>
-            <Typography variant={'h6'}>ICE: {hoveredNode.ice ? hoveredNode.ice.id : 'n/a'}</Typography>
+            <Typography variant={'h6'}>ICE: {hoveredNode.ice ?
+              <>{hoveredNode.ice.id}{hoveredNode.ice.activationCount > 0 ? '(deactivated)' : null}</>
+            : 'n/a'}</Typography>
           </FlexRow>
           <FlexRow sx={{ alignItems: 'center' }}>
             <Typography variant={'h6'}>Content: {hoveredNode.content ? hoveredNode.content.type : 'n/a'}</Typography>
@@ -229,6 +260,7 @@ export const GameScreen = () => {
             size={[-2, 2]}
             hoveredNodeXY={hoveredNodeXY}
             nodeMap={nodeMap}
+            game={game}
           />
         </FlexRow>
       </FlexCol>

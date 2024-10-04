@@ -1,4 +1,5 @@
 import { Ice, Installation, Trap } from '@game/types/game';
+import { GameEffect } from '@game/constants/effects';
 
 export type Coord = { x: number, y: number };
 export type CoordString = `${number},${number}`;
@@ -23,7 +24,8 @@ export type Game = {
     mental: number,
     ram: number,
     money: number,
-  }
+  },
+  stack: GameEffect[]
 }
 
 export type NodeMap = Record<CoordString, NodeID>;

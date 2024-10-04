@@ -1,21 +1,29 @@
 import { FlexCol } from '@client/components/FlexCol';
 import * as React from 'react';
-import { Dir, NodeID, NodeMap } from '@game/types';
+import { Dir, Game, NodeID, NodeMap } from '@game/types';
 import { Box, Typography } from '@mui/material';
 import { coordToString, getEdgeDirs } from '@game/utils/grid';
 
-const Node = ({ id, coord, selected, exist }: {
+const Node = ({ id, coord, selected, exist, isVisited, isOpened }: {
   id: string,
   coord: string,
   selected: boolean,
   exist?: boolean,
+  isVisited?: boolean,
+  isOpened?: boolean,
 }) => {
+  const color = selected ? '#c44'
+    : isOpened ? '#454'
+    : isVisited ? '#8c8'
+    : exist ? '#44c'
+    : '#222';
+
   return <Box
     data-key={coord}
     sx={{
       width: 50,
       height: 50,
-      background: selected ? 'red' : exist === true ? 'blue' : '#222',
+      background: color,
       border: '1px solid white',
       borderRadius: '50%',
       display: 'flex',
@@ -63,10 +71,12 @@ export const Grid = ({
   size,
   hoveredNodeXY,
   nodeMap,
+  game,
 }: {
   size: [number, number],
   hoveredNodeXY: NodeID,
   nodeMap: NodeMap,
+  game: Game,
 }) => {
   const sizeList = Array
     .from({ length: size[1] - size[0] + 1 }, (_, i) => i + size[0])
@@ -81,6 +91,7 @@ export const Grid = ({
       >
         {sizeList.slice(0).map(y => {
           const coordStr = coordToString({ x, y });
+          const node = game.nodes[nodeMap[coordStr]];
           if (x % 1 === 0 && y % 1 === 0) {
             return <Node
               id={nodeMap[coordStr]}
@@ -88,6 +99,8 @@ export const Grid = ({
               key={coordStr}
               selected={coordStr === hoveredNodeXY}
               exist={coordStr in nodeMap}
+              isOpened={node?.isOpened}
+              isVisited={node?.isVisited}
             />
           } else {
             const dirs = getEdgeDirs(nodeMap, { x, y });
