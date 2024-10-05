@@ -3,15 +3,17 @@ import { TextField, Typography } from '@mui/material';
 import { FlexRow } from '@client/components/FlexRow';
 import { FlexCol } from '@client/components/FlexCol';
 import { Autocomplete } from '@mui/lab';
-import { Command, COMMANDS } from '@game/types';
+import { Command, COMMANDS, Game } from '@game/types';
 import { useEffect } from 'react';
 
 export const CommandLine = ({
   onCommand,
   history,
+  game,
 }: {
   onCommand: (command: Command, ...args: any[]) => void,
   history: string[],
+  game: Game,
 }) => {
   const [value, setValue] = React.useState<string>('');
   const [input, setInput] = React.useState<string>('');
@@ -61,11 +63,15 @@ export const CommandLine = ({
           }
           value={value}
           onChange={(event: any, newValue: string | null) => {
-            setValue((newValue || '').toLowerCase());
+            if (game.mode === 'PLAY') {
+              setValue((newValue || '').toLowerCase());
+            }
           }}
           inputValue={input}
           onInputChange={(event, newInputValue) => {
-            setInput((newInputValue || '').toLowerCase());
+            if (game.mode === 'PLAY') {
+              setInput((newInputValue || '').toLowerCase());
+            }
           }}
           options={Object.keys(COMMANDS)}
         />

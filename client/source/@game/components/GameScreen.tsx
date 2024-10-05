@@ -41,7 +41,10 @@ const useGame = () => {
       'A': { x: 0, y: 0, isVisited: true, },
       'B': { x: 0, y: 1, ice: ICE.NeuralKatana(), content: { type: 'installation', ...Installations.Wallet } },
       'C': { x: 1, y: 0 },
-      'D': { x: 1, y: 1, ice: ICE.NeuralKatana(), content: { type: 'trap', ...Traps.RabbitHole } },
+      'D': { x: 1, y: 1, ice: ICE.NeuralKatana(), content: { type: 'trap', ...Traps.RabbitHole({
+        amount: 1,
+        duration: 2,
+      }) } },
       'E': { x: 2, y: 0 },
     },
     edges: {
@@ -54,15 +57,20 @@ const useGame = () => {
     hovered: 'A',
     player: {
       mental: 10,
-      ram: 3,
+      ram: {
+        max: 3,
+        current: 3,
+      },
       money: 0,
       actions: 2,
       stats: {
         icebreaker: 1,
       },
+      conditions: [],
     },
     stack: [],
     round: 0,
+    mode: 'PLAY',
   });
 
   return {
@@ -109,6 +117,10 @@ export const GameScreen = () => {
 
         return {
           ...prev,
+          player: {
+            ...prev.player,
+            actions: prev.player.actions - 1,
+          },
           hovered: target,
         }
       });
@@ -138,6 +150,10 @@ export const GameScreen = () => {
 
         return {
           ...prev,
+          player: {
+            ...prev.player,
+            actions: prev.player.actions - 1,
+          },
           hovered: target,
         }
       });
@@ -147,6 +163,39 @@ export const GameScreen = () => {
   }
 
   const onCommand = (command: Command, ...args: any[]) => {
+    if (game.mode === 'VIEW') {
+      console.log('cannot issue commands in view mode');
+      return;
+    }
+
+    if (command === 'next') {
+      setHistory((prev) => [...prev, 'next']);
+      setGame((prev) => {
+        const newConditions = [];
+        prev.player.conditions.forEach(c => {
+          if (c.until === prev.round) {
+            prev = c.onEnd(prev);
+          } else {
+            newConditions.push(c);
+          }
+        });
+        prev.player.conditions = newConditions;
+        return {
+          ...prev,
+          round: prev.round + 1,
+          player: {
+            ...prev.player,
+            actions: 2,
+          },
+        };
+      });
+    }
+
+    if (game.player.actions <= 0) {
+      console.log('no actions left');
+      return;
+    }
+
     if (command === 'retreat') {
       const lastDir = history[history.length - 1].split(' ')[1] as CompassDir;
       const flippedDir = lastDir.split('').map(c => {
@@ -176,7 +225,13 @@ export const GameScreen = () => {
       setHistory((prev) => [...prev, `break (${game.hovered}) -l ${layer}`]);
       setGame((prev) => {
         prev = hoveredNode.ice.break(prev, layer);
-        return prev;
+        return {
+          ...prev,
+          player: {
+            ...prev.player,
+            actions: prev.player.actions - 1,
+          },
+        };
       });
     }
 
@@ -190,7 +245,13 @@ export const GameScreen = () => {
       setHistory((prev) => [...prev, `drill (${game.hovered})`]);
       setGame((prev) => {
         prev = hoveredNode.ice.complete(prev);
-        return prev;
+        return {
+          ...prev,
+          player: {
+            ...prev.player,
+            actions: prev.player.actions - 1,
+          },
+        };
       });
     }
 
@@ -210,13 +271,25 @@ export const GameScreen = () => {
       nav(dir);
     }
 
-    if (command === 'open' && hoveredNode.content) {
+    if (command === 'open' && hoveredNode.content && !hoveredNode.isOpened) {
       // or instead of auto, seeing the content is another progression system
       console.log('open the hovered node. trigger trap effects or capture effects. this should maybe be auto? dunno');
       setHistory((prev) => [...prev, `open (${game.hovered})`]);
       setGame((prev) => {
-        prev.nodes[prev.hovered].isOpened = true;
-        return prev;
+        const node = prev.nodes[prev.hovered];
+        node.isOpened = true;
+
+        if (node.content.type === 'trap') {
+          prev = node.content.activate(prev) ?? prev;
+        }
+
+        return {
+          ...prev,
+          player: {
+            ...prev.player,
+            actions: prev.player.actions - 1,
+          },
+        };
       });
     }
   }
@@ -226,13 +299,32 @@ export const GameScreen = () => {
 
     if (effect) {
       console.log('trigger effect!', effect.id, { ...effect, trigger: null });
-      setGame((prev) => {
-        prev.stack = prev.stack.slice(1);
-        return {
-          ...prev,
-          ...effect.trigger(prev),
-        };
-      });
+
+      if (effect.id === 'delay') {
+        setGame((prev) => {
+          return {
+            ...prev,
+            mode: 'VIEW',
+          };
+        });
+        setTimeout(() => {
+          setGame((prev) => {
+            return {
+              ...prev,
+              mode: 'PLAY',
+              stack: prev.stack.slice(1),
+            }
+          });
+        }, effect['amount']);
+      } else {
+        setGame((prev) => {
+          prev.stack = prev.stack.slice(1);
+          return {
+            ...prev,
+            ...effect.trigger(prev),
+          }
+        });
+      }
     }
   }, [game.stack]);
 
@@ -266,7 +358,7 @@ export const GameScreen = () => {
             <Typography variant={'subtitle1'}>Mental: {game.player.mental}</Typography>
           </FlexRow>
           <FlexRow sx={{ alignItems: 'center' }}>
-            <Typography variant={'subtitle1'} sx={{ ml: 2 }}>RAM: {game.player.ram}</Typography>
+            <Typography variant={'subtitle1'} sx={{ ml: 2 }}>RAM: {game.player.ram.current} / {game.player.ram.max}</Typography>
           </FlexRow>
           <FlexRow sx={{ alignItems: 'center' }}>
             <Typography variant={'subtitle1'} sx={{ ml: 2 }}>Money: {game.player.money}</Typography>
@@ -314,7 +406,11 @@ export const GameScreen = () => {
         </FlexRow>
       </FlexCol>
       <FlexRow sx={{ p: 2 }}>
-        <CommandLine onCommand={onCommand} history={history} />
+        <CommandLine
+          onCommand={onCommand}
+          history={history}
+          game={game}
+        />
       </FlexRow>
     </FlexCol>
   </div>

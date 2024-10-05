@@ -18,18 +18,30 @@ export type Node = {
   isOpened?: boolean,
 }
 
+export type Condition = {
+  id: string,
+  until: number,
+  onStart: (game: Game) => Game,
+  onEnd: (game: Game) => Game,
+}
+
 export type Game = {
+  mode: 'PLAY' | 'VIEW',
   nodes: Record<NodeID, Node>,
   edges: Record<EdgeString, 'oneway' | 'bi'>,
   hovered: NodeID,
   player: {
     mental: number,
-    ram: number,
+    ram: {
+      current: number,
+      max: number,
+    },
     money: number,
     actions: number,
     stats: {
       icebreaker: number,
     },
+    conditions: Condition[],
   },
   stack: GameEffect[],
   round: number,
@@ -39,7 +51,7 @@ export type NodeMap = Record<CoordString, NodeID>;
 
 export const COMMANDS = {
   'm': 'move',
-  'n': 'nav',
+  'next': true,
   'move': true,
   'nav': true,
   'info': true,

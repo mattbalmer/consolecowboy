@@ -11,7 +11,13 @@ export const ICE = {
     layers: [
       {
         status: 'ACTIVE',
-        effects: [GameEffects.MentalDamage({ amount: 3 })],
+        effects: [
+          GameEffects.MentalDamage({ amount: 1 }),
+          GameEffects.Delay({ amount: 500 }),
+          GameEffects.MentalDamage({ amount: 1 }),
+          GameEffects.Delay({ amount: 500 }),
+          GameEffects.MentalDamage({ amount: 1 }),
+        ],
       },
     ],
     activate(game: Game): Game {

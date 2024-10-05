@@ -38,6 +38,8 @@ export type TrapEffect = {
 
 export type Trap = {
   id: string,
-  effects: TrapEffect[]
+  amount?: number,
+  duration?: number,
+  activate: (game: Game) => Game,
 }
 
