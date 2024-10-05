@@ -88,35 +88,58 @@ export const GameScreen = () => {
     return getAdjacentCoords(game);
   }, [game]);
 
+  const move = (dir: CompassDir, r: boolean = false) => {
+    if (!dir) {
+      return;
+    }
+    const current = pick(game.nodes[game.hovered], 'x', 'y');
+    const targetCoord = coordToString({
+      x: current.x + (dir.includes('e') ? 1 : dir.includes('w') ? -1 : 0),
+      y: current.y + (dir.includes('s') ? 1 : dir.includes('n') ? -1 : 0),
+    });
+    const target = nodeMap[targetCoord];
+    if (target && validMoveCoords.includes(targetCoord)) {
+      setHistory((prev) => [...prev, r ? 'retreat' : `move ${dir}`]);
+      setGame((prev) => {
+        prev.nodes[target].isVisited = true;
+
+        if (prev.nodes[target].ice) {
+          prev = prev.nodes[target].ice.activate(prev) ?? prev;
+        }
+
+        return {
+          ...prev,
+          hovered: target,
+        }
+      });
+    } else {
+      console.log('cannot move via', dir);
+    }
+  }
+
   const onCommand = (command: Command, ...args: any[]) => {
+    if (command === 'retreat') {
+      const lastDir = history[history.length - 1].split(' ')[1] as CompassDir;
+      const flippedDir = lastDir.split('').map(c => {
+        if (c === 'n') return 's';
+        if (c === 's') return 'n';
+        if (c === 'e') return 'w';
+        if (c === 'w') return 'e';
+        return c as CompassDir;
+      }).join('') as CompassDir;
+
+      move(flippedDir, true);
+    }
+
+    // if ice active, disable other commands
+    if (hoveredNode?.ice && hoveredNode.ice.status === 'ACTIVE') {
+      console.log('ice is active. cannot do other actions');
+      return;
+    }
+
     if (command === 'move') {
       const dir = args[0].toLowerCase() as CompassDir;
-      if (!dir) {
-        return;
-      }
-      const current = pick(game.nodes[game.hovered], 'x', 'y');
-      const targetCoord = coordToString({
-        x: current.x + (dir.includes('e') ? 1 : dir.includes('w') ? -1 : 0),
-        y: current.y + (dir.includes('s') ? 1 : dir.includes('n') ? -1 : 0),
-      });
-      const target = nodeMap[targetCoord];
-      if (target && validMoveCoords.includes(targetCoord)) {
-        setHistory((prev) => [...prev, `move ${args.join(' ')}`]);
-        setGame((prev) => {
-          prev.nodes[target].isVisited = true;
-
-          if (prev.nodes[target].ice) {
-            prev = prev.nodes[target].ice.activate(prev) ?? prev;
-          }
-
-          return {
-            ...prev,
-            hovered: target,
-          }
-        });
-      } else {
-        console.log('cannot move via', dir);
-      }
+      move(dir);
     }
 
     if (command === 'open' && hoveredNode.content) {
@@ -157,11 +180,11 @@ export const GameScreen = () => {
           </FlexRow>
           <FlexRow sx={{ alignItems: 'center' }}>
             <Typography variant={'h6'}>ICE: {hoveredNode.ice ?
-              <>{hoveredNode.ice.id}{hoveredNode.ice.activationCount > 0 ? '(deactivated)' : null}</>
-            : 'n/a'}</Typography>
+              <>{hoveredNode.ice.id} ({hoveredNode.ice.status.toLowerCase()})</>
+            : '--'}</Typography>
           </FlexRow>
           <FlexRow sx={{ alignItems: 'center' }}>
-            <Typography variant={'h6'}>Content: {hoveredNode.content ? hoveredNode.content.type : 'n/a'}</Typography>
+            <Typography variant={'h6'}>Content: {hoveredNode.content ? hoveredNode.content.type : '--'}</Typography>
           </FlexRow>
         </FlexCol>
         <FlexCol>
@@ -177,13 +200,39 @@ export const GameScreen = () => {
         </FlexCol>
       </FlexRow>
       <FlexCol sx={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <FlexRow sx={{ alignItems: 'center' }}>
+        <FlexRow sx={{ alignItems: 'center', position: 'relative' }}>
           <Grid
             size={[-2, 2]}
             hoveredNodeXY={hoveredNodeXY}
             nodeMap={nodeMap}
             game={game}
           />
+          {hoveredNode.ice && hoveredNode.ice.status === 'ACTIVE' &&
+            <FlexCol
+              sx={{
+                position: 'absolute',
+                background: '#333333ee',
+                borderRadius: 8,
+                top: 20,
+                left: '50%',
+                transform: 'translateX(-50%)',
+                boxShadow: '0 0 10px 2px #fff',
+                p: 2,
+              }}
+            >
+              <Typography variant={'h6'}>ICE is active!</Typography>
+              <Typography variant={'body1'}>Effects:</Typography>
+              <ul>
+                {hoveredNode.ice.effects.map((effects, i) => {
+                  return <li key={i}>
+                    {effects.map((effect, j) => {
+                      return <Typography key={j} variant={'body2'}>{effect.id}</Typography>
+                    })}
+                  </li>
+                })}
+              </ul>
+            </FlexCol>
+          }
         </FlexRow>
       </FlexCol>
       <FlexRow sx={{ p: 2 }}>

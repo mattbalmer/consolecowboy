@@ -37,6 +37,7 @@ export const COMMANDS = {
   'move': true,
   'info': true,
   'open': true,
+  'retreat': true,
 } as const;
 
 export type Command = keyof typeof COMMANDS;

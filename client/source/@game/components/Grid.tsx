@@ -3,6 +3,7 @@ import * as React from 'react';
 import { Dir, Game, NodeID, NodeMap } from '@game/types';
 import { Box, Typography } from '@mui/material';
 import { coordToString, getEdgeDirs } from '@game/utils/grid';
+import { FlexRow } from '@client/components/FlexRow';
 
 const Node = ({ id, coord, selected, exist, isVisited, isOpened }: {
   id: string,
@@ -83,7 +84,7 @@ export const Grid = ({
     .reduce((s, n) => [...s, n, n + 0.5], [])
     .slice(0, -1);
 
-  return <>
+  return <FlexRow sx={{ flexGrow: 1 }}>
     {sizeList.slice(0).map(x => {
       return <FlexCol
         key={`${x}`}
@@ -113,5 +114,5 @@ export const Grid = ({
         })}
       </FlexCol>
     })}
-  </>
+  </FlexRow>
 }
