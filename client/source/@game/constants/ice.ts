@@ -1,4 +1,4 @@
-import { GameEffect, GameEffects } from '@game/constants/effects';
+import { GameEffects } from '@game/constants/effects';
 import { Ice } from '@game/types/game';
 import { Game } from '@game/types';
 
