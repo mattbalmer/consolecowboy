@@ -2,7 +2,7 @@ import * as React from 'react';
 import { FlexCol } from '@client/components/FlexCol';
 import { FlexRow } from '@client/components/FlexRow';
 import { useEffect, useMemo, useState } from 'react';
-import { Command, CoordString, Dir, Game, NodeMap } from '@game/types';
+import { Command, CompassDir, Coord, CoordString, Dir, Game, NodeMap } from '@game/types';
 import { coordToString } from '@game/utils/grid';
 import { Grid } from '@game/components/Grid';
 import { Typography } from '@mui/material';
@@ -10,6 +10,7 @@ import { CommandLine } from '@game/components/CommandLine';
 import { ICE } from '@game/constants/ice';
 import { Installations } from '@game/constants/installations';
 import { Traps } from '@game/constants/traps';
+import { pick } from '@shared/utils/objects';
 
 const getAdjacentCoords = (game: Game): CoordString[] => {
   const allDirs: Dir[] = ['up', 'left', 'down', 'right'];
@@ -160,15 +161,17 @@ export const GameScreen = () => {
 
   const onCommand = (command: Command, ...args: any[]) => {
     if (command === 'move') {
-      const target = args[0].toUpperCase() as string;
-      if (!target) {
+      const dir = args[0].toLowerCase() as CompassDir;
+      if (!dir) {
         return;
       }
-      if (!game.nodes[target]) {
-        return;
-      }
-      const targetCoord = coordToString(game.nodes[target]);
-      if (validMoveCoords.includes(targetCoord)) {
+      const current = pick(game.nodes[game.hovered], 'x', 'y');
+      const targetCoord = coordToString({
+        x: current.x + (dir.includes('e') ? 1 : dir.includes('w') ? -1 : 0),
+        y: current.y + (dir.includes('s') ? 1 : dir.includes('n') ? -1 : 0),
+      });
+      const target = nodeMap[targetCoord];
+      if (target && validMoveCoords.includes(targetCoord)) {
         setHistory((prev) => [...prev, `move ${args.join(' ')}`]);
         setGame((prev) => {
           prev.nodes[target].isVisited = true;
@@ -183,7 +186,7 @@ export const GameScreen = () => {
           }
         });
       } else {
-        console.log('cannot move to', target);
+        console.log('cannot move via', dir);
       }
     }
 

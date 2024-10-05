@@ -36,3 +36,16 @@ export const mapObject = <R extends object, T extends object, K extends keyof T>
 
   return result;
 }
+
+export const pick = <T extends object, K extends keyof T>(
+  object: T,
+  ...keys: K[]
+): Pick<T, K> => {
+  const result = {} as Pick<T, K>;
+
+  for (const key of keys) {
+    result[key] = object[key];
+  }
+
+  return result;
+}
