@@ -88,77 +88,6 @@ export const GameScreen = () => {
     return getAdjacentCoords(game);
   }, [game]);
 
-  const handleKeyDown = (e: KeyboardEvent) => {
-    if (document.activeElement !== document.body) {
-      return;
-    }
-
-    if (e.key === 'ArrowUp') {
-      setGame((prev) => {
-        const hovered = prev.hovered;
-        const node = prev.nodes[hovered];
-        const y = node.y - 1;
-        const coordStr = coordToString({ x: node.x, y });
-        prev.nodes[nodeMap[coordStr]].isVisited = true;
-        if (coordStr in nodeMap) {
-          return {
-            ...prev,
-            hovered: nodeMap[coordStr],
-          }
-        }
-        return prev;
-      });
-    }
-    if (e.key === 'ArrowDown') {
-      setGame((prev) => {
-        const hovered = prev.hovered;
-        const node = prev.nodes[hovered];
-        const y = node.y + 1;
-        const coordStr = coordToString({ x: node.x, y });
-        prev.nodes[nodeMap[coordStr]].isVisited = true;
-        if (coordStr in nodeMap) {
-          return {
-            ...prev,
-            hovered: nodeMap[coordStr],
-          }
-        }
-        return prev;
-      });
-    }
-    if (e.key === 'ArrowLeft') {
-      setGame((prev) => {
-        const hovered = prev.hovered;
-        const node = prev.nodes[hovered];
-        const x = node.x - 1;
-        const coordStr = coordToString({ x, y: node.y });
-        prev.nodes[nodeMap[coordStr]].isVisited = true;
-        if (coordStr in nodeMap) {
-          return {
-            ...prev,
-            hovered: nodeMap[coordStr],
-          }
-        }
-        return prev;
-      });
-    }
-    if (e.key === 'ArrowRight') {
-      setGame((prev) => {
-        const hovered = prev.hovered;
-        const node = prev.nodes[hovered];
-        const x = node.x + 1;
-        const coordStr = coordToString({ x, y: node.y });
-        prev.nodes[nodeMap[coordStr]].isVisited = true;
-        if (coordStr in nodeMap) {
-          return {
-            ...prev,
-            hovered: nodeMap[coordStr],
-          }
-        }
-        return prev;
-      });
-    }
-  }
-
   const onCommand = (command: Command, ...args: any[]) => {
     if (command === 'move') {
       const dir = args[0].toLowerCase() as CompassDir;
@@ -200,16 +129,6 @@ export const GameScreen = () => {
       });
     }
   }
-
-  // Assign key down
-  // useEffect(() => {
-  //   document.addEventListener('keydown', handleKeyDown);
-  //   document.body.focus();
-  //
-  //   return () => {
-  //     document.removeEventListener('keydown', handleKeyDown);
-  //   }
-  // }, []);
 
   useEffect(() => {
     const effect = game.stack[0];

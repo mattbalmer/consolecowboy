@@ -1,10 +1,13 @@
 import { GameEffect } from '@game/constants/effects';
 import { Game } from '@game/types/index';
 
+export type IceStatus = 'READY' | 'ACTIVE' | 'BROKEN' | 'DEACTIVATED';
+
 export type Ice<ID extends string = string> = {
   id: ID,
   effects: (GameEffect[])[],
   activationCount: number,
+  status: IceStatus,
   activate: (game: Game) => Game;
 }
 

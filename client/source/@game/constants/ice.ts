@@ -6,12 +6,14 @@ export const ICE = {
   NeuralKatana: () => ({
     id: 'NeuralKatana',
     activationCount: 0,
+    status: 'READY',
     effects: [
       [GameEffects.MentalDamage({ amount: 3 })],
     ],
     activate(game: Game): Game {
       if (this.activationCount < 1) {
         this.activationCount += 1;
+        this.status = 'ACTIVE';
         return {
           ...game,
           stack: [
