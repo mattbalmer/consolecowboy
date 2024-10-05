@@ -39,9 +39,9 @@ const useGame = () => {
   const [game, setGame] = useState<Game>({
     nodes: {
       'A': { x: 0, y: 0, isVisited: true, },
-      'B': { x: 0, y: 1, ice: ICE.NeuralKatana(), content: { type: 'installation', ...Installations.Wallet } },
+      'B': { x: 0, y: 1, ice: ICE.NeuralKatana(), content: { type: 'installation', status: 'STANDBY' , ...Installations.Wallet({ amount: 100 }) } },
       'C': { x: 1, y: 0 },
-      'D': { x: 1, y: 1, ice: ICE.NeuralKatana(), content: { type: 'trap', ...Traps.RabbitHole({
+      'D': { x: 1, y: 1, ice: ICE.NeuralKatana(), content: { type: 'trap', status: 'STANDBY', ...Traps.RabbitHole({
         amount: 1,
         duration: 2,
       }) } },
@@ -271,16 +271,28 @@ export const GameScreen = () => {
       nav(dir);
     }
 
-    if (command === 'open' && hoveredNode.content && !hoveredNode.isOpened) {
+    if (command === 'open' && hoveredNode.content) {
+      if (hoveredNode.content.status === 'OPENED' || hoveredNode.isOpened) {
+        console.log('node already opened');
+        return;
+      }
+
       // or instead of auto, seeing the content is another progression system
       console.log('open the hovered node. trigger trap effects or capture effects. this should maybe be auto? dunno');
       setHistory((prev) => [...prev, `open (${game.hovered})`]);
       setGame((prev) => {
         const node = prev.nodes[prev.hovered];
+
+        // todo: no more 2 sources of truth
         node.isOpened = true;
+        node.content.status = 'OPENED';
 
         if (node.content.type === 'trap') {
           prev = node.content.activate(prev) ?? prev;
+        }
+
+        if (node.content.type === 'installation') {
+          prev = node.content.onCapture(prev) ?? prev;
         }
 
         return {
@@ -344,7 +356,9 @@ export const GameScreen = () => {
             : '--'}</Typography>
           </FlexRow>
           <FlexRow sx={{ alignItems: 'center' }}>
-            <Typography variant={'subtitle1'}>Content: {hoveredNode.content ? hoveredNode.content.type : '--'}</Typography>
+            <Typography variant={'subtitle1'}>Content: {hoveredNode.content ?
+              <>{hoveredNode.content.type} ({hoveredNode.content.status.toLowerCase()})</>
+            : '--'}</Typography>
           </FlexRow>
         </FlexCol>
         <FlexCol>

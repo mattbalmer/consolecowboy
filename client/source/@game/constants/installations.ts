@@ -1,11 +1,15 @@
 import { Installation } from '@game/types/game';
+import { GameEffects } from '@game/constants/effects';
 
 export const Installations = {
-  Wallet: {
+  Wallet: ({ amount }: { amount: number }) => ({
     id: 'wallet',
-    captureEffects: [{
-      type: 'money.increase',
-      amount: 100,
-    }]
-  },
-} as const satisfies Record<string, Installation>;
+    amount,
+    onCapture(game) {
+      return {
+        ...game,
+        stack: [...game.stack, GameEffects.AddMoney({ amount: this.amount })],
+      }
+    },
+  }),
+} as const satisfies Record<string, (...args: unknown[]) => Installation>;

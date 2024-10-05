@@ -28,7 +28,7 @@ export type InstallationCaptureEffect = {
 
 export type Installation = {
   id: string,
-  captureEffects: InstallationCaptureEffect[],
+  onCapture: (game: Game) => Game,
 };
 
 export type TrapEffect = {

@@ -9,11 +9,17 @@ export type Dir = 'up' | 'down' | 'right' | 'left';
 export type CompassCardinal = 'N' | 'S' | 'E' | 'W';
 export type CompassDir = CompassCardinal | 'NE' | 'NW' | 'SE' | 'SW';
 
+export type NodeContent = {
+  status: 'STANDBY' | 'OPENED',
+} & (
+  ({ type: 'trap' } & Trap) | ({ type: 'installation' } & Installation)
+);
+
 export type Node = {
   x: number,
   y: number,
   ice?: Ice,
-  content?: ({ type: 'trap' } & Trap) | ({ type: 'installation' } & Installation),
+  content?: NodeContent,
   isVisited?: boolean,
   isOpened?: boolean,
 }

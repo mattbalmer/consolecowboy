@@ -66,6 +66,19 @@ export const GameEffects = {
       });
     }
   }),
+  AddMoney: ({ amount }: { amount: number }) => ({
+    id: 'playerMoney.add',
+    amount,
+    trigger(game) {
+      return {
+        ...game,
+        player: {
+          ...game.player,
+          money: game.player.money + this.amount
+        },
+      };
+    }
+  }),
   Delay: ({ amount }: { amount?: number }) => ({
     id: 'delay',
     amount: amount || 250,
