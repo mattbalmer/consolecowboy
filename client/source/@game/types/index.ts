@@ -26,18 +26,27 @@ export type Game = {
     mental: number,
     ram: number,
     money: number,
+    actions: number,
+    stats: {
+      icebreaker: number,
+    },
   },
-  stack: GameEffect[]
+  stack: GameEffect[],
+  round: number,
 }
 
 export type NodeMap = Record<CoordString, NodeID>;
 
 export const COMMANDS = {
   'm': 'move',
+  'n': 'nav',
   'move': true,
+  'nav': true,
   'info': true,
   'open': true,
   'retreat': true,
+  'drill': true,
+  'break': true,
 } as const;
 
 export type Command = keyof typeof COMMANDS;

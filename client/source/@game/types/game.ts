@@ -1,14 +1,20 @@
 import { GameEffect } from '@game/constants/effects';
 import { Game } from '@game/types/index';
 
-export type IceStatus = 'READY' | 'ACTIVE' | 'BROKEN' | 'DEACTIVATED';
+export type IceStatus = 'READY' | 'ACTIVE' | 'BROKEN' | 'DEACTIVATED' | 'COMPLETE';
 
 export type Ice<ID extends string = string> = {
   id: ID,
-  effects: (GameEffect[])[],
+  layers: {
+    status: 'ACTIVE' | 'BROKEN' | 'DEACTIVATED',
+    effects: GameEffect[],
+  }[],
   activationCount: number,
+  strength: number,
   status: IceStatus,
   activate: (game: Game) => Game;
+  complete: (game: Game) => Game;
+  break: (game: Game, layer: number) => Game;
 }
 
 export type Content = {

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { FlexCol } from '@client/components/FlexCol';
 import { FlexRow } from '@client/components/FlexRow';
 import { useEffect, useMemo, useState } from 'react';
-import { Command, CompassDir, Coord, CoordString, Dir, Game, NodeMap } from '@game/types';
+import { Command, CompassDir, Coord, CoordString, Dir, Game, NodeID, NodeMap } from '@game/types';
 import { coordToString } from '@game/utils/grid';
 import { Grid } from '@game/components/Grid';
 import { Typography } from '@mui/material';
@@ -56,8 +56,13 @@ const useGame = () => {
       mental: 10,
       ram: 3,
       money: 0,
+      actions: 2,
+      stats: {
+        icebreaker: 1,
+      },
     },
     stack: [],
+    round: 0,
   });
 
   return {
@@ -65,7 +70,6 @@ const useGame = () => {
     setGame,
   }
 }
-
 
 export const GameScreen = () => {
   const { game, setGame } = useGame();
@@ -88,18 +92,14 @@ export const GameScreen = () => {
     return getAdjacentCoords(game);
   }, [game]);
 
-  const move = (dir: CompassDir, r: boolean = false) => {
-    if (!dir) {
+  const move = (target: string, r: boolean = false) => {
+    const targetNode = game.nodes[target.toUpperCase()];
+    if (!target || !targetNode) {
       return;
     }
-    const current = pick(game.nodes[game.hovered], 'x', 'y');
-    const targetCoord = coordToString({
-      x: current.x + (dir.includes('e') ? 1 : dir.includes('w') ? -1 : 0),
-      y: current.y + (dir.includes('s') ? 1 : dir.includes('n') ? -1 : 0),
-    });
-    const target = nodeMap[targetCoord];
+    const targetCoord = coordToString(targetNode);
     if (target && validMoveCoords.includes(targetCoord)) {
-      setHistory((prev) => [...prev, r ? 'retreat' : `move ${dir}`]);
+      setHistory((prev) => [...prev, r ? 'retreat' : `move ${target}`]);
       setGame((prev) => {
         prev.nodes[target].isVisited = true;
 
@@ -113,7 +113,36 @@ export const GameScreen = () => {
         }
       });
     } else {
-      console.log('cannot move via', dir);
+      console.log('cannot move to', target);
+    }
+  }
+
+  const nav = (dir: CompassDir, r: boolean = false) => {
+    if (!dir) {
+      return;
+    }
+    const current = pick(game.nodes[game.hovered], 'x', 'y');
+    const targetCoord = coordToString({
+      x: current.x + (dir.includes('e') ? 1 : dir.includes('w') ? -1 : 0),
+      y: current.y + (dir.includes('s') ? 1 : dir.includes('n') ? -1 : 0),
+    });
+    const target = nodeMap[targetCoord];
+    if (target && validMoveCoords.includes(targetCoord)) {
+      setHistory((prev) => [...prev, r ? 'retreat' : `nav ${dir}`]);
+      setGame((prev) => {
+        prev.nodes[target].isVisited = true;
+
+        if (prev.nodes[target].ice) {
+          prev = prev.nodes[target].ice.activate(prev) ?? prev;
+        }
+
+        return {
+          ...prev,
+          hovered: target,
+        }
+      });
+    } else {
+      console.log('cannot nav via', dir);
     }
   }
 
@@ -128,7 +157,41 @@ export const GameScreen = () => {
         return c as CompassDir;
       }).join('') as CompassDir;
 
-      move(flippedDir, true);
+      nav(flippedDir, true);
+    }
+
+    if (command === 'break') {
+      const layer = parseInt(args[0]);
+
+      if (!hoveredNode.ice) {
+        console.log('no ice to drill');
+        return;
+      }
+
+      if (isNaN(layer)) {
+        console.log(`invalid layer ${layer} to break`);
+        return;
+      }
+
+      setHistory((prev) => [...prev, `break (${game.hovered}) -l ${layer}`]);
+      setGame((prev) => {
+        prev = hoveredNode.ice.break(prev, layer);
+        return prev;
+      });
+    }
+
+    if (command === 'drill') {
+      if (!hoveredNode.ice) {
+        console.log('no ice to drill');
+        return;
+      }
+
+      // complete all layers of ice
+      setHistory((prev) => [...prev, `drill (${game.hovered})`]);
+      setGame((prev) => {
+        prev = hoveredNode.ice.complete(prev);
+        return prev;
+      });
     }
 
     // if ice active, disable other commands
@@ -138,8 +201,13 @@ export const GameScreen = () => {
     }
 
     if (command === 'move') {
+      const target = args[0].toUpperCase() as NodeID;
+      move(target);
+    }
+
+    if (command === 'nav') {
       const dir = args[0].toLowerCase() as CompassDir;
-      move(dir);
+      nav(dir);
     }
 
     if (command === 'open' && hoveredNode.content) {
@@ -175,27 +243,36 @@ export const GameScreen = () => {
       <FlexRow sx={{ p: 2, justifyContent: 'space-between' }}>
         <FlexCol>
           <FlexRow sx={{ alignItems: 'center' }}>
-            <Typography variant={'h4'} sx={{ mr: 1 }}>{game.hovered}</Typography>
-            <Typography variant={'h6'}>({hoveredNode.x}, {hoveredNode.y})</Typography>
+            <Typography variant={'h6'} sx={{ mr: 1 }}>{game.hovered}</Typography>
+            <Typography variant={'subtitle1'}>({hoveredNode.x}, {hoveredNode.y})</Typography>
           </FlexRow>
           <FlexRow sx={{ alignItems: 'center' }}>
-            <Typography variant={'h6'}>ICE: {hoveredNode.ice ?
+            <Typography variant={'subtitle1'}>ICE: {hoveredNode.ice ?
               <>{hoveredNode.ice.id} ({hoveredNode.ice.status.toLowerCase()})</>
             : '--'}</Typography>
           </FlexRow>
           <FlexRow sx={{ alignItems: 'center' }}>
-            <Typography variant={'h6'}>Content: {hoveredNode.content ? hoveredNode.content.type : '--'}</Typography>
+            <Typography variant={'subtitle1'}>Content: {hoveredNode.content ? hoveredNode.content.type : '--'}</Typography>
           </FlexRow>
         </FlexCol>
         <FlexCol>
           <FlexRow sx={{ alignItems: 'center' }}>
-            <Typography variant={'h6'}>Mental: {game.player.mental}</Typography>
+            <Typography variant={'h6'}>Round: {game.round}</Typography>
           </FlexRow>
           <FlexRow sx={{ alignItems: 'center' }}>
-            <Typography variant={'h6'} sx={{ ml: 2 }}>RAM: {game.player.ram}</Typography>
+            <Typography variant={'subtitle1'}>Actions: {game.player.actions}</Typography>
           </FlexRow>
           <FlexRow sx={{ alignItems: 'center' }}>
-            <Typography variant={'h6'} sx={{ ml: 2 }}>Money: {game.player.money}</Typography>
+            <Typography variant={'subtitle1'}>Mental: {game.player.mental}</Typography>
+          </FlexRow>
+          <FlexRow sx={{ alignItems: 'center' }}>
+            <Typography variant={'subtitle1'} sx={{ ml: 2 }}>RAM: {game.player.ram}</Typography>
+          </FlexRow>
+          <FlexRow sx={{ alignItems: 'center' }}>
+            <Typography variant={'subtitle1'} sx={{ ml: 2 }}>Money: {game.player.money}</Typography>
+          </FlexRow>
+          <FlexRow sx={{ alignItems: 'center' }}>
+            <Typography variant={'subtitle1'} sx={{ ml: 2 }}>ICEBreaker Power: {game.player.stats.icebreaker}</Typography>
           </FlexRow>
         </FlexCol>
       </FlexRow>
@@ -221,12 +298,13 @@ export const GameScreen = () => {
               }}
             >
               <Typography variant={'h6'}>ICE is active!</Typography>
-              <Typography variant={'body1'}>Effects:</Typography>
+              <Typography variant={'body1'}>Layers:</Typography>
               <ul>
-                {hoveredNode.ice.effects.map((effects, i) => {
+                {hoveredNode.ice.layers.map((layer, i) => {
                   return <li key={i}>
-                    {effects.map((effect, j) => {
-                      return <Typography key={j} variant={'body2'}>{effect.id}</Typography>
+                    ({i}) - {layer.status}
+                    {layer.effects.map((effect, j) => {
+                      return <Typography key={j} variant={'body2'}>- {effect.id}</Typography>
                     })}
                   </li>
                 })}
