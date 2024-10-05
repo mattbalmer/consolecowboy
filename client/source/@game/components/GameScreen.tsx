@@ -213,12 +213,17 @@ export const GameScreen = () => {
       const layer = parseInt(args[0]);
 
       if (!hoveredNode.ice) {
-        console.log('no ice to drill');
+        console.log('no ice to break');
         return;
       }
 
-      if (isNaN(layer)) {
+      if (isNaN(layer) || layer < 0 || layer >= hoveredNode.ice.layers.length) {
         console.log(`invalid layer ${layer} to break`);
+        return;
+      }
+
+      if (hoveredNode.ice.layers[layer].status !== 'ACTIVE') {
+        console.log(`layer ${layer} is not active`);
         return;
       }
 
@@ -238,6 +243,11 @@ export const GameScreen = () => {
     if (command === 'drill') {
       if (!hoveredNode.ice) {
         console.log('no ice to drill');
+        return;
+      }
+
+      if (hoveredNode.ice.status !== 'ACTIVE') {
+        console.log('ice is not active');
         return;
       }
 
