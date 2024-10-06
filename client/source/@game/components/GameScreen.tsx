@@ -38,14 +38,14 @@ const getAdjacentCoords = (game: Game): CoordString[] => {
 const useGame = () => {
   const [game, setGame] = useState<Game>({
     nodes: {
-      'A': { x: 0, y: 0, isVisited: true, },
-      'B': { x: 0, y: 1, ice: ICE.NeuralKatana(), content: { type: 'installation', status: 'STANDBY' , ...Installations.Wallet({ amount: 100 }) } },
-      'C': { x: 1, y: 0 },
-      'D': { x: 1, y: 1, ice: ICE.NeuralKatana(), content: { type: 'trap', status: 'STANDBY', ...Traps.RabbitHole({
+      'A': { x: -1, y: -1, isVisited: true, },
+      'B': { x: -1, y: 0, ice: ICE.NeuralKatana(), content: { type: 'installation', status: 'STANDBY' , ...Installations.Wallet({ amount: 100 }) } },
+      'C': { x: 0, y: -1 },
+      'D': { x: 0, y: 0, ice: ICE.NeuralKatana(), content: { type: 'trap', status: 'STANDBY', ...Traps.RabbitHole({
         amount: 1,
         duration: 2,
       }) } },
-      'E': { x: 2, y: 0 },
+      'E': { x: 1, y: -1 },
     },
     edges: {
       'A:B': 'bi',
