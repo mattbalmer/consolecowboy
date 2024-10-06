@@ -5,6 +5,10 @@ import { Box, Typography } from '@mui/material';
 import { coordToString, getEdgeDirs } from '@game/utils/grid';
 import { FlexRow } from '@client/components/FlexRow';
 
+const Spacer = () => {
+  return <Box sx={{ width: 50, height: 50 }} />
+}
+
 const Node = ({ id, coord, selected, exist, isVisited, isOpened }: {
   id: string,
   coord: string,
@@ -19,6 +23,8 @@ const Node = ({ id, coord, selected, exist, isVisited, isOpened }: {
     : exist ? '#44c'
     : '#222';
 
+  if (!exist) return <Spacer />
+
   return <Box
     data-key={coord}
     sx={{
@@ -30,6 +36,7 @@ const Node = ({ id, coord, selected, exist, isVisited, isOpened }: {
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
+      boxSizing: 'border-box',
     }}
   >
     <Typography variant={'subtitle1'}>{id}</Typography>
@@ -62,11 +69,13 @@ const Edge = ({ id, dirs }: {
           top: dir === 'up' ? 10 : '50%',
           left: dir === 'left' ? 10 : '50%',
           transform: dir === 'up' ? 'translateX(-50%)' : 'translateY(-50%)',
+          boxSizing: 'border-box',
         }}
       />
     })}
   </Box>
 }
+
 
 export const Grid = ({
   size,
@@ -84,35 +93,59 @@ export const Grid = ({
     .reduce((s, n) => [...s, n, n + 0.5], [])
     .slice(0, -1);
 
-  return <FlexRow sx={{ flexGrow: 1 }}>
-    {sizeList.slice(0).map(x => {
-      return <FlexCol
-        key={`${x}`}
-        sx={{ alignItems: 'center' }}
-      >
-        {sizeList.slice(0).map(y => {
-          const coordStr = coordToString({ x, y });
-          const node = game.nodes[nodeMap[coordStr]];
-          if (x % 1 === 0 && y % 1 === 0) {
-            return <Node
-              id={nodeMap[coordStr]}
-              coord={coordStr}
-              key={coordStr}
-              selected={coordStr === hoveredNodeXY}
-              exist={coordStr in nodeMap}
-              isOpened={node?.isOpened}
-              isVisited={node?.isVisited}
-            />
-          } else {
-            const dirs = getEdgeDirs(nodeMap, { x, y });
-            return <Edge
-              id={coordStr}
-              key={coordStr}
+  return <FlexRow sx={{ flexGrow: 1, position: 'relative' }}>
+    <>
+      {sizeList.slice(0).map(x => {
+        return <FlexCol
+          key={`${x}`}
+          sx={{ alignItems: 'center' }}
+        >
+          {sizeList.slice(0).map(y => {
+            const coordStr = coordToString({ x, y });
+            const node = game.nodes[nodeMap[coordStr]];
+            if (x % 1 === 0 && y % 1 === 0) {
+              return <Node
+                id={nodeMap[coordStr]}
+                coord={coordStr}
+                key={coordStr}
+                selected={coordStr === hoveredNodeXY}
+                exist={coordStr in nodeMap}
+                isOpened={node?.isOpened}
+                isVisited={node?.isVisited}
+              />
+            } else {
+              return <Spacer key={coordStr} />
+            }
+          })}
+        </FlexCol>
+      })}
+    </>
+    <FlexRow sx={{ position: 'absolute', flexGrow: 1 }}>
+      <>
+        {Object.entries(game.edges).map(([connecting, type]) => {
+          const [start, end] = connecting.split(':');
+          const startNode = game.nodes[start];
+          const endNode = game.nodes[end];
+
+          const midX = (endNode.x + startNode.x) / 2;
+          const midY = (endNode.y + startNode.y) / 2;
+
+          const intervalsFromTop = midY - sizeList[0];
+          const intervalsFromLeft = midX - sizeList[0];
+
+          const dirs: Dir[] = midX === startNode.x ? ['up'] : ['left'];
+
+          return <FlexRow
+            key={coordToString({ x: midX, y: midY })}
+            sx={{ position: 'absolute', top: 100 * intervalsFromTop, left: 100 * intervalsFromLeft }}
+          >
+            <Edge
+              id={coordToString({ x: midX, y: midY })}
               dirs={dirs}
             />
-          }
+          </FlexRow>
         })}
-      </FlexCol>
-    })}
+      </>
+    </FlexRow>
   </FlexRow>
 }
