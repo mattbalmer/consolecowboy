@@ -44,6 +44,14 @@ export const CommandLine = ({
 
   return <FlexRow sx={{ alignItems: 'center', flexGrow: 1 }}>
     <FlexCol sx={{ flexGrow: 1 }}>
+      <FlexCol>
+        {
+          history.map((command, index) => {
+            return <Typography key={index} variant={'subtitle2'}>{command}</Typography>
+          })
+        }
+      </FlexCol>
+      <hr />
       <FlexRow sx={{ alignItems: 'center', flexGrow: 1 }}>
         <Typography variant={'subtitle1'}>Terminal</Typography>
       </FlexRow>

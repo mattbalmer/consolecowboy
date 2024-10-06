@@ -51,6 +51,9 @@ export type Game = {
   },
   stack: GameEffect[],
   round: number,
+  history: {
+    nodes: NodeID[],
+  },
 }
 
 export type NodeMap = Record<CoordString, NodeID>;

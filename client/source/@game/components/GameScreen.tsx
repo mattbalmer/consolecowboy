@@ -38,7 +38,8 @@ const getAdjacentCoords = (game: Game): CoordString[] => {
 const useGame = () => {
   const [game, setGame] = useState<Game>({
     nodes: {
-      'A': { x: -1, y: -1, isVisited: true, },
+      // @ts-ignore TODO fix this when you fix the rest of the trigger() game vs history thing
+      'A': { x: -1, y: -1, isVisited: true, content: { type: 'installation', status: 'STANDBY', ...Installations.ExternalConnection() } },
       'B': { x: -1, y: 0, ice: ICE.NeuralKatana(), content: { type: 'installation', status: 'STANDBY' , ...Installations.Wallet({ amount: 100 }) } },
       'C': { x: 0, y: -1 },
       'D': { x: 0, y: 0, ice: ICE.NeuralKatana(), content: { type: 'trap', status: 'STANDBY', ...Traps.RabbitHole({
@@ -71,6 +72,9 @@ const useGame = () => {
     stack: [],
     round: 0,
     mode: 'PLAY',
+    history: {
+      nodes: [],
+    },
   });
 
   return {
@@ -111,18 +115,23 @@ export const GameScreen = () => {
       setGame((prev) => {
         prev.nodes[target].isVisited = true;
 
-        if (prev.nodes[target].ice) {
-          prev = prev.nodes[target].ice.activate(prev) ?? prev;
-        }
-
-        return {
+        prev = {
           ...prev,
           player: {
             ...prev.player,
             actions: prev.player.actions - 1,
           },
           hovered: target,
+          history: {
+            nodes: [...prev.history.nodes, prev.hovered],
+          },
+        };
+
+        if (prev.nodes[target].ice) {
+          prev = prev.nodes[target].ice.activate(prev) ?? prev;
         }
+
+        return prev;
       });
     } else {
       console.log('cannot move to', target);
@@ -144,18 +153,23 @@ export const GameScreen = () => {
       setGame((prev) => {
         prev.nodes[target].isVisited = true;
 
-        if (prev.nodes[target].ice) {
-          prev = prev.nodes[target].ice.activate(prev) ?? prev;
-        }
-
-        return {
+        prev = {
           ...prev,
           player: {
             ...prev.player,
             actions: prev.player.actions - 1,
           },
           hovered: target,
+          history: {
+            nodes: [...prev.history.nodes, prev.hovered],
+          },
+        };
+
+        if (prev.nodes[target].ice) {
+          prev = prev.nodes[target].ice.activate(prev) ?? prev;
         }
+
+        return prev;
       });
     } else {
       console.log('cannot nav via', dir);
@@ -197,16 +211,17 @@ export const GameScreen = () => {
     }
 
     if (command === 'retreat') {
-      const lastDir = history[history.length - 1].split(' ')[1] as CompassDir;
-      const flippedDir = lastDir.split('').map(c => {
-        if (c === 'n') return 's';
-        if (c === 's') return 'n';
-        if (c === 'e') return 'w';
-        if (c === 'w') return 'e';
-        return c as CompassDir;
-      }).join('') as CompassDir;
-
-      nav(flippedDir, true);
+      // const lastDir = history[history.length - 1].split(' ')[1] as CompassDir;
+      // const flippedDir = lastDir.split('').map(c => {
+      //   if (c === 'n') return 's';
+      //   if (c === 's') return 'n';
+      //   if (c === 'e') return 'w';
+      //   if (c === 'w') return 'e';
+      //   return c as CompassDir;
+      // }).join('') as CompassDir;
+      //
+      // nav(flippedDir, true);
+      move(game.history.nodes[game.history.nodes.length - 1], true);
     }
 
     if (command === 'break') {
@@ -338,6 +353,11 @@ export const GameScreen = () => {
             }
           });
         }, effect['amount']);
+      } else if (effect.id === 'print') {
+        setHistory((prev) => {
+          // @ts-ignore TODO: this is awful (trigger() returning mostly a game, but sometimes a history), fix later and find better way to add print to the history output
+          return [...prev, ...effect.trigger(prev)]
+        });
       } else {
         setGame((prev) => {
           prev.stack = prev.stack.slice(1);

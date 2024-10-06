@@ -85,7 +85,15 @@ export const GameEffects = {
     trigger(game) {
       return game;
     }
-  })
+  }),
+  // @ts-ignore TODO: this is awful, fix later
+  Print: (message: string) => ({
+    id: 'print',
+    message,
+    trigger(): string[] {
+      return [this.message];
+    }
+  }),
 } as const satisfies {
   [id in string]: (...args: unknown[]) => GameEffect<id>
 };
