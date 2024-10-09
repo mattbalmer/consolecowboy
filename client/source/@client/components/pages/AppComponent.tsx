@@ -4,7 +4,8 @@ import {
   ThemeProvider
 } from '@mui/material';
 import { Navigate, Outlet, Route, Routes } from 'react-router-dom';
-import { HomePageSignedIn } from '@client/components/pages/HomePageSignedIn';
+import { GamePage } from '@client/components/pages/GamePage';
+import { CreatePage } from '@client/components/pages/CreatePage';
 
 const darkTheme = createTheme({
   palette: {
@@ -24,10 +25,11 @@ export const AppComponent = () => {
   return <>
     <Routes>
       <Route path={'/'} element={<AppLayout />}>
-        <Route index element={<Navigate to='/games' />} />
-        <Route path={'games'} element={<HomePageSignedIn />} />
+        <Route index element={<Navigate to='/play' />} />
+        <Route path={'play'} element={<GamePage />} />
+        <Route path={'create'} element={<CreatePage />} />
       </Route>
-      <Route path="" element={<Navigate to='/games' />} />
+      <Route path="" element={<Navigate to='/play' />} />
     </Routes>
   </>
 }

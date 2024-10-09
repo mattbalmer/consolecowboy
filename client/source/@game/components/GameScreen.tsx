@@ -399,10 +399,8 @@ export const GameScreen = () => {
     }
   }, [game.stack]);
 
-  return <div>
-    <FlexCol
-      sx={{ flexGrow: 1, height: '100vh', background: '#111' }}
-    >
+  return <>
+    <FlexCol sx={{ flexGrow: 1 }}>
       <FlexRow sx={{ p: 2, justifyContent: 'space-between' }}>
         <FlexCol>
           <FlexRow sx={{ alignItems: 'center' }}>
@@ -485,5 +483,5 @@ export const GameScreen = () => {
         />
       </FlexRow>
     </FlexCol>
-  </div>
+  </>
 }

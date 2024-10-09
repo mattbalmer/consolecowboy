@@ -34,6 +34,8 @@ module.exports = {
         alias: {
             '@client': path.resolve(__dirname, 'source/@client'),
             '@game': path.resolve(__dirname, 'source/@game'),
+            '@overworld': path.resolve(__dirname, 'source/@overworld'),
+            '@editor': path.resolve(__dirname, 'source/@editor'),
             '@shared': path.resolve(__dirname, '../shared/@shared/'),
             '@env': path.resolve(__dirname, '../shared/@env/'),
         },
