@@ -8,11 +8,9 @@ import { useEffect } from 'react';
 
 export const CommandLine = ({
   onCommand,
-  history,
   game,
 }: {
   onCommand: (command: Command, ...args: any[]) => void,
-  history: string[],
   game: Game,
 }) => {
   const [value, setValue] = React.useState<string>('');
@@ -36,7 +34,7 @@ export const CommandLine = ({
   useEffect(() => {
     setInput('');
     setValue('');
-  }, [history]);
+  }, [game.history.terminal]);
 
   useEffect(() => {
 
@@ -46,8 +44,8 @@ export const CommandLine = ({
     <FlexCol sx={{ flexGrow: 1 }}>
       <FlexCol>
         {
-          history.map((command, index) => {
-            return <Typography key={index} variant={'subtitle2'}>{command}</Typography>
+          game.history.terminal.map((line, index) => {
+            return <Typography key={index} variant={'subtitle2'}>({line.type}) {line.value}</Typography>
           })
         }
       </FlexCol>

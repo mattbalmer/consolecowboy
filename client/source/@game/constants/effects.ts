@@ -86,13 +86,18 @@ export const GameEffects = {
       return game;
     }
   }),
-  // @ts-ignore TODO: this is awful, fix later
-  Print: (message: string) => ({
+  Print: (line: Game['history']['terminal'][number]) => ({
     id: 'print',
-    message,
-    trigger(): string[] {
-      return [this.message];
-    }
+    line,
+    trigger(game: Game): Game {
+      return {
+        ...game,
+        history: {
+          ...game.history,
+          terminal: [...game.history.terminal, line],
+        },
+      };
+    },
   }),
 } as const satisfies {
   [id in string]: (...args: unknown[]) => GameEffect<id>

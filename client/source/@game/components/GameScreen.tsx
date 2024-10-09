@@ -74,6 +74,7 @@ const useGame = () => {
     mode: 'PLAY',
     history: {
       nodes: [],
+      terminal: [],
     },
   });
 
@@ -85,7 +86,6 @@ const useGame = () => {
 
 export const GameScreen = () => {
   const { game, setGame } = useGame();
-  const [history, setHistory] = useState<string[]>([]);
 
   console.log('game', { ...game });
 
@@ -111,7 +111,6 @@ export const GameScreen = () => {
     }
     const targetCoord = coordToString(targetNode);
     if (target && validMoveCoords.includes(targetCoord)) {
-      setHistory((prev) => [...prev, r ? 'retreat' : `move ${target}`]);
       setGame((prev) => {
         prev.nodes[target].isVisited = true;
 
@@ -124,6 +123,10 @@ export const GameScreen = () => {
           hovered: target,
           history: {
             nodes: [...prev.history.nodes, prev.hovered],
+            terminal: [...prev.history.terminal, {
+              type: 'command',
+              value: r ? 'retreat' : `move ${target}`,
+            }],
           },
         };
 
@@ -149,7 +152,6 @@ export const GameScreen = () => {
     });
     const target = nodeMap[targetCoord];
     if (target && validMoveCoords.includes(targetCoord)) {
-      setHistory((prev) => [...prev, r ? 'retreat' : `nav ${dir}`]);
       setGame((prev) => {
         prev.nodes[target].isVisited = true;
 
@@ -162,6 +164,10 @@ export const GameScreen = () => {
           hovered: target,
           history: {
             nodes: [...prev.history.nodes, prev.hovered],
+            terminal: [...prev.history.terminal, {
+              type: 'command',
+              value: r ? 'retreat' : `nav ${dir}`,
+            }],
           },
         };
 
@@ -183,7 +189,6 @@ export const GameScreen = () => {
     }
 
     if (command === 'next') {
-      setHistory((prev) => [...prev, 'next']);
       setGame((prev) => {
         const newConditions = [];
         prev.player.conditions.forEach(c => {
@@ -200,6 +205,16 @@ export const GameScreen = () => {
           player: {
             ...prev.player,
             actions: 2,
+          },
+          history: {
+            ...prev.history,
+            terminal: [
+              ...prev.history.terminal,
+              {
+                type: 'command',
+                value: `next`,
+              },
+            ],
           },
         };
       });
@@ -242,7 +257,6 @@ export const GameScreen = () => {
         return;
       }
 
-      setHistory((prev) => [...prev, `break (${game.hovered}) -l ${layer}`]);
       setGame((prev) => {
         prev = hoveredNode.ice.break(prev, layer);
         return {
@@ -250,6 +264,16 @@ export const GameScreen = () => {
           player: {
             ...prev.player,
             actions: prev.player.actions - 1,
+          },
+          history: {
+            ...prev.history,
+            terminal: [
+              ...prev.history.terminal,
+              {
+                type: 'command',
+                value: `break (${game.hovered}) -l ${layer}`,
+              },
+            ],
           },
         };
       });
@@ -267,7 +291,6 @@ export const GameScreen = () => {
       }
 
       // complete all layers of ice
-      setHistory((prev) => [...prev, `drill (${game.hovered})`]);
       setGame((prev) => {
         prev = hoveredNode.ice.complete(prev);
         return {
@@ -275,6 +298,16 @@ export const GameScreen = () => {
           player: {
             ...prev.player,
             actions: prev.player.actions - 1,
+          },
+          history: {
+            ...prev.history,
+            terminal: [
+              ...prev.history.terminal,
+              {
+                type: 'command',
+                value: `drill (${game.hovered})`,
+              },
+            ],
           },
         };
       });
@@ -304,7 +337,6 @@ export const GameScreen = () => {
 
       // or instead of auto, seeing the content is another progression system
       console.log('open the hovered node. trigger trap effects or capture effects. this should maybe be auto? dunno');
-      setHistory((prev) => [...prev, `open (${game.hovered})`]);
       setGame((prev) => {
         const node = prev.nodes[prev.hovered];
 
@@ -325,6 +357,16 @@ export const GameScreen = () => {
           player: {
             ...prev.player,
             actions: prev.player.actions - 1,
+          },
+          history: {
+            ...prev.history,
+            terminal: [
+              ...prev.history.terminal,
+              {
+                type: 'command',
+                value: `open (${game.hovered})`,
+              },
+            ],
           },
         };
       });
@@ -353,11 +395,6 @@ export const GameScreen = () => {
             }
           });
         }, effect['amount']);
-      } else if (effect.id === 'print') {
-        setHistory((prev) => {
-          // @ts-ignore TODO: this is awful (trigger() returning mostly a game, but sometimes a history), fix later and find better way to add print to the history output
-          return [...prev, ...effect.trigger(prev)]
-        });
       } else {
         setGame((prev) => {
           prev.stack = prev.stack.slice(1);
@@ -452,7 +489,6 @@ export const GameScreen = () => {
       <FlexRow sx={{ p: 2 }}>
         <CommandLine
           onCommand={onCommand}
-          history={history}
           game={game}
         />
       </FlexRow>

@@ -20,7 +20,10 @@ export const Installations = {
       return {
         ...game,
         mode: 'VIEW',
-        stack: [...game.stack, GameEffects.Print('You have successfully connected to the external server')],
+        stack: [...game.stack, GameEffects.Print({
+          type: 'output',
+          value: 'You have successfully connected to the external server'
+        })],
       }
     },
   }),

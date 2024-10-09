@@ -53,6 +53,10 @@ export type Game = {
   round: number,
   history: {
     nodes: NodeID[],
+    terminal: {
+      type: 'command' | 'output' | 'error',
+      value: string,
+    }[],
   },
 }
 
