@@ -29,7 +29,11 @@ export const NavBar = () => {
   return <>
     <FlexRow>
       <Tabs
-        value={location.pathname.replace(/play\/[\d+]/g, 'play')}
+        value={
+          location.pathname
+            .replace(/play\/[\d+]/g, 'play')
+            .replace(/create\/[\d+]/g, 'create')
+        }
         aria-label='Nav Tabs'
         role='navigation'
       >

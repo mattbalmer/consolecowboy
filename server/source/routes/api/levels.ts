@@ -8,27 +8,48 @@ const resolveLevelFile = (level: string | number): string => path.join(LEVELS_DI
 
 route.get('/', (req, res) => {
   // list all files in levels dir
-  const levels = fs.readdirSync(LEVELS_DIR).map((file) => {
-    return parseInt(
-      file.split('.')[0].split('-')[1],
-      10
-    );
-  });
+  const levels = fs.readdirSync(LEVELS_DIR)
+    .filter(file => file.endsWith('.json') && !file.endsWith('level-empty.json'))
+    .map((file) => {
+      return parseInt(
+        file.split('.')[0].split('-')[1],
+        10
+      );
+    });
   res.json(levels.sort((a, b) => a - b));
 });
 
 route.get('/:id', (req, res) => {
-  const level = fs.readFileSync(
-    resolveLevelFile(req.params.id),
-    'utf-8'
-  );
-  res.json(JSON.parse(level));
+  const filepath = resolveLevelFile(req.params.id);
+  if (fs.existsSync(filepath)) {
+    const level = fs.readFileSync(
+      filepath,
+      'utf-8'
+    );
+    res.json(JSON.parse(level));
+  } else {
+    const level = fs.readFileSync(
+      resolveLevelFile('empty'),
+      'utf-8'
+    );
+    res.status(404).json(JSON.parse(level));
+  }
 });
 
 route.put('/:id', (req, res) => {
   const id = req.params.id;
   const level = req.body;
   const filepath = resolveLevelFile(id);
+
+  if (!fs.existsSync(LEVELS_DIR)) {
+    fs.mkdirSync(LEVELS_DIR);
+  }
+
+  if (id === 'empty') {
+    res.send(400).json({
+      error: 'Cannot overwrite empty level template'
+    });
+  }
 
   try {
     fs.writeFileSync(
