@@ -36,10 +36,6 @@ export const CommandLine = ({
     setValue('');
   }, [game.history.terminal]);
 
-  useEffect(() => {
-
-  }, []);
-
   return <FlexRow sx={{ alignItems: 'center', flexGrow: 1 }}>
     <FlexCol sx={{ flexGrow: 1 }}>
       <FlexCol>
