@@ -6,6 +6,7 @@ import {
 import { Navigate, Outlet, Route, Routes } from 'react-router-dom';
 import { GamePage } from '@client/components/pages/GamePage';
 import { CreatePage } from '@client/components/pages/CreatePage';
+import { OverworldPage } from '@client/components/pages/OverworldPage';
 
 const darkTheme = createTheme({
   palette: {
@@ -25,8 +26,9 @@ export const AppComponent = () => {
   return <>
     <Routes>
       <Route path={'/'} element={<AppLayout />}>
-        <Route index element={<Navigate to='/play/1' />} />
+        <Route index element={<Navigate to='/play' />} />
         <Route path={'play/:id'} element={<GamePage />} />
+        <Route path={'play'} element={<OverworldPage />} />
         <Route path={'create'} element={<CreatePage />} />
       </Route>
       <Route path="" element={<Navigate to='/play' />} />
