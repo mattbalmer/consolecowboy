@@ -20,7 +20,7 @@ export const OverworldPage = () => {
     {levels ?
       <List>
         {levels.map(level => {
-          return <ListItemButton component='a' href={`/play/${level}`}>
+          return <ListItemButton key={level} component='a' href={`/play/${level}`}>
             <ListItemText primary={`Level ${level}`} />
           </ListItemButton>
         })}
