@@ -2,7 +2,7 @@ import * as React from 'react';
 import { FlexCol } from '@client/components/FlexCol';
 import { FlexRow } from '@client/components/FlexRow';
 import { useEffect, useMemo, useState } from 'react';
-import { Command, CompassDir, Coord, CoordString, Dir, Game, NodeID, NodeMap } from '@game/types';
+import { Command, CompassDir, CoordString, Dir, Game, NodeID, NodeMap } from '@game/types';
 import { coordToString } from '@game/utils/grid';
 import { Grid } from '@game/components/Grid';
 import { Typography } from '@mui/material';
@@ -11,6 +11,7 @@ import { ICE } from '@game/constants/ice';
 import { Installations } from '@game/constants/installations';
 import { Traps } from '@game/constants/traps';
 import { pick } from '@shared/utils/objects';
+import { createGame, invertNodes } from '@game/utils/game';
 
 const getAdjacentCoords = (game: Game): CoordString[] => {
   const allDirs: Dir[] = ['up', 'left', 'down', 'right'];
@@ -36,25 +37,32 @@ const getAdjacentCoords = (game: Game): CoordString[] => {
 }
 
 const useGame = () => {
-  const [game, setGame] = useState<Game>({
+  const [game, setGame] = useState<Game>(createGame({
+    hovered: 'A',
     nodes: {
-      'A': { x: -1, y: -1, isVisited: true, content: { type: 'installation', status: 'STANDBY', ...Installations.ExternalConnection() } },
-      'B': { x: -1, y: 0, ice: ICE.NeuralKatana(), content: { type: 'installation', status: 'STANDBY' , ...Installations.Wallet({ amount: 100 }) } },
+      'A': {
+        x: -1,
+        y: -1,
+        isVisited: true,
+        content: { type: 'installation', status: 'STANDBY', ...Installations.ExternalConnection() }
+      },
+      'B': {
+        x: -1,
+        y: 0,
+        ice: ICE.NeuralKatana(),
+        content: { type: 'installation', status: 'STANDBY', ...Installations.Wallet({ amount: 100 }) }
+      },
       'C': { x: 0, y: -1 },
-      'D': { x: 0, y: 0, ice: ICE.NeuralKatana(), content: { type: 'trap', status: 'STANDBY', ...Traps.RabbitHole({
-        amount: 1,
-        duration: 2,
-      }) } },
+      'D': {
+        x: 0, y: 0, ice: ICE.NeuralKatana(), content: {
+          type: 'trap', status: 'STANDBY', ...Traps.RabbitHole({
+            amount: 1,
+            duration: 2,
+          })
+        }
+      },
       'E': { x: 1, y: -1 },
     },
-    edges: {
-      'A:B': 'bi',
-      'A:C': 'bi',
-      'B:D': 'bi',
-      'C:D': 'bi',
-      'C:E': 'bi',
-    },
-    hovered: 'A',
     player: {
       mental: 10,
       ram: {
@@ -68,14 +76,7 @@ const useGame = () => {
       },
       conditions: [],
     },
-    stack: [],
-    round: 0,
-    mode: 'PLAY',
-    history: {
-      nodes: [],
-      terminal: [],
-    },
-  });
+  }));
 
   return {
     game,
@@ -89,15 +90,7 @@ export const GameScreen = () => {
   console.log('game', { ...game });
 
   const hoveredNodeXY = useMemo(() => coordToString(game.nodes[game.hovered]), [game.nodes, game.hovered]);
-  const nodeMap = useMemo(() => {
-    const keys = Object.keys(game.nodes);
-    return Object.values(game.nodes).map(coordToString).reduce((m, coord, i) => {
-      return {
-        ...m,
-        [coord]: keys[i],
-      }
-    }, {} as NodeMap);
-  }, [game.nodes, game.hovered]);
+  const nodeMap = useMemo(() => invertNodes(game.nodes), [game.nodes, game.hovered]);
   const hoveredNode = game.nodes[nodeMap[hoveredNodeXY]];
   const validMoveCoords = useMemo(() => {
     return getAdjacentCoords(game);

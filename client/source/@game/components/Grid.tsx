@@ -2,7 +2,7 @@ import { FlexCol } from '@client/components/FlexCol';
 import * as React from 'react';
 import { Dir, Game, NodeID, NodeMap } from '@game/types';
 import { Box, Typography } from '@mui/material';
-import { coordToString, getEdgeDirs } from '@game/utils/grid';
+import { coordToString } from '@game/utils/grid';
 import { FlexRow } from '@client/components/FlexRow';
 
 const Spacer = () => {

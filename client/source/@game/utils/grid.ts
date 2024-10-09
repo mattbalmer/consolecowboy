@@ -1,7 +1,8 @@
-import { Coord, CoordString, Dir } from '@game/types';
+import { Coord, CoordString, Dir, Game, NodeMap } from '@game/types';
 
 export const coordToString = ({ x, y }: Coord): CoordString => `${x},${y}`;
 
+// todo: this currently only does verticality, I think
 export const getEdgeDirs = (nodeMap: Record<string, string>, { x, y }: Coord): Dir[] => {
   let output: Dir[] = [];
 
