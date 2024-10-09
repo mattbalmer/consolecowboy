@@ -38,7 +38,6 @@ const getAdjacentCoords = (game: Game): CoordString[] => {
 const useGame = () => {
   const [game, setGame] = useState<Game>({
     nodes: {
-      // @ts-ignore TODO fix this when you fix the rest of the trigger() game vs history thing
       'A': { x: -1, y: -1, isVisited: true, content: { type: 'installation', status: 'STANDBY', ...Installations.ExternalConnection() } },
       'B': { x: -1, y: 0, ice: ICE.NeuralKatana(), content: { type: 'installation', status: 'STANDBY' , ...Installations.Wallet({ amount: 100 }) } },
       'C': { x: 0, y: -1 },

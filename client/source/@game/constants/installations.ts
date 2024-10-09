@@ -14,7 +14,6 @@ export const Installations = {
   }),
   ExternalConnection: () => ({
     id: 'connection.external',
-    // @ts-ignore TODO fix with rest of this
     onCapture(game) {
       // finish the run
       return {
