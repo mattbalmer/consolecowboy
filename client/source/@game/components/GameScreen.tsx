@@ -7,11 +7,12 @@ import { coordToString } from '@game/utils/grid';
 import { Grid } from '@game/components/Grid';
 import { Typography } from '@mui/material';
 import { CommandLine } from '@game/components/CommandLine';
-import { ICE } from '@game/constants/ice';
-import { Installations } from '@game/constants/installations';
-import { Traps } from '@game/constants/traps';
+import { ICE } from '@shared/constants/ice';
+import { Installations } from '@shared/constants/installations';
+import { Traps } from '@shared/constants/traps';
 import { pick } from '@shared/utils/objects';
-import { createGame, invertNodes } from '@game/utils/game';
+import { createGame, gameFromLevel, invertNodes } from '@game/utils/game';
+import { Level } from '@shared/types/game/level';
 
 const getAdjacentCoords = (game: Game): CoordString[] => {
   const allDirs: Dir[] = ['up', 'left', 'down', 'right'];
@@ -36,47 +37,17 @@ const getAdjacentCoords = (game: Game): CoordString[] => {
     .filter(coord => coord in nodeMap);
 }
 
-const useGame = () => {
-  const [game, setGame] = useState<Game>(createGame({
-    hovered: 'A',
-    nodes: {
-      'A': {
-        x: -1,
-        y: -1,
-        isVisited: true,
-        content: { type: 'installation', status: 'STANDBY', ...Installations.ExternalConnection() }
-      },
-      'B': {
-        x: -1,
-        y: 0,
-        ice: ICE.NeuralKatana(),
-        content: { type: 'installation', status: 'STANDBY', ...Installations.Wallet({ amount: 100 }) }
-      },
-      'C': { x: 0, y: -1 },
-      'D': {
-        x: 0, y: 0, ice: ICE.NeuralKatana(), content: {
-          type: 'trap', status: 'STANDBY', ...Traps.RabbitHole({
-            amount: 1,
-            duration: 2,
-          })
-        }
-      },
-      'E': { x: 1, y: -1 },
-    },
-    player: {
-      mental: 10,
-      ram: {
-        max: 3,
-        current: 3,
-      },
-      money: 0,
-      actions: 2,
-      stats: {
-        icebreaker: 1,
-      },
-      conditions: [],
-    },
-  }));
+const useGame = ({
+  level,
+  player,
+}: {
+  level: Level,
+  player: Game['player'],
+}) => {
+  const [game, setGame] = useState<Game>(gameFromLevel(
+    level,
+    player,
+  ));
 
   return {
     game,
@@ -84,8 +55,17 @@ const useGame = () => {
   }
 }
 
-export const GameScreen = () => {
-  const { game, setGame } = useGame();
+export const GameScreen = ({
+  level,
+  player,
+}: {
+  level: Level,
+  player: Game['player'],
+}) => {
+  const { game, setGame } = useGame({
+    level,
+    player,
+  });
 
   console.log('game', { ...game });
 

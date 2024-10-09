@@ -1,6 +1,5 @@
-import { Trap } from '@game/types/game';
-import { Game } from '@game/types';
-import { GameEffects } from '@game/constants/effects';
+import { Game, Trap } from '@shared/types/game';
+import { GameEffects } from '@shared/constants/effects';
 
 export const Traps = {
   RabbitHole: ({ amount, duration }: { amount: number, duration: number }) => ({

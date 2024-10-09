@@ -1,5 +1,5 @@
-import { Installation } from '@game/types/game';
-import { GameEffects } from '@game/constants/effects';
+import { Installation } from '@shared/types/game';
+import { GameEffects } from '@shared/constants/effects';
 
 export const Installations = {
   Wallet: ({ amount }: { amount: number }) => ({

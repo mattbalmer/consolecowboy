@@ -1,10 +1,4 @@
-import { Condition, Game } from "@game/types";
-import { sleep } from '@shared/utils/functions';
-
-export type GameEffect<ID extends string = string> = {
-  id: ID,
-  trigger(game: Game): Game,
-}
+import { Condition, Game, GameEffect } from '@shared/types/game';
 
 export const GameEffects = {
   MentalDamage: ({ amount }: { amount?: number }) => ({

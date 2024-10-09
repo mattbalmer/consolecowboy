@@ -4,5 +4,7 @@ const routes = express.Router();
 
 routes.use(parser.json());
 
+routes.use('/levels', require('./levels'));
+
 module.exports = routes;
 export {}

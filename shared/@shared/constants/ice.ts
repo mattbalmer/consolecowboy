@@ -1,6 +1,5 @@
-import { GameEffects } from '@game/constants/effects';
-import { Ice } from '@game/types/game';
-import { Game } from '@game/types';
+import { GameEffects } from '@shared/constants/effects';
+import { Game, Ice } from '@shared/types/game';
 
 export const ICE = {
   NeuralKatana: () => ({

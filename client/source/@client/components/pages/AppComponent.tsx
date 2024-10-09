@@ -25,8 +25,8 @@ export const AppComponent = () => {
   return <>
     <Routes>
       <Route path={'/'} element={<AppLayout />}>
-        <Route index element={<Navigate to='/play' />} />
-        <Route path={'play'} element={<GamePage />} />
+        <Route index element={<Navigate to='/play/1' />} />
+        <Route path={'play/:id'} element={<GamePage />} />
         <Route path={'create'} element={<CreatePage />} />
       </Route>
       <Route path="" element={<Navigate to='/play' />} />
