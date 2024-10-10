@@ -4,19 +4,27 @@ import * as path from 'node:path';
 const route = express.Router();
 
 const LEVELS_DIR = path.resolve('data/levels');
-const resolveLevelFile = (level: string | number): string => path.join(LEVELS_DIR, `level-${level}.json`);
+const resolveLevelFile = (level: string | number): string => path.join(LEVELS_DIR, `${level}.level.json`);
 
 route.get('/', (req, res) => {
   // list all files in levels dir
+  // todo: sort based on id number
   const levels = fs.readdirSync(LEVELS_DIR)
-    .filter(file => file.endsWith('.json') && !file.endsWith('level-empty.json'))
+    .filter(file => file.endsWith('.level.json') && file !== '.level.json')
     .map((file) => {
-      return parseInt(
-        file.split('.')[0].split('-')[1],
-        10
-      );
-    });
-  res.json(levels.sort((a, b) => a - b));
+      const id = file.split('.')[0];
+      const parsed = Number(id);
+      return isNaN(parsed) ? id : parsed;
+    })
+    .sort((a, b) =>
+      typeof a === 'number' && typeof b === 'number' ? a - b
+        : typeof a === 'number'? -1
+        : typeof b === 'number' ? 1
+        : a < b ? -1
+        : a > b ? 1
+        : 0
+    );
+  res.json(levels);
 });
 
 route.get('/:id', (req, res) => {
@@ -29,7 +37,7 @@ route.get('/:id', (req, res) => {
     res.json(JSON.parse(level));
   } else {
     const level = fs.readFileSync(
-      resolveLevelFile('empty'),
+      resolveLevelFile(''),
       'utf-8'
     );
     res.status(404).json(JSON.parse(level));

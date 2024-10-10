@@ -9,11 +9,10 @@ import { EditScreen } from '@editor/EditScreen';
 
 export const CreatePage = (props) => {
   const { id } = useParams();
-  const levelID = parseInt(id, 10);
   const [level, setLevel] = useState<Level>(null);
 
   useEffect(() => {
-    fetch(`/api/levels/${levelID}`)
+    fetch(`/api/levels/${id}`)
       .then((res) => res.json())
       .then((level) => {
         setLevel(level);
@@ -23,7 +22,7 @@ export const CreatePage = (props) => {
   return <FlexCol sx={{ flexGrow: 1, height: '100vh', background: '#111' }}>
     <NavBar />
     {level ?
-      <EditScreen id={levelID} initialLevel={level} />
+      <EditScreen id={id} initialLevel={level} />
       : <>
         <Typography>...Loading</Typography>
       </>

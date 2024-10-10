@@ -26,9 +26,8 @@ const hightlightWithLineNumbers = (input: string, language: typeof languages[str
     .map((line, i) => `<span class='editorLineNumber'>${i + 1}</span>${line}`)
     .join('\n');
 
-
 export const EditScreen = (props: {
-  id: number,
+  id: string,
   initialLevel: Level;
 }) => {
   const { id, initialLevel } = props;
