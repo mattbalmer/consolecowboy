@@ -42,7 +42,9 @@ export const EditScreen = (props: {
     try {
       const parsed = JSON.parse(newLevelString);
       setLevel(parsed);
-      setHasLevelChanged(true);
+      setHasLevelChanged(
+        JSON.stringify(parsed) !== JSON.stringify(savedLevel)
+      );
     } catch (error) {
       console.log('parse error', error);
     }
@@ -63,24 +65,30 @@ export const EditScreen = (props: {
   }
 
   return (
-    <FlexRow sx={{ flexGrow: 1, basis: 1 }}>
-      <FlexCol sx={{ flexGrow: 1 }}>
+    // todo: this magic number from nav height
+    <FlexRow sx={{ flexGrow: 1, height: 'calc(100% - 48px)' }}>
+      {/* like 33%, but can fiddle later */}
+      <FlexCol sx={{ minWidth: 240, maxWidth: 400, width: '33%' }}>
         <Button
           onClick={onSave}
           disabled={!hasLevelChanged}
         >
           Save
         </Button>
-        <Editor
-          value={levelString}
-          onValueChange={onJSONChange}
-          highlight={code => highlight(levelString, languages.js)}
-          padding={10}
-          style={{
-            fontFamily: '"Fira code", "Fira Mono", monospace',
-            fontSize: 12,
-          }}
-        />
+        <FlexCol sx={{ height: '100%', overflowY: 'auto' }}>
+          <Editor
+            value={levelString}
+            onValueChange={onJSONChange}
+            highlight={code => highlight(levelString, languages.js)}
+            padding={10}
+            style={{
+              fontFamily: '"Fira code", "Fira Mono", monospace',
+              fontSize: 12,
+              overflow: 'visible',
+              flexGrow: 1,
+            }}
+          />
+        </FlexCol>
       </FlexCol>
       <GameScreen level={level} player={player} />
     </FlexRow>

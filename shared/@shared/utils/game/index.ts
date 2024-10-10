@@ -84,3 +84,5 @@ export const gameFromLevel = (level: Level, player: Game['player']): Game => {
     hovered: level.start
   });
 }
+
+// todo: validate game, eg. no two nodes for same coords.
