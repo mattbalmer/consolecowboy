@@ -24,7 +24,7 @@
         "status": "STANDBY",
         "key": "Wallet",
         "args": {
-            "amount": 100
+          "amount": 100
         }
       }
     },

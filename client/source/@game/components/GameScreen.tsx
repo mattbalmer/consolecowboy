@@ -67,6 +67,16 @@ export const GameScreen = ({
     player,
   });
 
+  useEffect(() => {
+    setGame((prev) => {
+      const newGame = gameFromLevel(level, player);
+      return {
+        ...newGame,
+        hovered: newGame.nodes[prev.hovered] ? prev.hovered : newGame.hovered,
+      };
+    });
+  }, [level, player]);
+
   console.log('game', { ...game });
 
   const hoveredNodeXY = useMemo(() => coordToString(game.nodes[game.hovered]), [game.nodes, game.hovered]);

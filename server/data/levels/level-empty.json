@@ -1,0 +1,16 @@
+{
+  "nodes": {
+    "A": {
+      "x": 0,
+      "y": 0,
+      "isVisited": true,
+      "content": {
+        "type": "installation",
+        "status": "STANDBY",
+        "key": "ExternalConnection",
+        "args": null
+      }
+    }
+  },
+  "start": "A"
+}
