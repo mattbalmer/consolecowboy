@@ -5,8 +5,8 @@ import {
 } from '@mui/material';
 import { Navigate, Outlet, Route, Routes } from 'react-router-dom';
 import { GamePage } from '@client/components/pages/GamePage';
-import { CreatePage } from '@client/components/pages/CreatePage';
 import { OverworldPage } from '@client/components/pages/OverworldPage';
+import { CreatePage } from '@client/components/pages/CreatePage';
 import { CreateListPage } from '@client/components/pages/CreateListPage';
 
 const darkTheme = createTheme({

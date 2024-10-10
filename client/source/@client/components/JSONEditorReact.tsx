@@ -10,6 +10,12 @@ export default function JSONEditorReact(props) {
   delete options.json;
   delete options.text;
 
+  options.onChange = () => {
+    if (props.onChange) {
+      props.onChange(jsoneditor.current.get());
+    }
+  }
+
   const jsoneditor = useRef(null);
   const container = useRef(null);
 
@@ -56,20 +62,7 @@ export default function JSONEditorReact(props) {
         jsoneditor.current.destroy();
       }
     };
-  }, [props]);
-
-  const onKeyEvent = useCallback(() => {
-    console.log('onkeydown');
-    props.onChange(jsoneditor.current.get());
-  }, [jsoneditor.current, props.onChange]);
-
-  useEffect(() => {
-    container?.current?.addEventListener('keydown', onKeyEvent);
-
-    return () => {
-      container?.current?.removeEventListener('keydown', onKeyEvent);
-    }
-  }, [container, onKeyEvent]);
+  }, [props.json, props.text, props.mode, props.schema, props.schemaRefs]);
 
   return <div style={{ width: '100%', height: '100%' }} ref={container} />;
 }

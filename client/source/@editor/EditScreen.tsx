@@ -5,24 +5,11 @@ import { FlexCol } from '@client/components/FlexCol';
 import { GameScreen } from '@game/components/GameScreen';
 import { Game } from '@shared/types/game';
 import { Button } from '@mui/material';
-import JSONEditorReact from '@client/components/JSONEditorReact';
 import { FlexRow } from '@client/components/FlexRow';
-
-function useTraceUpdate(props) {
-  const prev = useRef(props);
-  useEffect(() => {
-    const changedProps = Object.entries(props).reduce((ps, [k, v]) => {
-      if (prev.current[k] !== v) {
-        ps[k] = [prev.current[k], v];
-      }
-      return ps;
-    }, {});
-    if (Object.keys(changedProps).length > 0) {
-      console.log('Changed props:', changedProps);
-    }
-    prev.current = props;
-  });
-}
+import JSONInput from 'react-json-editor-ajrm';
+import locale from 'react-json-editor-ajrm/locale/en';
+import { useTraceUpdate } from '@client/hooks/use-trace-update';
+import JSONEditorReact from '@client/components/JSONEditorReact';
 
 export const EditScreen = (props: {
   id: number,
@@ -81,7 +68,19 @@ export const EditScreen = (props: {
         >
           Save
         </Button>
-        <JSONEditorReact json={savedLevel} onChange={onJSONChange} />
+        {/*<JSONInput*/}
+        {/*  id='json'*/}
+        {/*  placeholder={level}*/}
+        {/*  locale={locale}*/}
+        {/*  height='100%'*/}
+        {/*  width='100%'*/}
+        {/*  onChange={(changeObject) => onJSONChange(changeObject.jsObject as Level)}*/}
+        {/*/>*/}
+        <JSONEditorReact
+          json={level}
+          mode={'code'}
+          onChange={onJSONChange}
+        />
       </FlexCol>
       <GameScreen level={level} player={player} />
     </FlexRow>
