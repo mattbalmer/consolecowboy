@@ -36,6 +36,7 @@ export const EditScreen = (props: {
   const [level, setLevel] = useState<Level>(initialLevel);
   const [levelString, setLevelString] = useState<string>(JSON.stringify(level, null, 2));
   const [hasLevelChanged, setHasLevelChanged] = useState<boolean>(false);
+  const [hasEdits, setHasEdits] = useState<boolean>(false);
   const [jsonError, setJsonError] = useState<{
     message: string,
     stack: string,
@@ -59,6 +60,7 @@ export const EditScreen = (props: {
 
   const onJSONChange = (newLevelString: string) => {
     // TODO: look into using RSON https://www.relaxedjson.org/download/javascript
+    setHasEdits(JSON.stringify(savedLevel, null, 2) !== newLevelString);
     setLevelString(newLevelString);
     try {
       const parsed = JSON.parse(newLevelString);
@@ -87,7 +89,14 @@ export const EditScreen = (props: {
       .then(() => {
         setSavedLevel(level);
         setHasLevelChanged(false);
+        setHasEdits(false);
       });
+  }
+
+  const onReset = () => {
+    onJSONChange(JSON.stringify(savedLevel, null, 2));
+    // setLevelString(JSON.stringify(savedLevel, null, 2));
+    // setLevel(savedLevel);
   }
 
   return (
@@ -95,12 +104,22 @@ export const EditScreen = (props: {
     <FlexRow sx={{ flexGrow: 1, height: 'calc(100% - 48px)' }}>
       {/* like 33%, but can fiddle later */}
       <FlexCol sx={{ minWidth: 240, maxWidth: 400, width: '33%' }}>
-        <Button
-          onClick={onSave}
-          disabled={!hasLevelChanged}
-        >
-          Save
-        </Button>
+        <FlexRow sx={{ flexGrow: 1, justifyContent: 'space-between' }}>
+          <Button
+            onClick={onReset}
+            disabled={!hasEdits}
+            sx={{ flexGrow: 1 }}
+          >
+            Reset
+          </Button>
+          <Button
+            onClick={onSave}
+            disabled={!hasLevelChanged}
+            sx={{ flexGrow: 1 }}
+          >
+            Save
+          </Button>
+        </FlexRow>
         <FlexCol sx={{ height: '100%', overflowY: 'auto', position: 'relative' }}>
           <Editor
             value={levelString}
