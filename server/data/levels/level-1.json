@@ -7,8 +7,7 @@
       "content": {
         "type": "installation",
         "status": "STANDBY",
-        "key": "ExternalConnection",
-        "args": null
+        "key": "ExternalConnection"
       }
     },
     "B": {
@@ -16,8 +15,7 @@
       "y": 0,
       "ice": {
         "key": "NeuralKatana",
-        "status": "READY",
-        "args": null
+        "status": "READY"
       },
       "content": {
         "type": "installation",
@@ -37,8 +35,7 @@
       "y": 0,
       "ice": {
         "key": "NeuralKatana",
-        "status": "READY",
-        "args": null
+        "status": "READY"
       },
       "content": {
         "type": "trap",

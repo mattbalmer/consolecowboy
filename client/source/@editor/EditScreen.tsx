@@ -4,12 +4,28 @@ import { useMemo, useState } from 'react';
 import { FlexCol } from '@client/components/FlexCol';
 import { GameScreen } from '@game/components/GameScreen';
 import { Game } from '@shared/types/game';
-import { Button } from '@mui/material';
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Typography
+} from '@mui/material';
 import { FlexRow } from '@client/components/FlexRow';
 import Editor from 'react-simple-code-editor';
 import { highlight, languages } from 'prismjs/components/prism-core';
 import 'prismjs/components/prism-clike';
 import 'prismjs/components/prism-javascript';
+
+const hightlightWithLineNumbers = (input: string, language: typeof languages[string]) =>
+  highlight(input, language)
+    .split('\n')
+    .map((line, i) => `<span class='editorLineNumber'>${i + 1}</span>${line}`)
+    .join('\n');
+
 
 export const EditScreen = (props: {
   id: number,
@@ -20,6 +36,11 @@ export const EditScreen = (props: {
   const [level, setLevel] = useState<Level>(initialLevel);
   const [levelString, setLevelString] = useState<string>(JSON.stringify(level, null, 2));
   const [hasLevelChanged, setHasLevelChanged] = useState<boolean>(false);
+  const [jsonError, setJsonError] = useState<{
+    message: string,
+    stack: string,
+  }>(null);
+  const [showJsonStack, setShowJsonStack] = useState<boolean>(false);
   const player = useMemo<Game['player']>(() => {
     return {
       mental: 10,
@@ -45,8 +66,13 @@ export const EditScreen = (props: {
       setHasLevelChanged(
         JSON.stringify(parsed) !== JSON.stringify(savedLevel)
       );
+      setJsonError(null);
     } catch (error) {
-      console.log('parse error', error);
+      setJsonError({
+        message: error.message ?? 'Unknown JSON parse error',
+        stack: error.stack ?? null,
+      });
+      console.log('parse error', error.message, typeof error.stack);
     }
   }
 
@@ -75,22 +101,74 @@ export const EditScreen = (props: {
         >
           Save
         </Button>
-        <FlexCol sx={{ height: '100%', overflowY: 'auto' }}>
+        <FlexCol sx={{ height: '100%', overflowY: 'auto', position: 'relative' }}>
           <Editor
             value={levelString}
             onValueChange={onJSONChange}
-            highlight={code => highlight(levelString, languages.js)}
+            highlight={code => hightlightWithLineNumbers(code, languages.js)}
             padding={10}
             style={{
-              fontFamily: '"Fira code", "Fira Mono", monospace',
+              fontFamily: `'Fira code', 'Fira Mono', monospace`,
               fontSize: 12,
               overflow: 'visible',
               flexGrow: 1,
+              lineHeight: 1.1,
             }}
           />
+          {
+            jsonError &&
+            <Box
+              component={'button'}
+              sx={{
+                position: 'sticky',
+                bottom: 0,
+                width: `100%`,
+                p: 2,
+                background: `hsla(350, 10%, 50%, 90%)`,
+                border: `1px solid hsla(350, 50%, 65%, 1)`,
+                fontSize: '10px',
+                cursor: 'pointer',
+                textAlign: 'left',
+                ':before': {
+                  content: `''`,
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  boxShadow: `inset 0 0 50px hsla(350, 10%, 90%, 50%)`,
+                  filter: `blur(5px)`,
+                },
+              }}
+              onClick={() => setShowJsonStack(true)}
+            >
+              <Typography sx={{ color: 'hsla(350, 10%, 90%, 100%)' }}>{jsonError.message}</Typography>
+            </Box>
+          }
         </FlexCol>
       </FlexCol>
       <GameScreen level={level} player={player} />
+      <Dialog
+        open={showJsonStack}
+        onClose={() => setShowJsonStack(false)}
+        aria-labelledby='alert-dialog-title'
+        aria-describedby='alert-dialog-description'
+      >
+        <DialogTitle id='alert-dialog-title'>JSON Parse Error</DialogTitle>
+        <DialogContent>
+          <DialogContentText id='alert-dialog-description'>
+            <p style={{ fontSize: '12px' }}>{jsonError?.message}</p>
+            <pre style={{ fontSize: '12px' }}>
+              {jsonError?.stack}
+            </pre>
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setShowJsonStack(false)} autoFocus>
+            Okay
+          </Button>
+        </DialogActions>
+      </Dialog>
     </FlexRow>
   );
 }
