@@ -810,13 +810,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sphinxxxx/color-conversion@npm:^2.2.2":
-  version: 2.2.2
-  resolution: "@sphinxxxx/color-conversion@npm:2.2.2"
-  checksum: 10c0/847d6952aed358d54991b2f9a3c2f76d04d4c70cd014e9c1f86d8b37490768f3a56d077ba8f7ab3355b7616c4b1dcdacdba2e4705ade9b7c6220e4e950ab100f
-  languageName: node
-  linkType: hard
-
 "@tsconfig/node10@npm:^1.0.7":
   version: 1.0.11
   resolution: "@tsconfig/node10@npm:1.0.11"
@@ -1065,6 +1058,13 @@ __metadata:
   dependencies:
     "@types/express": "npm:*"
   checksum: 10c0/7120c1186c8c67e3818683b5b6a4439d102f67da93cc1c7d8f32484f7bf10e8438dd5de0bf571910b23d06caa43dd1ad501933b48618bfaf54e63219500993fe
+  languageName: node
+  linkType: hard
+
+"@types/prismjs@npm:^1":
+  version: 1.26.4
+  resolution: "@types/prismjs@npm:1.26.4"
+  checksum: 10c0/996be7d119779c4cbe66e58342115a12d35a02226dae3aaa4a744c9652d5a3939c93c26182e18156965ac4f93575ebb309c3469c36f52e60ee5c0f8f27e874df
   languageName: node
   linkType: hard
 
@@ -1593,13 +1593,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ace-builds@npm:^1.35.0":
-  version: 1.36.2
-  resolution: "ace-builds@npm:1.36.2"
-  checksum: 10c0/86b4e6d5f7342418e3c9d66d817c6bd3e23f3925392a5098b0b15e6c3189ad163b5e177e1729ca15744cb0772b8333780deea7a42d1a6c88010ef8b97bad90ce
-  languageName: node
-  linkType: hard
-
 "acorn-import-attributes@npm:^1.9.5":
   version: 1.9.5
   resolution: "acorn-import-attributes@npm:1.9.5"
@@ -1691,7 +1684,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ajv@npm:^6.12.4, ajv@npm:^6.12.5, ajv@npm:^6.12.6":
+"ajv@npm:^6.12.4, ajv@npm:^6.12.5":
   version: 6.12.6
   resolution: "ajv@npm:6.12.6"
   dependencies:
@@ -5744,13 +5737,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"javascript-natural-sort@npm:^0.7.1":
-  version: 0.7.1
-  resolution: "javascript-natural-sort@npm:0.7.1"
-  checksum: 10c0/340f8ffc5d30fb516e06dc540e8fa9e0b93c865cf49d791fed3eac3bdc5fc71f0066fc81d44ec1433edc87caecaf9f13eec4a1fce8c5beafc709a71eaedae6fe
-  languageName: node
-  linkType: hard
-
 "jest-worker@npm:^27.4.5":
   version: 27.5.1
   resolution: "jest-worker@npm:27.5.1"
@@ -5759,13 +5745,6 @@ __metadata:
     merge-stream: "npm:^2.0.0"
     supports-color: "npm:^8.0.0"
   checksum: 10c0/8c4737ffd03887b3c6768e4cc3ca0269c0336c1e4b1b120943958ddb035ed2a0fc6acab6dc99631720a3720af4e708ff84fb45382ad1e83c27946adf3623969b
-  languageName: node
-  linkType: hard
-
-"jmespath@npm:^0.16.0":
-  version: 0.16.0
-  resolution: "jmespath@npm:0.16.0"
-  checksum: 10c0/84cdca62c4a3d339701f01cc53decf16581c76ce49e6455119be1c5f6ab09a19e6788372536bd261d348d21cd817981605f8debae67affadba966219a2bac1c5
   languageName: node
   linkType: hard
 
@@ -5824,13 +5803,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"json-source-map@npm:^0.6.1":
-  version: 0.6.1
-  resolution: "json-source-map@npm:0.6.1"
-  checksum: 10c0/9fe819f7dfc1407caf8e36246f18376eb511b969954d457b251dfb506df74544cefc0c368f64474b512956eeb37807e03045332a9712ddd14b836d54debe03c3
-  languageName: node
-  linkType: hard
-
 "json-stable-stringify-without-jsonify@npm:^1.0.1":
   version: 1.0.1
   resolution: "json-stable-stringify-without-jsonify@npm:1.0.1"
@@ -5847,36 +5819,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsoneditor@npm:^10.1.0":
-  version: 10.1.0
-  resolution: "jsoneditor@npm:10.1.0"
-  dependencies:
-    ace-builds: "npm:^1.35.0"
-    ajv: "npm:^6.12.6"
-    javascript-natural-sort: "npm:^0.7.1"
-    jmespath: "npm:^0.16.0"
-    json-source-map: "npm:^0.6.1"
-    jsonrepair: "npm:^3.8.0"
-    mobius1-selectr: "npm:^2.4.13"
-    picomodal: "npm:^3.0.0"
-    vanilla-picker: "npm:^2.12.3"
-  checksum: 10c0/1d478b419f2f981600b766cc02ee63bae8c155943f96e85b5710d316b3e8333bf823de3ccbe424bdcddfc02ccbb4944d95df3588afafd98bb4fbc871ca54af7b
-  languageName: node
-  linkType: hard
-
 "jsonparse@npm:^1.2.0":
   version: 1.3.1
   resolution: "jsonparse@npm:1.3.1"
   checksum: 10c0/89bc68080cd0a0e276d4b5ab1b79cacd68f562467008d176dc23e16e97d4efec9e21741d92ba5087a8433526a45a7e6a9d5ef25408696c402ca1cfbc01a90bf0
-  languageName: node
-  linkType: hard
-
-"jsonrepair@npm:^3.8.0":
-  version: 3.8.1
-  resolution: "jsonrepair@npm:3.8.1"
-  bin:
-    jsonrepair: bin/cli.js
-  checksum: 10c0/2e6a750928d8a8ac8d6cc37dc399188098267e44827e00089da6245e75f6e8aaf95e145d2a346569a518fbfb761da78e61d37d833591bd0ef0230a7d8dbd5af5
   languageName: node
   linkType: hard
 
@@ -6554,13 +6500,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mobius1-selectr@npm:^2.4.13":
-  version: 2.4.13
-  resolution: "mobius1-selectr@npm:2.4.13"
-  checksum: 10c0/b6f348f8f2400363f0231e14bd2d700d88d3d88a66cb44f99ef0bc908f70e3d50372b0c0365a0c97992ecad5a8fb1b4af392fcbe21444df8a8c5b49feaeacb25
-  languageName: node
-  linkType: hard
-
 "module-deps@npm:^6.2.3":
   version: 6.2.3
   resolution: "module-deps@npm:6.2.3"
@@ -6762,6 +6701,7 @@ __metadata:
     "@mui/lab": "npm:^5.0.0-alpha.170"
     "@mui/material": "npm:^5.15.19"
     "@mui/system": "npm:^5.15.15"
+    "@types/prismjs": "npm:^1"
     "@types/react": "npm:^18.3.3"
     "@types/react-dom": "npm:^18.3.0"
     "@types/react-transition-group": "npm:^4.4.10"
@@ -6776,10 +6716,11 @@ __metadata:
     gulp-plumber: "npm:^1.2.1"
     gulp-stylint: "npm:^4.0.2"
     gulp-stylus: "npm:^3.0.1"
-    jsoneditor: "npm:^10.1.0"
+    prismjs: "npm:^1.29.0"
     react: "npm:^18.3.1"
     react-dom: "npm:^18.3.1"
     react-router-dom: "npm:^6.23.1"
+    react-simple-code-editor: "npm:^0.14.1"
     react-transition-group: "npm:^4.4.5"
     source-map-loader: "npm:^4.0.2"
     string-replace-loader: "npm:^3.1.0"
@@ -7462,13 +7403,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"picomodal@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "picomodal@npm:3.0.0"
-  checksum: 10c0/1e6cec615dfb2d362aa5c92ec3c5f38135c4240160e31b7f2ce0a391c29c9890c0823605b96ac9f238b82a93c63318445d483a54e1dafd24d278a6f3c2d39dba
-  languageName: node
-  linkType: hard
-
 "pify@npm:^2.0.0":
   version: 2.3.0
   resolution: "pify@npm:2.3.0"
@@ -7579,6 +7513,13 @@ __metadata:
   version: 1.0.3
   resolution: "pretty-hrtime@npm:1.0.3"
   checksum: 10c0/67cb3fc283a72252b49ac488647e6a01b78b7aa1b8f2061834aa1650691229081518ef3ca940f77f41cc8a8f02ba9eeb74b843481596670209e493062f2e89e0
+  languageName: node
+  linkType: hard
+
+"prismjs@npm:^1.29.0":
+  version: 1.29.0
+  resolution: "prismjs@npm:1.29.0"
+  checksum: 10c0/d906c4c4d01b446db549b4f57f72d5d7e6ccaca04ecc670fb85cea4d4b1acc1283e945a9cbc3d81819084a699b382f970e02f9d1378e14af9808d366d9ed7ec6
   languageName: node
   linkType: hard
 
@@ -7809,6 +7750,16 @@ __metadata:
   peerDependencies:
     react: ">=16.8"
   checksum: 10c0/0d15a39b419c99fb5ccad76388bfc4ee2b01323b3b1b694595a9f9ea28e1fbeea25486b5398f5d3d93922f5c6a9aa751b6bb27419488d85279f6ca5ff9e0a6bb
+  languageName: node
+  linkType: hard
+
+"react-simple-code-editor@npm:^0.14.1":
+  version: 0.14.1
+  resolution: "react-simple-code-editor@npm:0.14.1"
+  peerDependencies:
+    react: ">=16.8.0"
+    react-dom: ">=16.8.0"
+  checksum: 10c0/63264fce03315c80de4fc65b9e0a30b359cb0a6c269a90ad67ccff36c21d0f3ba1f9ac9bdfbe76477fc9a6d7033182debc64a58345f4914f0bc0b416eb686e61
   languageName: node
   linkType: hard
 
@@ -9719,15 +9670,6 @@ __metadata:
   version: 3.0.0
   resolution: "value-or-function@npm:3.0.0"
   checksum: 10c0/78a75b44543bb70ea3eee1804bbb101558f422335e3b62ed8864deeb85295efab1b109f607c3806b13c2fc48630d93f6c564b2796377a01a6302d355323ecebe
-  languageName: node
-  linkType: hard
-
-"vanilla-picker@npm:^2.12.3":
-  version: 2.12.3
-  resolution: "vanilla-picker@npm:2.12.3"
-  dependencies:
-    "@sphinxxxx/color-conversion": "npm:^2.2.2"
-  checksum: 10c0/306237ab0178ca0b8138ba86093302a33d98a505b34e427d3844717173033d9286ba93e07e7fb3162c3dc6c206c0ae4b786b4194833b2f69b690e93583d184bb
   languageName: node
   linkType: hard
 

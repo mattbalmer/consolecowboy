@@ -1,15 +1,15 @@
 import * as React from 'react';
 import { Level } from '@shared/types/game/level';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { FlexCol } from '@client/components/FlexCol';
 import { GameScreen } from '@game/components/GameScreen';
 import { Game } from '@shared/types/game';
 import { Button } from '@mui/material';
 import { FlexRow } from '@client/components/FlexRow';
-import JSONInput from 'react-json-editor-ajrm';
-import locale from 'react-json-editor-ajrm/locale/en';
-import { useTraceUpdate } from '@client/hooks/use-trace-update';
-import JSONEditorReact from '@client/components/JSONEditorReact';
+import Editor from 'react-simple-code-editor';
+import { highlight, languages } from 'prismjs/components/prism-core';
+import 'prismjs/components/prism-clike';
+import 'prismjs/components/prism-javascript';
 
 export const EditScreen = (props: {
   id: number,
@@ -18,6 +18,7 @@ export const EditScreen = (props: {
   const { id, initialLevel } = props;
   const [savedLevel, setSavedLevel] = useState<Level>(initialLevel);
   const [level, setLevel] = useState<Level>(initialLevel);
+  const [levelString, setLevelString] = useState<string>(JSON.stringify(level, null, 2));
   const [hasLevelChanged, setHasLevelChanged] = useState<boolean>(false);
   const player = useMemo<Game['player']>(() => {
     return {
@@ -35,11 +36,16 @@ export const EditScreen = (props: {
     };
   }, []);
 
-  useTraceUpdate(props)
-
-  const onJSONChange = (value: Level) => {
-    console.log('json change', value);
-    setLevel(value);
+  const onJSONChange = (newLevelString: string) => {
+    // TODO: look into using RSON https://www.relaxedjson.org/download/javascript
+    setLevelString(newLevelString);
+    try {
+      const parsed = JSON.parse(newLevelString);
+      setLevel(parsed);
+      setHasLevelChanged(true);
+    } catch (error) {
+      console.log('parse error', error);
+    }
   }
 
   const onSave = () => {
@@ -52,12 +58,9 @@ export const EditScreen = (props: {
     })
       .then(() => {
         setSavedLevel(level);
-        setLevel(level);
         setHasLevelChanged(false);
       });
   }
-
-  console.log('rerender why');
 
   return (
     <FlexRow sx={{ flexGrow: 1, basis: 1 }}>
@@ -68,18 +71,15 @@ export const EditScreen = (props: {
         >
           Save
         </Button>
-        {/*<JSONInput*/}
-        {/*  id='json'*/}
-        {/*  placeholder={level}*/}
-        {/*  locale={locale}*/}
-        {/*  height='100%'*/}
-        {/*  width='100%'*/}
-        {/*  onChange={(changeObject) => onJSONChange(changeObject.jsObject as Level)}*/}
-        {/*/>*/}
-        <JSONEditorReact
-          json={level}
-          mode={'code'}
-          onChange={onJSONChange}
+        <Editor
+          value={levelString}
+          onValueChange={onJSONChange}
+          highlight={code => highlight(levelString, languages.js)}
+          padding={10}
+          style={{
+            fontFamily: '"Fira code", "Fira Mono", monospace',
+            fontSize: 12,
+          }}
         />
       </FlexCol>
       <GameScreen level={level} player={player} />
