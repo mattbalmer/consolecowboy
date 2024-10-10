@@ -74,7 +74,6 @@ export const EditScreen = (props: {
         message: error.message ?? 'Unknown JSON parse error',
         stack: error.stack ?? null,
       });
-      console.log('parse error', error.message, typeof error.stack);
     }
   }
 
@@ -95,8 +94,6 @@ export const EditScreen = (props: {
 
   const onReset = () => {
     onJSONChange(JSON.stringify(savedLevel, null, 2));
-    // setLevelString(JSON.stringify(savedLevel, null, 2));
-    // setLevel(savedLevel);
   }
 
   return (
