@@ -162,7 +162,7 @@ export const EditScreen = (props: {
           }
         </FlexCol>
       </FlexCol>
-      <GameScreen level={level} player={player} />
+      <GameScreen levelID={id} level={level} player={player} />
       <Dialog
         open={showJsonStack}
         onClose={() => setShowJsonStack(false)}

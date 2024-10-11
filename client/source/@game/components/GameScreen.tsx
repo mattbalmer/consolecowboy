@@ -7,12 +7,12 @@ import { coordToString } from '@game/utils/grid';
 import { Grid } from '@game/components/Grid';
 import { Typography } from '@mui/material';
 import { CommandLine } from '@game/components/CommandLine';
-import { ICE } from '@shared/constants/ice';
-import { Installations } from '@shared/constants/installations';
-import { Traps } from '@shared/constants/traps';
 import { pick } from '@shared/utils/objects';
-import { createGame, gameFromLevel, invertNodes } from '@game/utils/game';
+import { gameFromLevel, invertNodes } from '@game/utils/game';
 import { Level } from '@shared/types/game/level';
+import { GameEffects } from '@shared/constants/effects';
+import { SimpleDialog } from '@client/components/SimpleDialog';
+import { getControllerFor } from '@game/level-controllers';
 
 const getAdjacentCoords = (game: Game): CoordString[] => {
   const allDirs: Dir[] = ['up', 'left', 'down', 'right'];
@@ -57,9 +57,11 @@ const useGame = ({
 
 export const GameScreen = ({
   level,
+  levelID,
   player,
 }: {
   level: Level,
+  levelID: string,
   player: Game['player'],
 }) => {
   const { game, setGame } = useGame({
@@ -78,6 +80,17 @@ export const GameScreen = ({
   }, [level, player]);
 
   console.log('game', { ...game });
+
+  const [dialog, setDialog] = useState<{
+    title: string,
+    body: string,
+    acknowledge: string,
+    onFinish: () => void,
+  }>(null);
+
+  const levelController = useMemo(() => {
+    return getControllerFor(levelID);
+  }, [levelID]);
 
   const hoveredNodeXY = useMemo(() => coordToString(game.nodes[game.hovered]), [game.nodes, game.hovered]);
   const nodeMap = useMemo(() => invertNodes(game.nodes), [game.nodes, game.hovered]);
@@ -356,6 +369,16 @@ export const GameScreen = ({
   }
 
   useEffect(() => {
+    if (levelController) {
+      setGame((prev) => {
+        return levelController.onChange({
+          game: prev,
+        }).game;
+      });
+    }
+  }, [game.stack, game.history.terminal]);
+
+  useEffect(() => {
     const effect = game.stack[0];
 
     if (effect) {
@@ -377,6 +400,23 @@ export const GameScreen = ({
             }
           });
         }, effect['amount']);
+      } else if((effect as ReturnType<typeof GameEffects.SimpleDialog>).id === 'dialog.simple') {
+        console.log('trigger dialog effect');
+        setDialog({
+          title: (effect as ReturnType<typeof GameEffects.SimpleDialog>).title,
+          body: (effect as ReturnType<typeof GameEffects.SimpleDialog>).body,
+          acknowledge: (effect as ReturnType<typeof GameEffects.SimpleDialog>).acknowledge,
+          onFinish: () => {
+            console.log('onFinish dialog');
+            setDialog(null);
+            setGame((prev) => {
+              return {
+                ...prev,
+                stack: prev.stack.slice(1),
+              };
+            });
+          },
+        });
       } else {
         setGame((prev) => {
           prev.stack = prev.stack.slice(1);
@@ -389,9 +429,11 @@ export const GameScreen = ({
     }
   }, [game.stack]);
 
+  console.log('render dialog', dialog);
+
   return <>
-    <FlexCol sx={{ flexGrow: 1 }}>
-      <FlexRow sx={{ p: 2, justifyContent: 'space-between' }}>
+    <FlexCol data-game sx={{ flexGrow: 1 }}>
+      <FlexRow data-header sx={{ p: 2, justifyContent: 'space-between' }}>
         <FlexCol>
           <FlexRow sx={{ alignItems: 'center' }}>
             <Typography variant={'h6'} sx={{ mr: 1 }}>{game.hovered}</Typography>
@@ -472,6 +514,14 @@ export const GameScreen = ({
           game={game}
         />
       </FlexRow>
+      <SimpleDialog
+        id={'game-effect-dialog'}
+        isOpen={!!dialog}
+        title={dialog?.title}
+        body={dialog?.body}
+        acknowledge={dialog?.acknowledge}
+        onClose={dialog?.onFinish}
+      />
     </FlexCol>
   </>
 }

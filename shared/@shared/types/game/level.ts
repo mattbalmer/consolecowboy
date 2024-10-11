@@ -1,4 +1,4 @@
-import { Content, IceStatus, NodeContent, NodeID } from '@shared/types/game/index';
+import { Content, Game, IceStatus, NodeContent, NodeID } from '@shared/types/game/index';
 import { ICE } from '@shared/constants/ice';
 import { Installations } from '@shared/constants/installations';
 import { Traps } from '@shared/constants/traps';

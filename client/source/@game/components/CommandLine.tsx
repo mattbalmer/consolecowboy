@@ -36,12 +36,19 @@ export const CommandLine = ({
     setValue('');
   }, [game.history.terminal]);
 
-  return <FlexRow sx={{ alignItems: 'center', flexGrow: 1 }}>
+  return <FlexRow data-cli sx={{ alignItems: 'center', flexGrow: 1 }}>
     <FlexCol sx={{ flexGrow: 1 }}>
-      <FlexCol>
+      <FlexCol data-cli-output>
         {
           game.history.terminal.map((line, index) => {
-            return <Typography key={index} variant={'subtitle2'}>({line.type}) {line.value}</Typography>
+            return <Typography
+              key={index}
+              variant={'subtitle2'}
+              data-cli-output={index}
+              data-cli-output-type={line.type}
+            >
+              ({line.type}) <pre>{line.value}</pre>
+            </Typography>
           })
         }
       </FlexCol>
@@ -56,6 +63,7 @@ export const CommandLine = ({
           id='command-line'
           freeSolo
           fullWidth
+          data-cli-input
           renderInput={(params) =>
             <TextField
               autoFocus

@@ -41,6 +41,7 @@ export const GamePage = () => {
     <NavBar />
     {level ?
       <GameScreen
+        levelID={id}
         level={level}
         player={player}
       />

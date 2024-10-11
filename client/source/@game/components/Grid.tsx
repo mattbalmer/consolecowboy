@@ -1,12 +1,15 @@
 import { FlexCol } from '@client/components/FlexCol';
 import * as React from 'react';
-import { Dir, Game, NodeID, NodeMap } from '@game/types';
+import { CoordString, Dir, EdgeString, Game, NodeID, NodeMap } from '@game/types';
 import { Box, Typography } from '@mui/material';
 import { coordToString } from '@game/utils/grid';
 import { FlexRow } from '@client/components/FlexRow';
 
 const Spacer = () => {
-  return <Box sx={{ width: 50, height: 50 }} />
+  return <Box
+    data-spacer
+    sx={{ width: 50, height: 50 }}
+  />
 }
 
 const Node = ({ id, coord, selected, exist, isVisited, isOpened }: {
@@ -26,7 +29,8 @@ const Node = ({ id, coord, selected, exist, isVisited, isOpened }: {
   if (!exist) return <Spacer />
 
   return <Box
-    data-key={coord}
+    data-node={id}
+    data-xy={coord}
     sx={{
       width: 50,
       height: 50,
@@ -43,12 +47,14 @@ const Node = ({ id, coord, selected, exist, isVisited, isOpened }: {
   </Box>
 }
 
-const Edge = ({ id, dirs }: {
-  id: string,
+const Edge = ({ connecting, coord, dirs }: {
+  connecting: EdgeString,
+  coord: CoordString,
   dirs: Dir[],
 }) => {
   return <Box
-    data-key={id}
+    data-edge={connecting}
+    data-xy={coord}
     sx={{
       position: 'relative',
       width: 50,
@@ -58,7 +64,7 @@ const Edge = ({ id, dirs }: {
     {dirs.filter(dir => dir === 'left' || dir === 'up').map(dir => {
       return <Box
         key={dir}
-        data-key={dir}
+        data-edge-dir={dir}
         sx={{
           width: dir === 'left' ? 30 : 10,
           height: dir === 'up' ? 30 : 10,
@@ -76,7 +82,6 @@ const Edge = ({ id, dirs }: {
   </Box>
 }
 
-
 export const Grid = ({
   size,
   hoveredNodeXY,
@@ -93,12 +98,16 @@ export const Grid = ({
     .reduce((s, n) => [...s, n, n + 0.5], [])
     .slice(0, -1);
 
-  return <FlexRow sx={{ flexGrow: 1, position: 'relative' }}>
+  return <FlexRow
+    data-grid
+    sx={{ flexGrow: 1, position: 'relative' }}
+  >
     <>
       {sizeList.slice(0).map(x => {
         return <FlexCol
           key={`${x}`}
           sx={{ alignItems: 'center' }}
+          data-col={x}
         >
           {sizeList.slice(0).map(y => {
             const coordStr = coordToString({ x, y });
@@ -122,7 +131,7 @@ export const Grid = ({
     </>
     <FlexRow sx={{ position: 'absolute', flexGrow: 1 }}>
       <>
-        {Object.entries(game.edges).map(([connecting, type]) => {
+        {Object.entries(game.edges).map(([connecting, type]: [EdgeString, typeof game.edges[EdgeString]]) => {
           const [start, end] = connecting.split(':');
           const startNode = game.nodes[start];
           const endNode = game.nodes[end];
@@ -140,7 +149,8 @@ export const Grid = ({
             sx={{ position: 'absolute', top: 100 * intervalsFromTop, left: 100 * intervalsFromLeft }}
           >
             <Edge
-              id={coordToString({ x: midX, y: midY })}
+              connecting={connecting}
+              coord={coordToString({ x: midX, y: midY })}
               dirs={dirs}
             />
           </FlexRow>

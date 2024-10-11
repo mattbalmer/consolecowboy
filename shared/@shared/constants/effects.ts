@@ -93,6 +93,19 @@ export const GameEffects = {
       };
     },
   }),
+  SimpleDialog: ({ title, body, acknowledge }: {
+    title: string,
+    body: string,
+    acknowledge?: string,
+  }) => ({
+    id: 'dialog.simple',
+    title,
+    body,
+    acknowledge,
+    trigger(game) {
+      return game;
+    }
+  }),
 } as const satisfies {
   [id in string]: (...args: unknown[]) => GameEffect<id>
 };
