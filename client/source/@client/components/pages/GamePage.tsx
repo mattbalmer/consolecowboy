@@ -7,27 +7,45 @@ import { useEffect, useMemo, useState } from 'react';
 import { Game } from '@shared/types/game';
 import { Level } from '@shared/types/game/level';
 import { Typography } from '@mui/material';
+import { playerCapsule } from '@client/capsules/player';
+
+const usePlayer = (levelID: string): Game['player'] => {
+  return useMemo<Game['player']>(() => {
+    const savedPlayer = playerCapsule.get('player');
+    const previousHistoryForLevel = savedPlayer.history[levelID] ?? [0, 0];
+    playerCapsule.set('player', {
+      ...savedPlayer,
+      history: {
+        ...savedPlayer.history,
+        [levelID]: [
+          previousHistoryForLevel[0] + 1,
+          previousHistoryForLevel[1],
+        ],
+      },
+    });
+
+    return {
+      mental: savedPlayer.mental,
+      ram: {
+        max: savedPlayer.ram,
+        current: savedPlayer.ram,
+      },
+      money: savedPlayer.money,
+      actions: 2,
+      stats: {
+        ...savedPlayer.stats,
+      },
+      conditions: [],
+    };
+  }, []);
+}
 
 export const GamePage = () => {
   let { id } = useParams();
 
   const [level, setLevel] = useState<Level>(null);
 
-  const player = useMemo<Game['player']>(() => {
-    return {
-      mental: 10,
-      ram: {
-        max: 3,
-        current: 3,
-      },
-      money: 0,
-      actions: 2,
-      stats: {
-        icebreaker: 1,
-      },
-      conditions: [],
-    };
-  }, []);
+  const player = usePlayer(id);
 
   useEffect(() => {
     fetch(`/api/levels/${id}`)

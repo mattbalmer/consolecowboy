@@ -40,7 +40,7 @@ export const CommandLine = ({
     <FlexCol sx={{ flexGrow: 1 }}>
       <FlexCol data-cli-output>
         {
-          game.history.terminal.map((line, index) => {
+          game.history.terminal.filter(line => line.type !== 'hidden').map((line, index) => {
             return <Typography
               key={index}
               variant={'subtitle2'}

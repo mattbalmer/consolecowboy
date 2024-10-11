@@ -13,6 +13,9 @@ import { Level } from '@shared/types/game/level';
 import { GameEffects } from '@shared/constants/effects';
 import { SimpleDialog } from '@client/components/SimpleDialog';
 import { getControllerFor } from '@game/level-controllers';
+import { playerCapsule } from '@client/capsules/player';
+import { Simulate } from 'react-dom/test-utils';
+import play = Simulate.play;
 
 const getAdjacentCoords = (game: Game): CoordString[] => {
   const allDirs: Dir[] = ['up', 'left', 'down', 'right'];
@@ -402,19 +405,32 @@ export const GameScreen = ({
         }, effect['amount']);
       } else if((effect as ReturnType<typeof GameEffects.SimpleDialog>).id === 'dialog.simple') {
         console.log('trigger dialog effect');
-        setDialog({
+        const dialogSettings = {
           title: (effect as ReturnType<typeof GameEffects.SimpleDialog>).title,
           body: (effect as ReturnType<typeof GameEffects.SimpleDialog>).body,
           acknowledge: (effect as ReturnType<typeof GameEffects.SimpleDialog>).acknowledge,
+        };
+        setDialog({
+          ...dialogSettings,
           onFinish: () => {
             console.log('onFinish dialog');
-            setDialog(null);
             setGame((prev) => {
               return {
                 ...prev,
                 stack: prev.stack.slice(1),
+                history: {
+                  ...prev.history,
+                  terminal: [
+                    ...prev.history.terminal,
+                    {
+                      type: 'hidden',
+                      value: `dialog: ${effect.id} | ${dialogSettings.title} | ${dialogSettings.body}`,
+                    },
+                  ],
+                },
               };
             });
+            setDialog(null);
           },
         });
       } else {
@@ -426,7 +442,34 @@ export const GameScreen = ({
           }
         });
       }
+      if (effect.id === 'finish.extraction') {
+        const savedPlayer = playerCapsule.get('player');
+        const previousHistoryForLevel = savedPlayer.history[levelID] ?? [0, 0];
+        playerCapsule.set('player', {
+          ...savedPlayer,
+          mental: game.player.mental,
+          money: game.player.money,
+          history: {
+            ...savedPlayer.history,
+            [levelID]: [
+              previousHistoryForLevel[0],
+              previousHistoryForLevel[1] + 1,
+            ],
+          },
+        });
+
+        setDialog({
+          title: 'Extraction Complete',
+          body: 'You have successfully connected to the external server, go back to the overworld.',
+          acknowledge: 'Okay',
+          onFinish: () => {
+            window.location.href = '/play';
+            setDialog(null);
+          },
+        });
+      }
     }
+
   }, [game.stack]);
 
   console.log('render dialog', dialog);

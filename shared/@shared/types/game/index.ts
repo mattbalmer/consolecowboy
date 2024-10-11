@@ -71,6 +71,25 @@ export type Condition = {
   onEnd: (game: Game) => Game,
 }
 
+/**
+ * Represents the player out-of-game, for saving purposes. The player on Game['player'] is the in-game player, with
+ * status effects and other things we don't need to track between levels.
+ */
+export type Player = {
+  mental: number,
+  bodyHP: number,
+  ram: number,
+  money: number,
+  actions: number,
+  stats: {
+    icebreaker: number,
+  },
+  /**
+   * Record of level IDs to number of times entered & completed
+   */
+  history: Record<string, [entered: number, completed: number]>,
+}
+
 export type Game = {
   mode: 'PLAY' | 'VIEW',
   nodes: Record<NodeID, Node>,
@@ -94,7 +113,7 @@ export type Game = {
   history: {
     nodes: NodeID[],
     terminal: {
-      type: 'command' | 'output' | 'error',
+      type: 'command' | 'output' | 'error' | 'hidden',
       value: string,
     }[],
   },

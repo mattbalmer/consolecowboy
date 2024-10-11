@@ -93,6 +93,22 @@ export const GameEffects = {
       };
     },
   }),
+  ExtractFromNetwork: () => ({
+    id: 'finish.extraction',
+    trigger(game: Game): Game {
+      return {
+        ...game,
+        mode: 'VIEW',
+        history: {
+          ...game.history,
+          terminal: [...game.history.terminal, {
+            type: 'output',
+            value: 'You have successfully connected to the external server'
+          }],
+        },
+      };
+    },
+  }),
   SimpleDialog: ({ title, body, acknowledge }: {
     title: string,
     body: string,
