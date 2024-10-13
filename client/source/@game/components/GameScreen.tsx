@@ -60,10 +60,12 @@ export const GameScreen = ({
   level,
   levelID,
   player,
+  shouldBindController,
 }: {
   level: Level,
   levelID: string,
   player: Game['player'],
+  shouldBindController: boolean,
 }) => {
   const { game, setGame } = useGame({
     level,
@@ -90,8 +92,8 @@ export const GameScreen = ({
   }>(null);
 
   const levelController = useMemo(() => {
-    return getControllerFor(levelID);
-  }, [levelID]);
+    return shouldBindController ? getControllerFor(levelID) : null;
+  }, [shouldBindController, levelID]);
 
   const hoveredNodeXY = useMemo(() => coordToString(game.nodes[game.hovered]), [game.nodes, game.hovered]);
   const nodeMap = useMemo(() => invertNodes(game.nodes), [game.nodes, game.hovered]);

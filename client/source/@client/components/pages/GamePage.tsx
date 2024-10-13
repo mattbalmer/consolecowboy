@@ -52,6 +52,7 @@ export const GamePage = () => {
         levelID={id}
         level={level}
         player={player}
+        shouldBindController={true}
       />
       : <>
         <Typography>...Loading</Typography>
