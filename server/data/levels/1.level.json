@@ -1,8 +1,6 @@
 {
   "nodes": {
-    "A": {
-      "x": -1,
-      "y": -1,
+    "-1,-1": {
       "isVisited": true,
       "content": {
         "type": "installation",
@@ -10,9 +8,7 @@
         "key": "ExternalConnection"
       }
     },
-    "B": {
-      "x": -1,
-      "y": 0,
+    "-1,0": {
       "ice": {
         "key": "NeuralKatana",
         "status": "READY"
@@ -25,31 +21,6 @@
           "amount": 100
         }
       }
-    },
-    "C": {
-      "x": 0,
-      "y": -1
-    },
-    "D": {
-      "x": 0,
-      "y": 0,
-      "ice": {
-        "key": "NeuralKatana",
-        "status": "READY"
-      },
-      "content": {
-        "type": "trap",
-        "status": "STANDBY",
-        "key": "RabbitHole",
-        "args": {
-          "amount": 1,
-          "duration": 2
-        }
-      }
-    },
-    "E": {
-      "x": 1,
-      "y": -1
     }
   },
   "start": "A"

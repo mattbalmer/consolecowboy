@@ -1,4 +1,4 @@
-import { Content, Game, IceStatus, NodeContent, NodeID } from '@shared/types/game/index';
+import { Content, CoordString, IceStatus, NodeContent, NodeID } from '@shared/types/game/index';
 import { ICE } from '@shared/constants/ice';
 import { Installations } from '@shared/constants/installations';
 import { Traps } from '@shared/constants/traps';
@@ -32,9 +32,8 @@ export type LevelContent<T extends Content['type'], K extends T extends 'install
 }
 
 export type Level = {
-  nodes: Record<NodeID, {
-    x: number,
-    y: number,
+  nodes: Record<CoordString, {
+    id?: NodeID,
     isVisited?: boolean,
     ice?: LevelICE<keyof typeof ICE>
     content?: LevelContent<Content['type'], any>,

@@ -50,6 +50,10 @@ const useGame = ({
     player,
   ));
 
+  useEffect(() => {
+    setGame(gameFromLevel(level, player));
+  }, [level, player]);
+
   return {
     game,
     setGame,
@@ -82,6 +86,7 @@ export const GameScreen = ({
     });
   }, [level, player]);
 
+  console.log('level', { ...level });
   console.log('game', { ...game });
 
   const [dialog, setDialog] = useState<{

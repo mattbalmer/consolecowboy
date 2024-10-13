@@ -1,6 +1,10 @@
 import { Coord, CoordString, Dir } from '@shared/types/game';
 
 export const coordToString = ({ x, y }: Coord): CoordString => `${x},${y}`;
+export const stringToCoord = (str: CoordString): Coord => {
+  const [x, y] = str.split(',').map(_ => Number(_));
+  return { x, y };
+};
 
 // todo: this currently only does verticality, I think
 export const getEdgeDirs = (nodeMap: Record<string, string>, { x, y }: Coord): Dir[] => {
