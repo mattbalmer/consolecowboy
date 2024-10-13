@@ -21,6 +21,7 @@ import 'prismjs/components/prism-clike';
 import 'prismjs/components/prism-javascript';
 import { getInitialPlayerProps } from '@client/capsules/player';
 import { savedPlayerToGamePlayer } from '@shared/utils/game/player';
+import { ErrorBoundary } from 'react-error-boundary';
 
 const hightlightWithLineNumbers = (input: string, language: typeof languages[string]) =>
   highlight(input, language)
@@ -81,6 +82,13 @@ export const EditScreen = (props: {
 
   const onReset = () => {
     onJSONChange(JSON.stringify(savedLevel, null, 2));
+  }
+
+  const fallbackRender = ({ error }) => {
+    return <div role="alert">
+      <p>Something went wrong:</p>
+      <pre>{error.message}</pre>
+    </div>
   }
 
   return (
@@ -150,12 +158,16 @@ export const EditScreen = (props: {
           }
         </FlexCol>
       </FlexCol>
-      <GameScreen
-        levelID={id}
-        level={level}
-        player={player}
-        shouldBindController={false}
-      />
+      <ErrorBoundary
+        fallbackRender={fallbackRender}
+      >
+        <GameScreen
+          levelID={id}
+          level={level}
+          player={player}
+          shouldBindController={false}
+        />
+      </ErrorBoundary>
       <Dialog
         open={showJsonStack}
         onClose={() => setShowJsonStack(false)}
