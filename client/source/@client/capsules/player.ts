@@ -11,7 +11,7 @@ export const getInitialPlayerProps = () => {
     bodyHP: 5,
     ram: 3,
     money: 0,
-    actions: 2,
+    actions: 3,
     stats: {
       icebreaker: 1,
     },

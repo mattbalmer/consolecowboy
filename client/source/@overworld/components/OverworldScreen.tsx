@@ -41,6 +41,7 @@ export const OverworldScreen = ({
         <Typography variant={'body1'}>HP: {player.bodyHP}</Typography>
         <Typography variant={'body1'}>Mental HP: {player.mental}</Typography>
         <Typography variant={'body1'}>Money: {player.money}</Typography>
+        <Typography variant={'body1'}>Actions per turn: {player.actions}</Typography>
         <Typography variant={'body1'}>RAM: {player.ram}</Typography>
         <Typography variant={'body1'}>Icebreaker: {player.stats.icebreaker}</Typography>
       </FlexCol>
@@ -67,6 +68,7 @@ export const OverworldScreen = ({
       onConfirm={handleReset}
       cancelText={'Cancel'}
       confirmText={'Reset'}
+      color={'error'}
     />
   </FlexCol>
 }

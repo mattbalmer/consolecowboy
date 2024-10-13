@@ -103,6 +103,7 @@ export type Game = {
     },
     money: number,
     actions: number,
+    actionsPerTurn: number,
     stats: {
       icebreaker: number,
     },

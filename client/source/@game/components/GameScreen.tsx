@@ -14,8 +14,6 @@ import { GameEffects } from '@shared/constants/effects';
 import { SimpleDialog } from '@client/components/SimpleDialog';
 import { getControllerFor } from '@game/level-controllers';
 import { playerCapsule } from '@client/capsules/player';
-import { Simulate } from 'react-dom/test-utils';
-import play = Simulate.play;
 
 const getAdjacentCoords = (game: Game): CoordString[] => {
   const allDirs: Dir[] = ['up', 'left', 'down', 'right'];
@@ -202,7 +200,7 @@ export const GameScreen = ({
           round: prev.round + 1,
           player: {
             ...prev.player,
-            actions: 2,
+            actions: prev.player.actionsPerTurn,
           },
           history: {
             ...prev.history,

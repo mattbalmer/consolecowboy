@@ -19,6 +19,8 @@ import Editor from 'react-simple-code-editor';
 import { highlight, languages } from 'prismjs/components/prism-core';
 import 'prismjs/components/prism-clike';
 import 'prismjs/components/prism-javascript';
+import { getInitialPlayerProps } from '@client/capsules/player';
+import { savedPlayerToGamePlayer } from '@shared/utils/game/player';
 
 const hightlightWithLineNumbers = (input: string, language: typeof languages[string]) =>
   highlight(input, language)
@@ -41,21 +43,7 @@ export const EditScreen = (props: {
     stack: string,
   }>(null);
   const [showJsonStack, setShowJsonStack] = useState<boolean>(false);
-  const player = useMemo<Game['player']>(() => {
-    return {
-      mental: 10,
-      ram: {
-        max: 3,
-        current: 3,
-      },
-      money: 0,
-      actions: 2,
-      stats: {
-        icebreaker: 1,
-      },
-      conditions: [],
-    };
-  }, []);
+  const player = useMemo<Game['player']>(() => savedPlayerToGamePlayer(getInitialPlayerProps()), []);
 
   const onJSONChange = (newLevelString: string) => {
     // TODO: look into using RSON https://www.relaxedjson.org/download/javascript

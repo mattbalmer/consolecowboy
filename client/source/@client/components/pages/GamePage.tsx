@@ -8,9 +8,11 @@ import { Game } from '@shared/types/game';
 import { Level } from '@shared/types/game/level';
 import { Typography } from '@mui/material';
 import { playerCapsule } from '@client/capsules/player';
+import { savedPlayerToGamePlayer } from '@shared/utils/game/player';
 
 const usePlayer = (levelID: string): Game['player'] => {
   return useMemo<Game['player']>(() => {
+    // Player to Game['player']
     const savedPlayer = playerCapsule.get('player');
     const previousHistoryForLevel = savedPlayer.history[levelID] ?? [0, 0];
     playerCapsule.set('player', {
@@ -24,19 +26,7 @@ const usePlayer = (levelID: string): Game['player'] => {
       },
     });
 
-    return {
-      mental: savedPlayer.mental,
-      ram: {
-        max: savedPlayer.ram,
-        current: savedPlayer.ram,
-      },
-      money: savedPlayer.money,
-      actions: 2,
-      stats: {
-        ...savedPlayer.stats,
-      },
-      conditions: [],
-    };
+    return savedPlayerToGamePlayer(savedPlayer);
   }, []);
 }
 
