@@ -13,7 +13,6 @@ export const SimpleDialog = ({ id, shouldRender, isOpen, onClose, title, body, a
   acknowledge?: string,
 }) => {
   const handleClose = () => {
-    console.log('close', onClose);
     if (onClose) {
       onClose();
     }

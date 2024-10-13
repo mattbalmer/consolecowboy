@@ -5,8 +5,8 @@ class PlayerCapsule extends Capsule<{
   player: Player,
 }>{}
 
-export const playerCapsule = new PlayerCapsule('netrunner', {
-  player: {
+export const getInitialPlayerProps = () => {
+  return {
     mental: 10,
     bodyHP: 5,
     ram: 3,
@@ -16,5 +16,9 @@ export const playerCapsule = new PlayerCapsule('netrunner', {
       icebreaker: 1,
     },
     history: {},
-  },
+  };
+}
+
+export const playerCapsule = new PlayerCapsule('netrunner', {
+  player: getInitialPlayerProps(),
 });
