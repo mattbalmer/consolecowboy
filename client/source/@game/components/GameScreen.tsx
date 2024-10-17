@@ -8,12 +8,14 @@ import { Grid } from '@game/components/Grid';
 import { Typography } from '@mui/material';
 import { CommandLine } from '@game/components/CommandLine';
 import { pick } from '@shared/utils/objects';
-import { gameFromLevel, invertNodes } from '@game/utils/game';
+import { gameFromLevel, getDice, invertNodes } from '@game/utils/game';
 import { Level } from '@shared/types/game/level';
 import { GameEffects } from '@shared/constants/effects';
 import { SimpleDialog } from '@client/components/SimpleDialog';
 import { getControllerFor } from '@game/level-controllers';
 import { playerCapsule } from '@client/capsules/player';
+import { HUD } from '@game/components/HUD';
+import { replace } from '@shared/utils/arrays';
 
 const getAdjacentCoords = (game: Game): CoordString[] => {
   const allDirs: Dir[] = ['up', 'left', 'down', 'right'];
@@ -107,38 +109,59 @@ export const GameScreen = ({
     return getAdjacentCoords(game);
   }, [game]);
 
-  const move = (target: string, r: boolean = false) => {
+  const move = (target: string, useDice: string, r: boolean = false) => {
     const targetNode = game.nodes[target.toUpperCase()];
     if (!target || !targetNode) {
       return;
     }
     const targetCoord = coordToString(targetNode);
     if (target && validMoveCoords.includes(targetCoord)) {
-      setGame((prev) => {
-        prev.nodes[target].isVisited = true;
-
-        prev = {
-          ...prev,
-          player: {
-            ...prev.player,
-            actions: prev.player.actions - 1,
-          },
-          hovered: target,
-          history: {
-            nodes: [...prev.history.nodes, prev.hovered],
-            terminal: [...prev.history.terminal, {
-              type: 'command',
-              value: r ? 'retreat' : `move ${target}`,
-            }],
-          },
-        };
-
-        if (prev.nodes[target].ice) {
-          prev = prev.nodes[target].ice.activate(prev) ?? prev;
+      const diceAvailableByNumber = player.dice.reduce((a, d) => {
+        if (d.isAvailable) {
+          return {
+            ...a,
+            [d.value]: a[d.value] + 1,
+          };
+        } else {
+          return a;
         }
+      }, { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0 });
+      if (Number.isInteger(Number(useDice)) && diceAvailableByNumber[useDice] > 0) {
+        setGame((prev) => {
+          prev.nodes[target].isVisited = true;
 
-        return prev;
-      });
+          const diceIndex = prev.player.dice.findIndex(d => d.value === Number(useDice));
+
+          prev = {
+            ...prev,
+            player: {
+              ...prev.player,
+              actions: prev.player.actions - 1,
+              dice: replace(prev.player.dice, diceIndex, [{
+                value: Number(useDice),
+                isAvailable: false,
+              }]),
+            },
+            hovered: target,
+            history: {
+              nodes: [...prev.history.nodes, prev.hovered],
+              terminal: [...prev.history.terminal, {
+                type: 'command',
+                value: r ? 'retreat' : `move ${target}`,
+              }],
+            },
+          };
+
+          if (prev.nodes[target].ice) {
+            prev = prev.nodes[target].ice.activate(prev) ?? prev;
+          }
+
+          return prev;
+        });
+      } else {
+        console.log(`cannot use dice ${useDice} to move to ${target} - dice is not available`);
+      }
+
     } else {
       console.log('cannot move to', target);
     }
@@ -208,6 +231,7 @@ export const GameScreen = ({
           player: {
             ...prev.player,
             actions: prev.player.actionsPerTurn,
+            dice: getDice(prev.player.actionsPerTurn),
           },
           history: {
             ...prev.history,
@@ -239,7 +263,7 @@ export const GameScreen = ({
       // }).join('') as CompassDir;
       //
       // nav(flippedDir, true);
-      move(game.history.nodes[game.history.nodes.length - 1], true);
+      move(game.history.nodes[game.history.nodes.length - 1], '', true);
     }
 
     if (command === 'break') {
@@ -324,7 +348,8 @@ export const GameScreen = ({
 
     if (command === 'move') {
       const target = args[0].toUpperCase() as NodeID;
-      move(target);
+      const useDice = args[1].toUpperCase();
+      move(target, useDice);
     }
 
     if (command === 'nav') {
@@ -481,44 +506,10 @@ export const GameScreen = ({
 
   return <>
     <FlexCol data-game sx={{ flexGrow: 1 }}>
-      <FlexRow data-header sx={{ p: 2, justifyContent: 'space-between' }}>
-        <FlexCol>
-          <FlexRow sx={{ alignItems: 'center' }}>
-            <Typography variant={'h6'} sx={{ mr: 1 }}>{game.hovered}</Typography>
-            <Typography variant={'subtitle1'}>({hoveredNode.x}, {hoveredNode.y})</Typography>
-          </FlexRow>
-          <FlexRow sx={{ alignItems: 'center' }}>
-            <Typography variant={'subtitle1'}>ICE: {hoveredNode.ice ?
-              <>{hoveredNode.ice.id} ({hoveredNode.ice.status.toLowerCase()})</>
-            : '--'}</Typography>
-          </FlexRow>
-          <FlexRow sx={{ alignItems: 'center' }}>
-            <Typography variant={'subtitle1'}>Content: {hoveredNode.content ?
-              <>{hoveredNode.content.type} ({hoveredNode.content.status.toLowerCase()})</>
-            : '--'}</Typography>
-          </FlexRow>
-        </FlexCol>
-        <FlexCol>
-          <FlexRow sx={{ alignItems: 'center' }}>
-            <Typography variant={'h6'}>Round: {game.round}</Typography>
-          </FlexRow>
-          <FlexRow sx={{ alignItems: 'center' }}>
-            <Typography variant={'subtitle1'}>Actions: {game.player.actions}</Typography>
-          </FlexRow>
-          <FlexRow sx={{ alignItems: 'center' }}>
-            <Typography variant={'subtitle1'}>Mental: {game.player.mental}</Typography>
-          </FlexRow>
-          <FlexRow sx={{ alignItems: 'center' }}>
-            <Typography variant={'subtitle1'} sx={{ ml: 2 }}>RAM: {game.player.ram.current} / {game.player.ram.max}</Typography>
-          </FlexRow>
-          <FlexRow sx={{ alignItems: 'center' }}>
-            <Typography variant={'subtitle1'} sx={{ ml: 2 }}>Money: {game.player.money}</Typography>
-          </FlexRow>
-          <FlexRow sx={{ alignItems: 'center' }}>
-            <Typography variant={'subtitle1'} sx={{ ml: 2 }}>ICEBreaker Power: {game.player.stats.icebreaker}</Typography>
-          </FlexRow>
-        </FlexCol>
-      </FlexRow>
+      <HUD
+        game={game}
+        hoveredNode={hoveredNode}
+      />
       <FlexCol sx={{ flexGrow: 1, justifyContent: 'center', alignItems: 'center' }}>
         <FlexRow sx={{ alignItems: 'center', position: 'relative' }}>
           <Grid

@@ -1,4 +1,5 @@
 import { Game, Player } from '@shared/types/game';
+import { getDice } from '@shared/utils/game/index';
 
 export const savedPlayerToGamePlayer = (savedPlayer: Player): Game['player'] => {
   return {
@@ -14,5 +15,6 @@ export const savedPlayerToGamePlayer = (savedPlayer: Player): Game['player'] => 
       ...savedPlayer.stats,
     },
     conditions: [],
+    dice: getDice(savedPlayer.dicePerRound),
   };
 }

@@ -81,6 +81,7 @@ export type Player = {
   ram: number,
   money: number,
   actions: number,
+  dicePerRound: number,
   stats: {
     icebreaker: number,
   },
@@ -88,6 +89,11 @@ export type Player = {
    * Record of level IDs to number of times entered & completed
    */
   history: Record<string, [entered: number, completed: number]>,
+}
+
+export type GameDie = {
+  value: number,
+  isAvailable: boolean,
 }
 
 export type Game = {
@@ -108,6 +114,7 @@ export type Game = {
       icebreaker: number,
     },
     conditions: Condition[],
+    dice: GameDie[], // make this a map, but somehow track max available for the round too
   },
   stack: GameEffect[],
   round: number,
