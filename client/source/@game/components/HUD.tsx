@@ -2,7 +2,7 @@ import { FlexCol } from '@client/components/FlexCol';
 import { FlexRow } from '@client/components/FlexRow';
 import { Typography } from '@mui/material';
 import * as React from 'react';
-import { Game, Node } from '@shared/types/game';
+import { Game, GameNode } from '@shared/types/game';
 import { Dice } from '@client/components/Dice';
 
 export const HUD = ({
@@ -10,7 +10,7 @@ export const HUD = ({
   hoveredNode,
 }: {
   game: Game,
-  hoveredNode: Node,
+  hoveredNode: GameNode,
 }) => {
   return <FlexRow data-header sx={{ p: 2, justifyContent: 'space-between' }}>
     <FlexCol>

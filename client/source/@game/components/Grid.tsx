@@ -1,9 +1,10 @@
 import { FlexCol } from '@client/components/FlexCol';
 import * as React from 'react';
-import { CoordString, Dir, EdgeString, Game, NodeID, NodeMap } from '@game/types';
+import { CoordString, Dir, EdgeString, Game, GameNode, NodeID, NodeMap } from '@game/types';
 import { Box, Typography } from '@mui/material';
 import { coordToString } from '@game/utils/grid';
 import { FlexRow } from '@client/components/FlexRow';
+import { useMemo } from 'react';
 
 const Spacer = () => {
   return <Box
@@ -84,12 +85,12 @@ const Edge = ({ connecting, coord, dirs }: {
 
 export const Grid = ({
   size,
-  hoveredNodeXY,
+  hoveredNode,
   nodeMap,
   game,
 }: {
   size: [number, number],
-  hoveredNodeXY: NodeID,
+  hoveredNode: GameNode,
   nodeMap: NodeMap,
   game: Game,
 }) => {
@@ -97,6 +98,7 @@ export const Grid = ({
     .from({ length: size[1] - size[0] + 1 }, (_, i) => i + size[0])
     .reduce((s, n) => [...s, n, n + 0.5], [])
     .slice(0, -1);
+  const hoveredNodeXY = useMemo(() => coordToString(hoveredNode), [hoveredNode]);
 
   return <FlexRow
     data-grid

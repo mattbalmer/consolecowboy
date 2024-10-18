@@ -1,8 +1,6 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import * as React from 'react';
 
-const noop = () => {};
-
 export const SimpleDialog = ({ id, shouldRender, isOpen, onClose, title, body, acknowledge }: {
   id: string,
   shouldRender?: boolean,

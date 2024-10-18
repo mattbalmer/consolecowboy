@@ -1,4 +1,4 @@
-import { Coord, CoordString, Dir } from '@shared/types/game';
+import { Coord, CoordString, Dir, Game, NodeMap } from '@shared/types/game';
 
 export const coordToString = ({ x, y }: Coord): CoordString => `${x},${y}`;
 export const stringToCoord = (str: CoordString): Coord => {
@@ -32,4 +32,27 @@ export const getEdgeDirs = (nodeMap: Record<string, string>, { x, y }: Coord): D
   // }
 
   return output
+}
+
+export const getAdjacentCoords = (game: Game): CoordString[] => {
+  const allDirs: Dir[] = ['up', 'left', 'down', 'right'];
+  const hoveredNode = game.nodes[game.hovered];
+
+  const nodeMap = (() => {
+    const keys = Object.keys(game.nodes);
+    return Object.values(game.nodes).map(coordToString).reduce((m, coord, i) => {
+      return {
+        ...m,
+        [coord]: keys[i],
+      }
+    }, {} as NodeMap);
+  })();
+
+  return allDirs
+    .map(dir => {
+      const x = dir === 'left' ? hoveredNode.x - 1 : dir === 'right' ? hoveredNode.x + 1 : hoveredNode.x;
+      const y = dir === 'up' ? hoveredNode.y - 1 : dir === 'down' ? hoveredNode.y + 1 : hoveredNode.y;
+      return coordToString({ x, y });
+    })
+    .filter(coord => coord in nodeMap);
 }

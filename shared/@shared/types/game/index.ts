@@ -55,7 +55,7 @@ export type NodeContent = {
   ({ type: 'trap' } & Trap) | ({ type: 'installation' } & Installation)
 );
 
-export type Node = {
+export type GameNode = {
   x: number,
   y: number,
   ice?: Ice,
@@ -98,7 +98,7 @@ export type GameDie = {
 
 export type Game = {
   mode: 'PLAY' | 'VIEW',
-  nodes: Record<NodeID, Node>,
+  nodes: Record<NodeID, GameNode>,
   edges: Record<EdgeString, 'oneway' | 'bi'>,
   hovered: NodeID,
   player: {
