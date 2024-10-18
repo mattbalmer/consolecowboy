@@ -17,7 +17,7 @@ export const CommandLine = ({
   const [input, setInput] = React.useState<string>('');
 
   const onSubmit = () => {
-    const inputs = input.split(' ').filter(_ => !!_);
+    const inputs = input.match(/(".*?"|[^"\s]+)+(?=\s*|\s*$)/g)
     if (inputs[0] in COMMANDS) {
       const command = COMMANDS[inputs[0]] === true ? inputs[0] : COMMANDS[inputs[0]];
       onCommand(command as Command, ...inputs.slice(1));
