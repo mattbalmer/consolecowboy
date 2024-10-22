@@ -17,7 +17,7 @@ export default class extends LevelController {
         ...game.stack,
         GameEffects.SimpleDialog({
           title: 'Welcome to Netrunner!',
-          body: `To play the game, use the terminal at the bottom to enter commands. First try moving nodes, using "move <target>" (eg. "move B")`,
+          body: `Your goal in each hostile net is to grab as much as you can, then exit through an external connection. You always enter through one of these, but they generally close behind you - find another! To play the game, use the terminal at the bottom to enter commands. First try moving nodes, using "move <target>" (eg. "move B")`,
         }),
       ];
     }
@@ -28,7 +28,7 @@ export default class extends LevelController {
         ...game.stack,
         GameEffects.SimpleDialog({
           title: 'Time to leave',
-          body: `You've reached the exit node! Use the "execute" command to run the ExternalConnection server and exit the net.`,
+          body: `You've reached the exit node! Use the "execute" (alias "x") command to run the ExternalConnection server and exit the net.`,
         }),
       ];
     }
