@@ -23,7 +23,9 @@ export abstract class LevelController {
 
   abstract onChange({ game }: OnChangeArgs): OnChangeArgs;
   abstract onCommand(game: Game, command: Command, args: CLIArgs): {
-    game: Game,
+    game?: Game,
+    command?: Command,
+    args?: CLIArgs,
     shouldContinue: boolean,
   };
 }

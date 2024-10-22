@@ -7,14 +7,29 @@ import { appendMessage } from '@shared/utils/game/cli';
 export class Level1Controller extends LevelController {
   levelID: string = '1';
 
+  hasShownIntro = false;
+  hasShownExit = false;
+
   onChange({ game }: { game: Game }) {
     console.log('onChange', game.history.terminal.length);
-    if (game.history.terminal.length === 0 && game.stack.length === 0) {
+    if (game.history.terminal.length === 0 && game.stack.length === 0 && !this.hasShownIntro) {
+      this.hasShownIntro = true;
       game.stack = [
         ...game.stack,
         GameEffects.SimpleDialog({
           title: 'Welcome to Netrunner!',
-          body: `To play the game, use the terminal at the bottom to enter command such as 'move' or 'info'`,
+          body: `To play the game, use the terminal at the bottom to enter commands. First try moving nodes, using "move {TARGET}" (eg. "move B")`,
+        }),
+      ];
+    }
+
+    if (game.hovered === 'B' && !this.hasShownExit) {
+      this.hasShownExit = true;
+      game.stack = [
+        ...game.stack,
+        GameEffects.SimpleDialog({
+          title: 'Time to leave',
+          body: `You've reached the exit node! Use the "open" command to open the ExternalConnection server and exit the net.`,
         }),
       ];
     }
@@ -23,6 +38,16 @@ export class Level1Controller extends LevelController {
   };
 
   onCommand(game: Game, command: Command, args: CLIArgs) {
+    if (game.hovered === 'A' && command !== 'move') {
+      return {
+        shouldContinue: false,
+        game: appendMessage(game, {
+          type: 'output',
+          value: `You need to move first! Try "move b"`
+        })
+      }
+    }
+
     if (command === 'config') {
       return {
         shouldContinue: false,
@@ -32,5 +57,13 @@ export class Level1Controller extends LevelController {
         })
       }
     }
+
+    return {
+      shouldContinue: true,
+      args: {
+        ...args,
+        d: [game.player.dice.find(d => d.isAvailable).value],
+      } as CLIArgs,
+    };
   }
 }

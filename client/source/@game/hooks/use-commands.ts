@@ -475,7 +475,7 @@ export const useCommands = ({
       return;
     }
 
-    const commandArgs = parseArgs(rawArgs);
+    let commandArgs = parseArgs(rawArgs);
 
     game = appendMessage(game, {
       type: 'command',
@@ -487,6 +487,8 @@ export const useCommands = ({
       if (controllerOutput) {
         if (controllerOutput.shouldContinue) {
           game = controllerOutput.game ?? game;
+          command = controllerOutput.command ?? command;
+          commandArgs = controllerOutput.args ?? commandArgs;
         } else {
           setGame(controllerOutput.game);
           return;
