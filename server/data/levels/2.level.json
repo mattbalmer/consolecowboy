@@ -1,6 +1,6 @@
 {
   "nodes": {
-    "-1,-1": {
+    "0,0": {
       "isVisited": true,
       "content": {
         "type": "installation",
@@ -9,7 +9,7 @@
         "args": null
       }
     },
-    "-1,0": {
+    "1,0": {
       "ice": {
         "key": "NeuralKatana",
         "status": "READY",
@@ -20,12 +20,11 @@
         "status": "STANDBY",
         "key": "Wallet",
         "args": {
-            "amount": 100
+          "amount": 100
         }
       }
     },
-    "0,-1": {},
-    "0,0": {
+    "2,0": {
       "ice": {
         "key": "NeuralKatana",
         "status": "READY",
@@ -40,8 +39,6 @@
           "duration": 2
         }
       }
-    },
-    "1,-1": {
     }
   },
   "start": "A"

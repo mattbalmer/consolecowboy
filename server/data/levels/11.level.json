@@ -1,8 +1,6 @@
 {
   "nodes": {
-    "A": {
-      "x": -1,
-      "y": -1,
+    "-1,-1": {
       "isVisited": true,
       "content": {
         "type": "installation",
@@ -11,9 +9,7 @@
         "args": null
       }
     },
-    "B": {
-      "x": -1,
-      "y": 0,
+    "-1,0": {
       "ice": {
         "key": "NeuralKatana",
         "status": "READY",
@@ -24,17 +20,12 @@
         "status": "STANDBY",
         "key": "Wallet",
         "args": {
-            "amount": 100
+          "amount": 100
         }
       }
     },
-    "C": {
-      "x": 0,
-      "y": -1
-    },
-    "D": {
-      "x": 0,
-      "y": 0,
+    "0,-1": {},
+    "0,0": {
       "ice": {
         "key": "NeuralKatana",
         "status": "READY",
@@ -50,10 +41,7 @@
         }
       }
     },
-    "E": {
-      "x": 1,
-      "y": -1
-    }
+    "1,-1": {}
   },
   "start": "A"
 }

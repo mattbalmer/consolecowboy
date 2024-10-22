@@ -17,18 +17,26 @@ export const Installations = {
       }
     },
   }),
-  ExternalConnection: () => ({
+  ExternalConnection: (isConnected: boolean = true) => ({
     id: 'connection.external',
+    isConnected,
     onCapture(game) {
-      game = appendMessage(game, {
-        type: 'output',
-        value: `Extraction complete`,
-      });
-      // finish the run
-      return {
-        ...game,
-        mode: 'VIEW',
-        stack: [...game.stack, GameEffects.ExtractFromNetwork()],
+      if (this.isConnected) {
+        game = appendMessage(game, {
+          type: 'output',
+          value: `Extraction complete`,
+        });
+        // finish the run
+        return {
+          ...game,
+          mode: 'VIEW',
+          stack: [...game.stack, GameEffects.ExtractFromNetwork()],
+        }
+      } else {
+        return appendMessage(game, {
+          type: 'error',
+          value: `Connection is not open, use a different external connection.`,
+        });
       }
     },
   }),

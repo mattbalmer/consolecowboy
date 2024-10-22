@@ -484,11 +484,13 @@ export const useCommands = ({
 
     if (levelController) {
       const controllerOutput = levelController.onCommand(game, command, commandArgs);
-      if (!controllerOutput || controllerOutput.shouldContinue) {
-        game = controllerOutput.game ?? game;
-      } else {
-        setGame(controllerOutput.game);
-        return;
+      if (controllerOutput) {
+        if (controllerOutput.shouldContinue) {
+          game = controllerOutput.game ?? game;
+        } else {
+          setGame(controllerOutput.game);
+          return;
+        }
       }
     }
 
