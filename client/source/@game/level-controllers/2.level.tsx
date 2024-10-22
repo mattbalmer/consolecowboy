@@ -28,7 +28,7 @@ export default class extends LevelController {
         ...game.stack,
         GameEffects.SimpleDialog({
           title: 'Out of Actions',
-          body: `Each round, you get 3 actions to perform. If you run out, run "next" to end your turn and get 3 new actions (don't worry about the dice values for now). (If you want, you can use "config autonext true" to automatically end your turn when you run out of actions)`,
+          body: `Each round, you get 3 actions to perform. If you run out, run "next" to end your turn and get 3 new actions (don't worry about the dice values for now). (If you want, you can use "config autonext true" to automatically end your turn when you run out of actions). Be aware - each time you run "next", you take 1 Mental damage and the enemy net gets a turn to run any active defenses.`,
         }),
       ];
     }

@@ -129,6 +129,22 @@ export const GameEffects = {
       };
     },
   }),
+  EjectMentalDrained: () => ({
+    id: 'finish.mental-drained',
+    trigger(game: Game): Game {
+      return {
+        ...game,
+        mode: 'VIEW',
+        history: {
+          ...game.history,
+          terminal: [...game.history.terminal, {
+            type: 'output',
+            value: 'You have been ejected from the net due to mental exhaustion'
+          }],
+        },
+      };
+    },
+  }),
   SimpleDialog: ({ title, body, acknowledge }: {
     title: string,
     body: string,

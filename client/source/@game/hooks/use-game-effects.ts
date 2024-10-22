@@ -2,6 +2,7 @@ import { ComponentProps, useEffect, useState } from 'react';
 import { GameEffects } from '@shared/constants/effects';
 import { Game } from '@shared/types/game';
 import { SimpleDialog } from '@client/components/SimpleDialog';
+import { playerCapsule } from '@client/capsules/player';
 
 export const useGameEffects = ({
   game,
@@ -80,11 +81,29 @@ export const useGameEffects = ({
       if (effect.id === 'finish.extraction') {
         onExtract();
 
+        setGame(effect.trigger(game));
+
         setDialog({
           title: 'Extraction Complete',
           body: 'You have successfully connected to the external server, go back to the overworld.',
           acknowledge: 'Okay',
           onClose: () => {
+            window.location.href = '/play';
+            setDialog(null);
+          },
+        });
+      }
+      if (effect.id === 'finish.mental-drained') {
+        setGame(effect.trigger(game));
+        setDialog({
+          title: 'Mental Drained',
+          body: `You've run out of mental energy - emergency eject from the net.`,
+          acknowledge: 'Okay',
+          onClose: () => {
+            const savedPlayer = playerCapsule.get('player');
+            savedPlayer.bodyHP -= 1;
+            savedPlayer.mental = 10;
+            playerCapsule.set('player', savedPlayer);
             window.location.href = '/play';
             setDialog(null);
           },

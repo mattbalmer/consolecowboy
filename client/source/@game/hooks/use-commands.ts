@@ -205,6 +205,7 @@ const Commands = {
         ...game.player,
         actions: game.player.actionsPerTurn,
         dice: getDice(game.player.actionsPerTurn),
+        mental: game.player.mental - 1,
       },
     };
   },

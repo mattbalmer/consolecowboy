@@ -11,11 +11,23 @@ export const useOverworldController = (state: OverworldState) => {
       ).length;
 
     if (numLevelsPlayed === 0 && !state.misc.hasShownIntroDialog) {
-      state.setMisc({ hasShownIntroDialog: true });
+      state.setMisc({ ...state.misc, hasShownIntroDialog: true });
       state.setDialog({
         title: 'Welcome to Netrunner',
         body: 'To start, click Level 1 to enter the first hostile net',
         acknowledge: 'Let\'s Go',
+        onFinish() {
+          state.setDialog(null);
+        },
+      });
+    }
+
+    if (state.player.bodyHP < 1) {
+      state.setMisc({ ...state.misc, hasShownDeadDialog: true });
+      state.setDialog({
+        title: `Death`,
+        body: `After too much mental strain, your body has given out. Reset the game to try again.`,
+        acknowledge: 'Ok',
         onFinish() {
           state.setDialog(null);
         },

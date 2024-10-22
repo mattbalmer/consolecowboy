@@ -5,6 +5,8 @@ import { gameFromLevel, invertNodes } from '@shared/utils/game';
 import { coordToString } from '@shared/utils/game/grid';
 import { getControllerFor } from '@game/level-controllers';
 import { useCommands } from '@game/hooks/use-commands';
+import { appendMessage } from '@shared/utils/game/cli';
+import { GameEffects } from '@shared/constants/effects';
 
 export type GameDerived = {
   hoveredNode: GameNode,
@@ -67,6 +69,16 @@ export const useGame = ({
   }, [level, player]);
 
   useEffect(() => {
+    if (game.player.mental < 1) {
+      return setGame({
+        ...game,
+        stack: [
+          ...game.stack,
+          GameEffects.EjectMentalDrained(),
+        ]
+      })
+    }
+
     setGameDerived(getGameDerived(game));
   }, [game]);
 
