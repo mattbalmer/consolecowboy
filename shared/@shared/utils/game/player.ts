@@ -16,5 +16,6 @@ export const savedPlayerToGamePlayer = (savedPlayer: Player): Game['player'] => 
     },
     conditions: [],
     dice: getDice(savedPlayer.dicePerRound),
+    config: savedPlayer.config,
   };
 }

@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { FlexCol } from '@client/components/FlexCol';
 import { FlexRow } from '@client/components/FlexRow';
-import { ComponentProps, useRef, useState } from 'react';
-import { Game } from '@game/types';
+import { ComponentProps, useState } from 'react';
+import { Game, Player } from '@game/types';
 import { Grid } from '@game/components/Grid';
 import { Typography } from '@mui/material';
 import { CommandLine } from '@game/components/CommandLine';
@@ -17,8 +17,9 @@ import { useGameEffects } from '@game/hooks/use-game-effects';
 const savePlayer = (levelID: string, game: Game) => {
   const savedPlayer = playerCapsule.get('player');
   const previousHistoryForLevel = savedPlayer.history[levelID] ?? [0, 0];
-  const newPlayer = {
+  const newPlayer: Player = {
     ...savedPlayer,
+    config: game.player.config,
     mental: game.player.mental,
     money: game.player.money,
     history: {
@@ -53,6 +54,7 @@ export const GameScreen = ({
     game,
     setGame,
     gameDerived,
+    onCommand,
   } = useGame({
     level,
     player,
@@ -60,12 +62,6 @@ export const GameScreen = ({
     levelID,
   });
   const { hoveredNode, nodeMap } = gameDerived;
-
-  const onCommand = useCommands({
-    game,
-    setGame,
-    gameDerived
-  });
 
   useGameEffects({
     game,

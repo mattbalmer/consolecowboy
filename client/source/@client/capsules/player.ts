@@ -17,6 +17,9 @@ export const getInitialPlayerProps = (): Player => {
       icebreaker: 1,
     },
     history: {},
+    config: {
+      autonext: false,
+    },
   };
 }
 

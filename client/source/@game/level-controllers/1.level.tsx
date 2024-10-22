@@ -1,6 +1,8 @@
 import { LevelController } from '@game/level-controllers/base';
-import { Game } from '@game/types';
+import { Command, Game } from '@game/types';
 import { GameEffects } from '@shared/constants/effects';
+import { CLIArgs } from '@shared/types/game/cli';
+import { appendMessage } from '@shared/utils/game/cli';
 
 export class Level1Controller extends LevelController {
   levelID: string = '1';
@@ -19,4 +21,16 @@ export class Level1Controller extends LevelController {
 
     return { game };
   };
+
+  onCommand(game: Game, command: Command, args: CLIArgs) {
+    if (command === 'config') {
+      return {
+        shouldContinue: false,
+        game: appendMessage(game, {
+          type: 'output',
+          value: `the 'config' command is not enabled yet, keep playing to unlock it`
+        })
+      }
+    }
+  }
 }

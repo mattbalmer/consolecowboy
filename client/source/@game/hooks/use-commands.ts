@@ -9,6 +9,7 @@ import { CLIArgs } from '@shared/types/game/cli';
 import { getDiceCounts } from '@shared/utils/game/dice';
 import { appendMessage, parseArgs } from '@shared/utils/game/cli';
 import { GameError } from '@shared/errors/GameError';
+import { LevelController } from '@game/level-controllers/base';
 
 const consumeDice = (game: Game, args: CLIArgs<Record<string, any>, any>): Game => {
   const dice = args.d?.[0];
@@ -361,6 +362,45 @@ const Commands = {
       },
     };
   },
+  config: (game, args) => {
+    const [key, value] = args._;
+
+    if (!key) {
+      return game;
+    }
+
+    if (!value) {
+      return appendMessage(game, {
+        type: 'output',
+        value: `Config value for '${key}': ${game.player.config[key]}`
+      });
+    }
+
+    const parsedValue = value === 'true' ? true : value === 'false' ? false
+      : !isNaN(Number(value)) ? Number(value)
+      : value;
+
+    return {
+      ...game,
+      player: {
+        ...game.player,
+        config: {
+          ...game.player.config,
+          [key]: parsedValue,
+        },
+      },
+      history: {
+        ...game.history,
+        terminal: [
+          ...game.history.terminal,
+          {
+            type: 'output',
+            value: `set config '${key}' to '${parsedValue}'`,
+          },
+        ],
+      },
+    };
+  },
 } as const satisfies Record<Command, (game: Game, args: CLIArgs<any, any>, derived?: GameDerived) => Game>;
 
 const executeCommand = (command: keyof typeof Commands, game: Game, args: CLIArgs, derived: GameDerived): Game => {
@@ -371,10 +411,12 @@ export const useCommands = ({
   game,
   setGame,
   gameDerived,
+  levelController,
 }: {
   game: Game,
   setGame: ReturnType<typeof useState<Game>>[1],
   gameDerived: GameDerived,
+  levelController: LevelController,
 }) => {
   const { hoveredNode, nodeMap } = gameDerived;
   // let game = rfdc(gameSource);
@@ -384,6 +426,10 @@ export const useCommands = ({
   const onCommand = useCallback((game: Game, command: Command, commandArgs: CLIArgs): Game => {
     if (command === 'next') {
       return executeCommand('next', game, commandArgs, gameDerived)
+    }
+
+    if (command === 'config') {
+      return executeCommand('config', game, commandArgs, gameDerived)
     }
 
     if (game.player.actions <= 0) {
@@ -432,19 +478,33 @@ export const useCommands = ({
       return;
     }
 
+    const commandArgs = parseArgs(rawArgs);
+
     game = appendMessage(game, {
       type: 'command',
       value: `${command} ${rawArgs.join(' ')}`
     });
 
-    const commandArgs = parseArgs(rawArgs);
+    if (levelController) {
+      const controllerOutput = levelController.onCommand(game, command, commandArgs);
+      if (!controllerOutput || controllerOutput.shouldContinue) {
+        game = controllerOutput.game ?? game;
+      } else {
+        setGame(controllerOutput.game);
+        return;
+      }
+    }
 
-    const newGame = onCommand(game, command, commandArgs);
+    let newGame = onCommand(game, command, commandArgs);
+
+    if (game.player.config.autonext && newGame.player.actions < 1) {
+      newGame = onCommand(newGame, 'next', {_:[]} as CLIArgs);
+    }
 
     if (newGame) {
       setGame(newGame)
     } else {
       setGame(game);
     }
-  }, [game, gameDerived, onCommand])
+  }, [game, gameDerived, onCommand, levelController])
 }

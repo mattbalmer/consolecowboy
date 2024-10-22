@@ -1,4 +1,5 @@
-import { Game } from '@shared/types/game';
+import { Command, Game } from '@shared/types/game';
+import { CLIArgs } from '@shared/types/game/cli';
 
 type OnChangeArgs = {
   game: Game;
@@ -21,4 +22,8 @@ export abstract class LevelController {
   onBind?(): void;
 
   abstract onChange({ game }: OnChangeArgs): OnChangeArgs;
+  abstract onCommand(game: Game, command: Command, args: CLIArgs): {
+    game: Game,
+    shouldContinue: boolean,
+  };
 }

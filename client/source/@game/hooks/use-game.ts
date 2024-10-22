@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { gameFromLevel, invertNodes } from '@shared/utils/game';
 import { coordToString } from '@shared/utils/game/grid';
 import { getControllerFor } from '@game/level-controllers';
+import { useCommands } from '@game/hooks/use-commands';
 
 export type GameDerived = {
   hoveredNode: GameNode,
@@ -48,6 +49,13 @@ export const useGame = ({
   console.log('level', { ...level });
   console.log('game', { ...game });
 
+  const onCommand = useCommands({
+    game,
+    setGame,
+    gameDerived,
+    levelController,
+  });
+
   useEffect(() => {
     setGame((prev) => {
       const newGame = gameFromLevel(level, player);
@@ -76,5 +84,6 @@ export const useGame = ({
     game,
     setGame,
     gameDerived,
+    onCommand,
   }
 }

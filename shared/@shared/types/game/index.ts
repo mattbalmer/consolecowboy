@@ -89,6 +89,9 @@ export type Player = {
    * Record of level IDs to number of times entered & completed
    */
   history: Record<string, [entered: number, completed: number]>,
+  config: {
+    autonext: boolean,
+  },
 }
 
 export type GameDie = {
@@ -120,6 +123,7 @@ export type Game = {
     },
     conditions: Condition[],
     dice: GameDie[], // make this a map, but somehow track max available for the round too
+    config: Player['config'],
   },
   stack: GameEffect[],
   round: number,
@@ -141,6 +145,7 @@ export const COMMANDS = {
   'retreat': true,
   'drill': true,
   'break': true,
+  'config': true,
 } as const;
 
 export type Command = keyof typeof COMMANDS;
