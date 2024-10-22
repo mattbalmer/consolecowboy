@@ -13,13 +13,14 @@ const Spacer = () => {
   />
 }
 
-const Node = ({ id, coord, selected, exist, isVisited, isOpened }: {
+const Node = ({ id, coord, selected, exist, isVisited, isOpened, hasContent }: {
   id: string,
   coord: string,
   selected: boolean,
   exist?: boolean,
   isVisited?: boolean,
   isOpened?: boolean,
+  hasContent?: boolean,
 }) => {
   const color = selected ? '#c44'
     : isOpened ? '#454'
@@ -44,7 +45,7 @@ const Node = ({ id, coord, selected, exist, isVisited, isOpened }: {
       boxSizing: 'border-box',
     }}
   >
-    <Typography variant={'subtitle1'}>{id}</Typography>
+    <Typography variant={'subtitle1'}>{id}{hasContent ? '*' : ''}</Typography>
   </Box>
 }
 
@@ -117,12 +118,13 @@ export const Grid = ({
             if (x % 1 === 0 && y % 1 === 0) {
               return <Node
                 id={nodeMap[coordStr]}
-                coord={coordStr}
                 key={coordStr}
+                coord={coordStr}
                 selected={coordStr === hoveredNodeXY}
                 exist={coordStr in nodeMap}
                 isOpened={node?.isOpened}
                 isVisited={node?.isVisited}
+                hasContent={!!node?.content}
               />
             } else {
               return <Spacer key={coordStr} />
