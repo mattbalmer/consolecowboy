@@ -4,7 +4,7 @@ import { FlexRow } from '@client/components/FlexRow';
 import { FlexCol } from '@client/components/FlexCol';
 import { Autocomplete } from '@mui/lab';
 import { CLIMessage, Command, COMMANDS, Game } from '@game/types';
-import { useEffect } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 const CLIHistoryEntry = ({
   line,
@@ -37,28 +37,78 @@ export const CommandLine = ({
   onCommand: (command: Command, ...args: any[]) => void,
   game: Game,
 }) => {
+  const inputRef = useRef<HTMLInputElement>();
   const [value, setValue] = React.useState<string>('');
   const [input, setInput] = React.useState<string>('');
+  const [hovered, setHovered] = React.useState<number | null>(null);
 
-  const onSubmit = () => {
-    const inputs = input.match(/(".*?"|[^"\s]+)+(?=\s*|\s*$)/g)
+  const commandsHistory = useMemo(() => {
+    return game.history.terminal.filter(line => line.type === 'command').map(line => line.value);
+  }, [game.history.terminal]);
+
+  const onSubmit = useCallback(() => {
+    if (!input) {
+      return;
+    }
+    const inputs = input.match(/(".*?"|[^"\s]+)+(?=\s*|\s*$)/g);
     if (inputs[0] in COMMANDS) {
       const command = COMMANDS[inputs[0]] === true ? inputs[0] : COMMANDS[inputs[0]];
       onCommand(command as Command, ...inputs.slice(1));
     }
-  }
+  }, [input, onCommand]);
 
   // @ts-ignore TODO
-  const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+  const onInputKeyDown = useCallback((event: KeyboardEvent<HTMLDivElement>) => {
     if (event.key === 'Enter') {
+      event.preventDefault();
       onSubmit();
     }
+  }, [onSubmit])
+
+  // @ts-ignore TODO
+  const onDocKeyDown = useCallback((event: KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      inputRef?.current?.focus();
+      if (hovered === null) {
+        setHovered(commandsHistory.length - 1);
+      } else {
+        setHovered(hovered > 0 ? hovered - 1 : commandsHistory.length - 1);
+      }
+    }
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      inputRef?.current?.focus();
+      if (hovered !== null) {
+        setHovered(hovered < commandsHistory.length - 1 ? hovered + 1 : 0);
+      }
+    }
+  }, [hovered, inputRef.current, commandsHistory])
+
+  const onBlur = () => {
+    setHovered(null);
   }
+
+  useEffect(() => {
+    if (hovered !== null && hovered > -1 && hovered < commandsHistory.length) {
+      setValue(commandsHistory[hovered]);
+      setInput(commandsHistory[hovered]);
+    }
+  }, [hovered, commandsHistory]);
 
   useEffect(() => {
     setInput('');
     setValue('');
+    setHovered(null);
   }, [game.history.terminal]);
+
+  useEffect(() => {
+    document.addEventListener('keydown', onDocKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', onDocKeyDown);
+    }
+  }, [onDocKeyDown]);
 
   return <FlexCol data-cli sx={{ flexGrow: 1 }}>
     <Box
@@ -89,7 +139,9 @@ export const CommandLine = ({
             <TextField
               autoFocus
               variant={'standard'} {...params}
-              onKeyDown={onKeyDown}
+              onKeyDown={onInputKeyDown}
+              inputRef={inputRef}
+              onBlur={onBlur}
             />
           }
           value={value}
