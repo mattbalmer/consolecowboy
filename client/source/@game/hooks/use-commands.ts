@@ -352,7 +352,7 @@ const Commands = {
         type: 'output',
         value: `(${game.hovered}) Trap activated - ${node.content.id}`,
       });
-      game = node.content.activate(game) ?? game;
+      game = node.content.onExecute(game) ?? game;
     }
 
     if (node.content.type === 'installation') {
@@ -360,7 +360,7 @@ const Commands = {
         type: 'output',
         value: `(${game.hovered}) Server content executed - ${node.content.id}`,
       });
-      game = node.content.onCapture(game) ?? game;
+      game = node.content.onExecute(game) ?? game;
     }
 
     return {

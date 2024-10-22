@@ -34,7 +34,7 @@ export type InstallationCaptureEffect = {
 
 export type Installation = {
   id: string,
-  onCapture: (game: Game) => Game,
+  onExecute: (game: Game) => Game,
 };
 
 export type TrapEffect = {
@@ -46,7 +46,7 @@ export type Trap = {
   id: string,
   amount?: number,
   duration?: number,
-  activate: (game: Game) => Game,
+  onExecute: (game: Game) => Game,
 }
 
 export type NodeContent = {

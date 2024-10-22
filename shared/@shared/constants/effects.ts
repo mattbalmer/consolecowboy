@@ -2,6 +2,22 @@ import { Condition, Game, GameEffect } from '@shared/types/game';
 import { appendMessage } from '@shared/utils/game/cli';
 
 export const GameEffects = {
+  Execute: ({ target }: { target: string }) => ({
+    id: 'execute',
+    target,
+    trigger(game) {
+      return game.nodes[this.target].content?.onExecute(game);
+    }
+  }),
+  ModifyServerContent: ({ target, props }: { target: string, props: Record<string, unknown> }) => ({
+    id: 'modify.server-content',
+    target,
+    props,
+    trigger(game) {
+      Object.assign(game.nodes[this.target]?.content, this.props);
+      return game;
+    }
+  }),
   MentalDamage: ({ amount }: { amount?: number }) => ({
     id: 'damage.mental',
     amount: amount || 1,

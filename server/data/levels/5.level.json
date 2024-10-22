@@ -1,0 +1,45 @@
+{
+  "nodes": {
+    "0,0": {
+      "content": {
+        "type": "installation",
+        "status": "STANDBY",
+        "key": "ExternalConnection",
+        "args": [
+          false
+        ]
+      }
+    },
+    "1,0": {},
+    "2,0": {
+      "ice": {
+        "key": "NeuralKatana",
+        "status": "READY",
+        "args": null
+      },
+      "content": {
+        "type": "installation",
+        "status": "STANDBY",
+        "key": "Wallet",
+        "args": {
+          "amount": 100
+        }
+      }
+    },
+    "1,1": {
+      "content": {
+        "type": "installation",
+        "status": "STANDBY",
+        "key": "RemoteEnableConnection",
+        "args": [
+          "A"
+        ]
+      }
+    }
+  },
+  "start": "A",
+  "offset": [
+    -1,
+    -1
+  ]
+}

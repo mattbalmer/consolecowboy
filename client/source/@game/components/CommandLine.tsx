@@ -33,9 +33,11 @@ const CLIHistoryEntry = ({
 export const CommandLine = ({
   onCommand,
   game,
+  bindArrowKeys,
 }: {
   onCommand: (command: Command, ...args: any[]) => void,
   game: Game,
+  bindArrowKeys: boolean,
 }) => {
   const inputRef = useRef<HTMLInputElement>();
   const [value, setValue] = React.useState<string>('');
@@ -108,12 +110,14 @@ export const CommandLine = ({
   }, [game.history.terminal]);
 
   useEffect(() => {
-    document.addEventListener('keydown', onDocKeyDown);
+    if (bindArrowKeys) {
+      document.addEventListener('keydown', onDocKeyDown);
+    }
 
     return () => {
       document.removeEventListener('keydown', onDocKeyDown);
     }
-  }, [onDocKeyDown]);
+  }, [onDocKeyDown, bindArrowKeys]);
 
   return <FlexCol data-cli sx={{ flexGrow: 1 }}>
     <Box

@@ -6,7 +6,7 @@ export const Traps = {
     id: 'RabbitHole',
     amount: amount || 1,
     duration: duration || 2,
-    activate(game: Game): Game {
+    onExecute(game: Game): Game {
       const { amount, duration } = this;
       game.stack = [
         ...game.stack,

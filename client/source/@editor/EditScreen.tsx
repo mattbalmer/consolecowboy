@@ -166,6 +166,7 @@ export const EditScreen = (props: {
           level={level}
           player={player}
           shouldBindController={false}
+          bindKeyboardShortcuts={false}
         />
       </ErrorBoundary>
       <Dialog

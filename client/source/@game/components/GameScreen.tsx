@@ -30,8 +30,6 @@ const savePlayer = (levelID: string, game: Game) => {
     },
   };
 
-  console.log('save newPlayer', newPlayer);
-
   playerCapsule.set('player', newPlayer);
 }
 
@@ -40,11 +38,13 @@ export const GameScreen = ({
   levelID,
   player,
   shouldBindController,
+  bindKeyboardShortcuts,
 }: {
   level: Level,
   levelID: string,
   player: Game['player'],
   shouldBindController: boolean,
+  bindKeyboardShortcuts?: boolean,
 }) => {
   const [dialog, setDialog] = useState<
     Omit<ComponentProps<typeof SimpleDialog>, 'id'>
@@ -121,6 +121,7 @@ export const GameScreen = ({
         <CommandLine
           onCommand={onCommand}
           game={game}
+          bindArrowKeys={bindKeyboardShortcuts ?? true}
         />
       </FlexRow>
       <SimpleDialog

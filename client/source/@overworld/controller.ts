@@ -14,7 +14,7 @@ export const useOverworldController = (state: OverworldState) => {
       state.setMisc({ hasShownIntroDialog: true });
       state.setDialog({
         title: 'Welcome to Netrunner',
-        body: 'To start, click Level 1 to enter level 1',
+        body: 'To start, click Level 1 to enter the first hostile net',
         acknowledge: 'Let\'s Go',
         onFinish() {
           state.setDialog(null);
