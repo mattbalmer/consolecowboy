@@ -1,5 +1,6 @@
 import { GameEffects } from '@shared/constants/effects';
 import { Game, Ice } from '@shared/types/game';
+import { appendMessage } from '@shared/utils/game/cli';
 
 export const ICE = {
   NeuralKatana: () => ({
@@ -46,8 +47,10 @@ export const ICE = {
         }
         return game;
       } else {
-        console.log('not enough icebreaker strength to break this ice');
-        return game;
+        return appendMessage(game, {
+          type: 'error',
+          value: `Not enough icebreaker strength to break this ice`,
+        });
       }
     }
   })

@@ -48,12 +48,14 @@ export const GamePage = () => {
   return <FlexCol sx={{ flexGrow: 1, height: '100vh', background: '#111' }}>
     <NavBar />
     {level ?
-      <GameScreen
-        levelID={id}
-        level={level}
-        player={player}
-        shouldBindController={true}
-      />
+      <FlexCol sx={{ flexGrow: 1, height: 'calc(100vh - 48px)' }}>
+        <GameScreen
+          levelID={id}
+          level={level}
+          player={player}
+          shouldBindController={true}
+        />
+      </FlexCol>
       : <>
         <Typography>...Loading</Typography>
       </>

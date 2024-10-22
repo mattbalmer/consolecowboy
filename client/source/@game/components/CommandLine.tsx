@@ -1,10 +1,34 @@
 import * as React from 'react';
-import { TextField, Typography } from '@mui/material';
+import { Box, Divider, TextField, Typography } from '@mui/material';
 import { FlexRow } from '@client/components/FlexRow';
 import { FlexCol } from '@client/components/FlexCol';
 import { Autocomplete } from '@mui/lab';
-import { Command, COMMANDS, Game } from '@game/types';
+import { CLIMessage, Command, COMMANDS, Game } from '@game/types';
 import { useEffect } from 'react';
+
+const CLIHistoryEntry = ({
+  line,
+  i,
+}: {
+  line: CLIMessage,
+  i: number,
+}) => {
+  const color = ({
+    'error': '#cc6666',
+    'output': '#ffffff99',
+    'command': '#ffffffee',
+    'hidden': '#ffffff00',
+  } satisfies Record<CLIMessage['type'], string>)[line.type];
+  return <Typography
+    variant={'subtitle2'}
+    data-cli-output={i}
+    data-cli-output-type={line.type}
+  >
+    <pre style={{ color, paddingLeft: line.type === 'output' || line.type === 'error' ? '0.7rem' : 0 }}>{
+      line.type === 'command' ? <span style={{ display: 'inline-block', color: 'aqua', marginRight: 3 }}>$</span> : null
+    }{line.value}</pre>
+  </Typography>
+}
 
 export const CommandLine = ({
   onCommand,
@@ -36,29 +60,27 @@ export const CommandLine = ({
     setValue('');
   }, [game.history.terminal]);
 
-  return <FlexRow data-cli sx={{ alignItems: 'center', flexGrow: 1 }}>
-    <FlexCol sx={{ flexGrow: 1 }}>
-      <FlexCol data-cli-output>
-        {
-          game.history.terminal.filter(line => line.type !== 'hidden').map((line, index) => {
-            return <Typography
-              key={index}
-              variant={'subtitle2'}
-              data-cli-output={index}
-              data-cli-output-type={line.type}
-            >
-              ({line.type}) <pre>{line.value}</pre>
-            </Typography>
-          })
-        }
-      </FlexCol>
-      <hr />
-      <FlexRow sx={{ alignItems: 'center', flexGrow: 1 }}>
+  return <FlexCol data-cli sx={{ flexGrow: 1 }}>
+    <Box
+      data-cli-output
+      sx={{ display: 'flex', flexDirection: 'column-reverse', overflowY: 'auto', flexGrow: 1, pb: 1, maxHeight: 120 }}
+    >
+      {
+        game.history.terminal.filter(line => line.type !== 'hidden').reverse().map((line, index) => {
+          return <CLIHistoryEntry
+            key={index}
+            i={index}
+            line={line}
+          />
+        })
+      }
+    </Box>
+    <Divider sx={{ mb: 1 }} />
+    <FlexCol sx={{ flexGrow: 1, pb: 1 }}>
+      <FlexRow sx={{ flexGrow: 1 }}>
         <Typography variant={'subtitle1'}>Terminal</Typography>
       </FlexRow>
-      <FlexRow sx={{ alignItems: 'center', flexGrow: 1 }}>
-        <Typography variant={'subtitle1'} sx={{ mr: 1 }}>$</Typography>
-
+      <FlexRow sx={{ flexGrow: 1 }}>
         <Autocomplete
           id='command-line'
           freeSolo
@@ -87,5 +109,5 @@ export const CommandLine = ({
         />
       </FlexRow>
     </FlexCol>
-  </FlexRow>
+  </FlexCol>
 }

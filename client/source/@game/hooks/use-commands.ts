@@ -51,7 +51,10 @@ const Commands = {
     const targetNode = game.nodes[target];
 
     if (!target || !targetNode) {
-      return game;
+      return appendMessage(game, {
+        type: 'error',
+        value: `Target not valid: ${target}`
+      });
     }
 
     const targetCoord = coordToString(targetNode);
@@ -81,11 +84,8 @@ const Commands = {
       ...game,
       hovered: target,
       history: {
+        ...game.history,
         nodes: [...game.history.nodes, game.hovered],
-        terminal: [...game.history.terminal, {
-          type: 'command',
-          value: `move ${target}`,
-        }],
       },
     };
 
@@ -133,11 +133,8 @@ const Commands = {
       ...game,
       hovered: target,
       history: {
+        ...game.history,
         nodes: [...game.history.nodes, game.hovered],
-        terminal: [...game.history.terminal, {
-          type: 'command',
-          value: `nav ${dir}`,
-        }],
       },
     };
 
@@ -179,11 +176,8 @@ const Commands = {
       ...game,
       hovered: target,
       history: {
+        ...game.history,
         nodes: [...game.history.nodes, game.hovered],
-        terminal: [...game.history.terminal, {
-          type: 'command',
-          value: `retreat ${target}`,
-        }],
       },
     };
 
@@ -211,34 +205,30 @@ const Commands = {
         actions: game.player.actionsPerTurn,
         dice: getDice(game.player.actionsPerTurn),
       },
-      history: {
-        ...game.history,
-        terminal: [
-          ...game.history.terminal,
-          {
-            type: 'command',
-            value: `next`,
-          },
-        ],
-      },
     };
   },
   break: (game, args: CLIArgs<{ l: string }>, { hoveredNode }) => {
     const layer = parseInt(args.l);
 
     if (!hoveredNode.ice) {
-      console.log('no ice to break');
-      return;
+      return appendMessage(game, {
+        type: 'error',
+        value: `No ICE to break`,
+      });
     }
 
     if (isNaN(layer) || layer < 0 || layer >= hoveredNode.ice.layers.length) {
-      console.log(`invalid layer ${layer} to break`);
-      return;
+      return appendMessage(game, {
+        type: 'error',
+        value: `ICE has no layer '${layer}'`,
+      });
     }
 
     if (hoveredNode.ice.layers[layer].status !== 'ACTIVE') {
-      console.log(`layer ${layer} is not active`);
-      return;
+      return appendMessage(game, {
+        type: 'error',
+        value: `Layer ${layer} is not active`,
+      });
     }
 
     try {
@@ -262,8 +252,8 @@ const Commands = {
         terminal: [
           ...game.history.terminal,
           {
-            type: 'command',
-            value: `break (${game.hovered}) -l ${layer}`,
+            type: 'output',
+            value: `(${game.hovered}) break -l ${layer}`,
           },
         ],
       },
@@ -271,13 +261,17 @@ const Commands = {
   },
   drill: (game, args, { hoveredNode }) => {
     if (!hoveredNode.ice) {
-      console.log('no ice to drill');
-      return game;
+      return appendMessage(game, {
+        type: 'error',
+        value: `No ICE to drill`,
+      });
     }
 
     if (hoveredNode.ice.status !== 'ACTIVE') {
-      console.log('ice is not active');
-      return game;
+      return appendMessage(game, {
+        type: 'error',
+        value: `ICE is not active`,
+      });
     }
 
     try {
@@ -302,8 +296,8 @@ const Commands = {
         terminal: [
           ...game.history.terminal,
           {
-            type: 'command',
-            value: `drill (${game.hovered})`,
+            type: 'output',
+            value: `(${game.hovered}) drill`,
           },
         ],
       },
@@ -311,29 +305,22 @@ const Commands = {
   },
   open: (game, args, { hoveredNode }) => {
     if (!hoveredNode.content) {
-      console.log('node has nothing to open');
-      return game;
+      return appendMessage(game, {
+        type: 'error',
+        value: `Nothing installed to open`,
+      });
     }
+
     if (hoveredNode.content.status === 'OPENED' || hoveredNode.isOpened) {
-      console.log('node already opened');
-      return game;
+      return appendMessage(game, {
+        type: 'error',
+        value: `Already opened`,
+      });
     }
 
     // or instead of auto, seeing the content is another progression system
     console.log('open the hovered node. trigger trap effects or capture effects. this should maybe be auto? dunno');
     const node = game.nodes[game.hovered];
-
-    // todo: no more 2 sources of truth
-    node.isOpened = true;
-    node.content.status = 'OPENED';
-
-    if (node.content.type === 'trap') {
-      game = node.content.activate(game) ?? game;
-    }
-
-    if (node.content.type === 'installation') {
-      game = node.content.onCapture(game) ?? game;
-    }
 
     try {
       game = consumeDice(game, args);
@@ -348,18 +335,28 @@ const Commands = {
       }
     }
 
+    // todo: no more 2 sources of truth
+    node.isOpened = true;
+    node.content.status = 'OPENED';
+
+    if (node.content.type === 'trap') {
+      game = appendMessage(game, {
+        type: 'output',
+        value: `(${game.hovered}) Trap activated - ${node.content.id}`,
+      });
+      game = node.content.activate(game) ?? game;
+    }
+
+    if (node.content.type === 'installation') {
+      game = appendMessage(game, {
+        type: 'output',
+        value: `(${game.hovered}) Installation opened - ${node.content.id}`,
+      });
+      game = node.content.onCapture(game) ?? game;
+    }
+
     return {
       ...game,
-      history: {
-        ...game.history,
-        terminal: [
-          ...game.history.terminal,
-          {
-            type: 'command',
-            value: `open (${game.hovered})`,
-          },
-        ],
-      },
     };
   },
   config: (game, args) => {
