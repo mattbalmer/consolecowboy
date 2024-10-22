@@ -39,4 +39,5 @@ export type Level = {
     content?: LevelContent<Content['type'], any>,
   }>,
   start: string,
+  offset?: [x: number, y: number],
 }

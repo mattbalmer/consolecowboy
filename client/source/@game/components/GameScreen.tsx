@@ -11,7 +11,6 @@ import { SimpleDialog } from '@client/components/SimpleDialog';
 import { playerCapsule } from '@client/capsules/player';
 import { HUD } from '@game/components/HUD';
 import { useGame } from '@game/hooks/use-game';
-import { useCommands } from '@game/hooks/use-commands';
 import { useGameEffects } from '@game/hooks/use-game-effects';
 
 const savePlayer = (levelID: string, game: Game) => {
@@ -84,6 +83,7 @@ export const GameScreen = ({
         <FlexRow sx={{ alignItems: 'center', position: 'relative' }}>
           <Grid
             size={[-2, 2]}
+            offset={level.offset}
             hoveredNode={hoveredNode}
             nodeMap={nodeMap}
             game={game}

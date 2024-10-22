@@ -89,8 +89,10 @@ export const Grid = ({
   hoveredNode,
   nodeMap,
   game,
+  offset = [0,0],
 }: {
   size: [number, number],
+  offset: [number, number],
   hoveredNode: GameNode,
   nodeMap: NodeMap,
   game: Game,
@@ -103,7 +105,7 @@ export const Grid = ({
 
   return <FlexRow
     data-grid
-    sx={{ flexGrow: 1, position: 'relative' }}
+    sx={{ flexGrow: 1, position: 'relative', transform: `translate(${offset[0] * 100}px, ${offset[1] * 100}px)` }}
   >
     <>
       {sizeList.slice(0).map(x => {

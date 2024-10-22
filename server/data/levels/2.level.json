@@ -6,15 +6,12 @@
         "type": "installation",
         "status": "STANDBY",
         "key": "ExternalConnection",
-        "args": null
+        "args": [
+          false
+        ]
       }
     },
     "1,0": {
-      "ice": {
-        "key": "NeuralKatana",
-        "status": "READY",
-        "args": null
-      },
       "content": {
         "type": "installation",
         "status": "STANDBY",
@@ -25,21 +22,13 @@
       }
     },
     "2,0": {
-      "ice": {
-        "key": "NeuralKatana",
-        "status": "READY",
-        "args": null
-      },
       "content": {
-        "type": "trap",
+        "type": "installation",
         "status": "STANDBY",
-        "key": "RabbitHole",
-        "args": {
-          "amount": 1,
-          "duration": 2
-        }
+        "key": "ExternalConnection"
       }
     }
   },
-  "start": "A"
+  "start": "A",
+  "offset": [-1,-1]
 }
