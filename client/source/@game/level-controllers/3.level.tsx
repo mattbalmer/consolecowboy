@@ -30,7 +30,7 @@ export default class extends LevelController {
         ...game.stack,
         GameEffects.SimpleDialog({
           title: 'ICE',
-          body: `Net Corps often install ICE over important servers they don't want you to access. You cannot open any servers with active ICE, but you can interact with the ICE and (most of the time) move around the network. Later you can learn how to break them, but if you're ever unable to break ice, you can try to drill through. This will remove it, but also activate any layers that are unbroken. Use "drill -d ${nextDie?.value || '<dice>'}"`,
+          body: `Net Corps often install ICE over important servers they don't want you to access. You cannot execute any servers with active ICE, but you can interact with the ICE and (most of the time) move around the network. Later you can learn how to break them, but if you're ever unable to break ice, you can try to drill through. This will remove it, but also activate any layers that are unbroken. Use "drill -d ${nextDie?.value || '<dice>'}"`,
         }),
       ];
     }

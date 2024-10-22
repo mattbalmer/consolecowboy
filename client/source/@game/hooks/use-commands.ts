@@ -44,6 +44,7 @@ const consumeDice = (game: Game, args: CLIArgs<Record<string, any>, any>): Game 
 
 const Commands = {
   m: game => game,
+  x: game => game,
   info: game => game,
   move: (game, args: CLIArgs<void, [target: string]>) => {
     const target = args._[0]?.toUpperCase();
@@ -310,23 +311,23 @@ const Commands = {
       },
     };
   },
-  open: (game, args, { hoveredNode }) => {
+  execute: (game, args, { hoveredNode }) => {
     if (!hoveredNode.content) {
       return appendMessage(game, {
         type: 'error',
-        value: `Nothing installed to open`,
+        value: `Nothing installed to run`,
       });
     }
 
-    if (hoveredNode.content.status === 'OPENED' || hoveredNode.isOpened) {
+    if (hoveredNode.content.status === 'EXECUTED' || hoveredNode.wasExecuted) {
       return appendMessage(game, {
         type: 'error',
-        value: `Already opened`,
+        value: `Already executed`,
       });
     }
 
     // or instead of auto, seeing the content is another progression system
-    console.log('open the hovered node. trigger trap effects or capture effects. this should maybe be auto? dunno');
+    console.log('run the hovered node. trigger trap effects or capture effects. this should maybe be auto? dunno');
     const node = game.nodes[game.hovered];
 
     try {
@@ -343,8 +344,8 @@ const Commands = {
     }
 
     // todo: no more 2 sources of truth
-    node.isOpened = true;
-    node.content.status = 'OPENED';
+    node.wasExecuted = true;
+    node.content.status = 'EXECUTED';
 
     if (node.content.type === 'trap') {
       game = appendMessage(game, {
@@ -357,7 +358,7 @@ const Commands = {
     if (node.content.type === 'installation') {
       game = appendMessage(game, {
         type: 'output',
-        value: `(${game.hovered}) Installation opened - ${node.content.id}`,
+        value: `(${game.hovered}) Server content executed - ${node.content.id}`,
       });
       game = node.content.onCapture(game) ?? game;
     }
@@ -467,12 +468,12 @@ export const useCommands = ({
     if (hoveredNode?.ice && hoveredNode.ice.status === 'ACTIVE') {
       return appendMessage(game, {
         type: 'output',
-        value: `ICE is active - cannot open`
+        value: `ICE is active - cannot execute`
       });
     }
 
-    if (command === 'open') {
-      return executeCommand('open', game, commandArgs, gameDerived);
+    if (command === 'execute') {
+      return executeCommand('execute', game, commandArgs, gameDerived);
     }
   }, [game, gameDerived]);
 

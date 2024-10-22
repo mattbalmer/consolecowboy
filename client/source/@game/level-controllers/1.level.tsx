@@ -28,7 +28,7 @@ export default class extends LevelController {
         ...game.stack,
         GameEffects.SimpleDialog({
           title: 'Time to leave',
-          body: `You've reached the exit node! Use the "open" command to open the ExternalConnection server and exit the net.`,
+          body: `You've reached the exit node! Use the "execute" command to run the ExternalConnection server and exit the net.`,
         }),
       ];
     }

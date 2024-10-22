@@ -17,7 +17,7 @@ export default class extends LevelController {
         ...game.stack,
         GameEffects.SimpleDialog({
           title: 'Bit o Coin',
-          body: `A great way to get some quick cash is to hack into your target's wallets. Use "open" on a server run whatever asset is installed in it. Sometimes you might find money!`,
+          body: `A great way to get some quick cash is to hack into your target's wallets. Use "execute" on a server run whatever asset is installed in it. Sometimes you might find money!`,
         }),
       ];
     }

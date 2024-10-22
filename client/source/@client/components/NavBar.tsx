@@ -31,8 +31,8 @@ export const NavBar = () => {
       <Tabs
         value={
           location.pathname
-            .replace(/play\/[\d+]/g, 'play')
-            .replace(/create\/[\d+]/g, 'create')
+            .replace(/play\/\d+/g, 'play')
+            .replace(/create\/\d+/g, 'create')
         }
         aria-label='Nav Tabs'
         role='navigation'

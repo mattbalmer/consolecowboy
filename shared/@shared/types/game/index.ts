@@ -50,7 +50,7 @@ export type Trap = {
 }
 
 export type NodeContent = {
-  status: 'STANDBY' | 'OPENED',
+  status: 'STANDBY' | 'EXECUTED',
 } & (
   ({ type: 'trap' } & Trap) | ({ type: 'installation' } & Installation)
 );
@@ -61,7 +61,7 @@ export type GameNode = {
   ice?: Ice,
   content?: NodeContent,
   isVisited?: boolean,
-  isOpened?: boolean,
+  wasExecuted?: boolean,
 }
 
 export type Condition = {
@@ -137,11 +137,12 @@ export type NodeMap = Record<CoordString, NodeID>;
 
 export const COMMANDS = {
   'm': 'move',
+  'x': 'execute',
   'next': true,
   'move': true,
   'nav': true,
   'info': true,
-  'open': true,
+  'execute': true,
   'retreat': true,
   'drill': true,
   'break': true,
