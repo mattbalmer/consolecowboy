@@ -78,9 +78,8 @@ export const CommandLine = ({
     <Divider sx={{ mb: 1 }} />
     <FlexCol sx={{ flexGrow: 1, pb: 1 }}>
       <FlexRow sx={{ flexGrow: 1 }}>
-        <Typography variant={'subtitle1'}>Terminal</Typography>
-      </FlexRow>
-      <FlexRow sx={{ flexGrow: 1 }}>
+        <Typography variant={'subtitle1'} sx={{ mr: 1 }}>$</Typography>
+
         <Autocomplete
           id='command-line'
           freeSolo
