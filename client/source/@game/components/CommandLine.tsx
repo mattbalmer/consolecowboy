@@ -78,9 +78,14 @@ export const CommandLine = ({
     }
     if (event.key === 'ArrowDown') {
       event.preventDefault();
-      inputRef?.current?.focus();
-      if (hovered !== null) {
-        setHovered(hovered < commandsHistory.length - 1 ? hovered + 1 : 0);
+      if (document.activeElement && document.activeElement === inputRef?.current) {
+        if (hovered !== null) {
+          setHovered(hovered < commandsHistory.length - 1 ? hovered + 1 : 0);
+        } else {
+          setHovered(0);
+        }
+      } else {
+        inputRef?.current?.focus();
       }
     }
   }, [hovered, inputRef.current, commandsHistory])
