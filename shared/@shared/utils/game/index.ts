@@ -1,10 +1,12 @@
 import { Level } from '@shared/types/game/level';
-import { CoordString, Game, NodeMap } from '@shared/types/game';
+import { CoordString, Game, GameDie, NodeMap } from '@shared/types/game';
 import { ICE } from '@shared/constants/ice';
 import { Installations } from '@shared/constants/installations';
 import { Traps } from '@shared/constants/traps';
 import { coordToString, stringToCoord } from '@shared/utils/game/grid';
 import { numberForStringID, stringIDForNumber } from '@shared/utils/strings';
+import { generate } from '@shared/utils/arrays';
+import { subBools } from '@shared/utils/booleans';
 
 export const invertNodes = (nodes: Game['nodes']): NodeMap => {
   const output: NodeMap = {};
@@ -107,6 +109,15 @@ class IDTracker {
     return sorted[i - 2] + 1;
   }
 }
+
+export const getDice = (quantity: number): GameDie[] => {
+  return generate(quantity, () => Math.floor(Math.random() * 6) + 1).map(value => ({
+    value,
+    isAvailable: true,
+  })).sort((a, b) => {
+    return a.value - b.value || subBools(a.isAvailable, b.isAvailable);
+  });
+};
 
 export const gameFromLevel = (level: Level, player: Game['player']): Game => {
   const idTracker = new IDTracker();

@@ -19,3 +19,13 @@ export const replace = <T>(array: T[], start: number, items: T[]): T[] => {
     ...array.slice(start + items.length),
   ]
 }
+
+type GenMapCallback <T> = (i: number) => T;
+export const generate = <T>(size: number, value: T | GenMapCallback<T>): T[] => {
+  if (typeof value === 'function') {
+    const getVal = (_: unknown, i: number) => (value as GenMapCallback<T>)(i);
+    return Array.from({ length: size }).map(getVal);
+  } else {
+    return Array.from({ length: size }).fill(value) as T[];
+  }
+}

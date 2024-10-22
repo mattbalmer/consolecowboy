@@ -55,7 +55,7 @@ export type NodeContent = {
   ({ type: 'trap' } & Trap) | ({ type: 'installation' } & Installation)
 );
 
-export type Node = {
+export type GameNode = {
   x: number,
   y: number,
   ice?: Ice,
@@ -81,6 +81,7 @@ export type Player = {
   ram: number,
   money: number,
   actions: number,
+  dicePerRound: number,
   stats: {
     icebreaker: number,
   },
@@ -90,9 +91,19 @@ export type Player = {
   history: Record<string, [entered: number, completed: number]>,
 }
 
+export type GameDie = {
+  value: number,
+  isAvailable: boolean,
+}
+
+export type CLIMessage = {
+  type: 'command' | 'output' | 'error' | 'hidden',
+  value: string,
+}
+
 export type Game = {
   mode: 'PLAY' | 'VIEW',
-  nodes: Record<NodeID, Node>,
+  nodes: Record<NodeID, GameNode>,
   edges: Record<EdgeString, 'oneway' | 'bi'>,
   hovered: NodeID,
   player: {
@@ -108,15 +119,13 @@ export type Game = {
       icebreaker: number,
     },
     conditions: Condition[],
+    dice: GameDie[], // make this a map, but somehow track max available for the round too
   },
   stack: GameEffect[],
   round: number,
   history: {
     nodes: NodeID[],
-    terminal: {
-      type: 'command' | 'output' | 'error' | 'hidden',
-      value: string,
-    }[],
+    terminal: CLIMessage[],
   },
 }
 
