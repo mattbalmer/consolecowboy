@@ -1,6 +1,8 @@
 import { LevelController } from '@game/level-controllers/base';
-import { Game } from '@game/types';
+import { Command, Game } from '@game/types';
 import { GameEffects } from '@shared/constants/effects';
+import { CLIArgs } from '@shared/types/game/cli';
+import { appendMessage } from '@shared/utils/game/cli';
 
 export default class extends LevelController {
   levelID: string = '3';
@@ -23,11 +25,12 @@ export default class extends LevelController {
 
     if (game.hovered === 'B' && !this.hasShownDrill) {
       this.hasShownDrill = true;
+      const nextDie = game.player.dice.find(d => d.isAvailable);
       game.stack = [
         ...game.stack,
         GameEffects.SimpleDialog({
           title: 'ICE',
-          body: `Net Corps often install ICE over important servers they don't want you to access. You cannot open any servers with active ICE, but you can interact with the ICE and (most of the time) move around the network. Later you can learn how to break them, but if you're ever unable to break ice, you can try to drill through. This will remove it, but also activate any layers that are unbroken. Use "drill [-d <dice>]"`,
+          body: `Net Corps often install ICE over important servers they don't want you to access. You cannot open any servers with active ICE, but you can interact with the ICE and (most of the time) move around the network. Later you can learn how to break them, but if you're ever unable to break ice, you can try to drill through. This will remove it, but also activate any layers that are unbroken. Use "drill -d ${nextDie?.value || '<dice>'}"`,
         }),
       ];
     }
@@ -35,5 +38,16 @@ export default class extends LevelController {
     return { game };
   };
 
-  onCommand() {}
+
+  onCommand(game: Game, command: Command, args: CLIArgs) {
+    if (command === 'break') {
+      return {
+        shouldContinue: false,
+        game: appendMessage(game, {
+          type: 'output',
+          value: `the 'break' command is not enabled yet, keep playing to unlock it`
+        })
+      }
+    }
+  }
 }

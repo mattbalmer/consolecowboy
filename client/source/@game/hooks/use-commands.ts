@@ -245,6 +245,11 @@ const Commands = {
     }
 
     game = hoveredNode.ice.break(game, layer);
+
+    // @ts-ignore
+    const didBreakLayer = hoveredNode.ice.layers[layer].status === 'BROKEN';
+    const isICEBroken = hoveredNode.ice.status === 'BROKEN';
+
     return {
       ...game,
       history: {
@@ -253,7 +258,9 @@ const Commands = {
           ...game.history.terminal,
           {
             type: 'output',
-            value: `(${game.hovered}) break -l ${layer}`,
+            value: didBreakLayer
+              ? isICEBroken ? `(${game.hovered}) broke Lvl${hoveredNode.ice.strength} ${hoveredNode.ice.id}` : `(${game.hovered}) broke layer ${layer} of Lvl${hoveredNode.ice.strength} ${hoveredNode.ice.id}`
+              : `Failed to break layer ${layer} of Lvl${hoveredNode.ice.strength} ${hoveredNode.ice.id}`,
           },
         ],
       },

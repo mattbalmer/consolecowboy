@@ -5,13 +5,12 @@ import { CLIArgs } from '@shared/types/game/cli';
 import { appendMessage } from '@shared/utils/game/cli';
 
 export default class extends LevelController {
-  levelID: string = '1';
+  levelID = '1';
 
   hasShownIntro = false;
   hasShownExit = false;
 
   onChange({ game }: { game: Game }) {
-    console.log('onChange', game.history.terminal.length);
     if (game.history.terminal.length === 0 && game.stack.length === 0 && !this.hasShownIntro) {
       this.hasShownIntro = true;
       game.stack = [

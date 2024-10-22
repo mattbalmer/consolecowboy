@@ -5,6 +5,7 @@ export const LevelControllers = [
   require('@game/level-controllers/1.level').default,
   require('@game/level-controllers/2.level').default,
   require('@game/level-controllers/3.level').default,
+  require('@game/level-controllers/4.level').default,
 ].reduce<
   Record<string, new () => LevelController>
 >((a, C) => {
