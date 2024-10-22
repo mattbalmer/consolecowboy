@@ -10,10 +10,10 @@ if (!createRFDC) {
   throw new Error(`Cannot correctly import RFDC`);
 }
 
-const rfdc: Function = createRFDC({
+const rfdc: <T>(object: T) => T = createRFDC({
   circles: false,
   proto: false,
 });
 
 export { createRFDC };
-export default rfdc;
+export { rfdc };

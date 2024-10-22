@@ -96,6 +96,11 @@ export type GameDie = {
   isAvailable: boolean,
 }
 
+export type CLIMessage = {
+  type: 'command' | 'output' | 'error' | 'hidden',
+  value: string,
+}
+
 export type Game = {
   mode: 'PLAY' | 'VIEW',
   nodes: Record<NodeID, GameNode>,
@@ -120,10 +125,7 @@ export type Game = {
   round: number,
   history: {
     nodes: NodeID[],
-    terminal: {
-      type: 'command' | 'output' | 'error' | 'hidden',
-      value: string,
-    }[],
+    terminal: CLIMessage[],
   },
 }
 

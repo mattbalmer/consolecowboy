@@ -33,8 +33,14 @@ export const HUD = ({
       <FlexRow sx={{ alignItems: 'center' }}>
         <Typography variant={'h6'}>Round: {game.round}</Typography>
       </FlexRow>
-      <FlexRow sx={{ alignItems: 'center' }}>
-        <Typography variant={'subtitle1'}>Actions: {game.player.actions}</Typography>
+      <FlexRow>
+        {game.player.dice.map((dice, i) => {
+          return <Dice
+            key={i}
+            value={dice.value}
+            isAvailable={dice.isAvailable}
+          />
+        })}
       </FlexRow>
       <FlexRow sx={{ alignItems: 'center' }}>
         <Typography variant={'subtitle1'}>Mental: {game.player.mental}</Typography>
@@ -49,15 +55,6 @@ export const HUD = ({
         <Typography variant={'subtitle1'} sx={{ ml: 2 }}>ICEBreaker Power: {game.player.stats.icebreaker}</Typography>
       </FlexRow>
 
-      <FlexRow>
-        {game.player.dice.map((dice, i) => {
-          return <Dice
-            key={i}
-            value={dice.value}
-            isAvailable={dice.isAvailable}
-          />
-        })}
-      </FlexRow>
     </FlexCol>
   </FlexRow>
 }

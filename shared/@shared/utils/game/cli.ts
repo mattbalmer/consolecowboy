@@ -1,4 +1,5 @@
 import { CLIArgs } from '@shared/types/game/cli';
+import { CLIMessage, Game } from '@shared/types/game';
 
 const isNamed = (str: string): boolean => Boolean(
   (/-([a-zA-Z]+)/).exec(str)?.[1]
@@ -36,4 +37,17 @@ export const parseArgs = (args: string[]): CLIArgs => {
     ...named,
     _: positional,
   } as CLIArgs;
+}
+
+export const appendMessage = (game: Game, line: CLIMessage): Game => {
+  return {
+    ...game,
+    history: {
+      ...game.history,
+      terminal: [
+        ...game.history.terminal,
+        line
+      ],
+    },
+  };
 }

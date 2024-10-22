@@ -1,62 +1,83 @@
 import { Command, CompassDir, Game } from '@shared/types/game';
 import { getDice } from '@shared/utils/game';
-import { useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { coordToString, getAdjacentCoords } from '@shared/utils/game/grid';
 import { replace } from '@shared/utils/arrays';
 import { pick } from '@shared/utils/objects';
 import { GameDerived } from '@game/hooks/use-game';
 import { CLIArgs } from '@shared/types/game/cli';
 import { getDiceCounts } from '@shared/utils/game/dice';
-import { parseArgs } from '@shared/utils/game/cli';
+import { appendMessage, parseArgs } from '@shared/utils/game/cli';
+import { GameError } from '@shared/errors/GameError';
+
+const consumeDice = (game: Game, args: CLIArgs<Record<string, any>, any>): Game => {
+  const dice = args.d?.[0];
+
+  if (!dice) {
+    throw new GameError('No valid dice given');
+  }
+
+  if (getDiceCounts(game.player.dice)[dice] < 1) {
+    throw new GameError(`No available dice of value ${dice}`);
+  }
+
+  const diceIndex = game.player.dice.findIndex(d => d.value === dice && d.isAvailable);
+
+  if (diceIndex < 0) {
+    console.log('error allocating dice used', dice, diceIndex, game.player.dice);
+    throw new GameError(`Error allocating dice usage (-d ${args.d})`);
+  }
+
+  return {
+    ...game,
+    player: {
+      ...game.player,
+      actions: game.player.actions - 1,
+      dice: replace(game.player.dice, diceIndex, [{
+        value: dice,
+        isAvailable: false,
+      }]),
+    },
+  };
+}
 
 const Commands = {
   m: game => game,
   info: game => game,
   move: (game, args: CLIArgs<void, [target: string]>) => {
     const target = args._[0]?.toUpperCase();
-    const dice = args.d?.[0];
     const validMoveCoords = getAdjacentCoords(game);
     const targetNode = game.nodes[target];
 
     if (!target || !targetNode) {
-      return;
+      return game;
     }
+
     const targetCoord = coordToString(targetNode);
 
     if (!target || !validMoveCoords.includes(targetCoord)) {
-      console.log('cannot move to', target);
-      return game;
+      return appendMessage(game, {
+        type: 'error',
+        value: `Cannot move to ${target}`
+      });
     }
 
-    if (!dice) {
-      console.log('No valid dice given');
-      return game;
-    }
-
-    if (getDiceCounts(game.player.dice)[dice] < 1) {
-      console.log(`No available dice of value ${dice}`);
-      return game;
-    }
-
-    const diceIndex = game.player.dice.findIndex(d => d.value === dice && d.isAvailable);
-
-    if (diceIndex < 0) {
-      console.log('error allocating dice used', dice, diceIndex, game.player.dice);
-      return game;
+    try {
+      game = consumeDice(game, args);
+    } catch (error) {
+      if (error instanceof GameError) {
+        return appendMessage(game, {
+          type: error.type,
+          value: error.message,
+        });
+      } else {
+        throw error;
+      }
     }
 
     game.nodes[target].isVisited = true;
-
     game = {
       ...game,
-      player: {
-        ...game.player,
-        actions: game.player.actions - 1,
-        dice: replace(game.player.dice, diceIndex, [{
-          value: dice,
-          isAvailable: false,
-        }]),
-      },
       hovered: target,
       history: {
         nodes: [...game.history.nodes, game.hovered],
@@ -75,7 +96,6 @@ const Commands = {
   },
   nav: (game, args: CLIArgs<void, [CompassDir]>, derived) => {
     const [ dir ] = args._;
-    const dice = args.d?.[0];
 
     if (!dir) {
       return;
@@ -94,24 +114,22 @@ const Commands = {
       return game;
     }
 
-    if (!dice) {
-      console.log('No valid dice given');
-      return game;
-    }
-
-    if (getDiceCounts(game.player.dice)[dice] < 1) {
-      console.log(`No available dice of value ${dice}`);
-      return game;
+    try {
+      game = consumeDice(game, args);
+    } catch (error) {
+      if (error instanceof GameError) {
+        return appendMessage(game, {
+          type: error.type,
+          value: error.message,
+        });
+      } else {
+        throw error;
+      }
     }
 
     game.nodes[target].isVisited = true;
-
     game = {
       ...game,
-      player: {
-        ...game.player,
-        actions: game.player.actions - 1,
-      },
       hovered: target,
       history: {
         nodes: [...game.history.nodes, game.hovered],
@@ -130,7 +148,6 @@ const Commands = {
   },
   retreat: (game, args) => {
     const target = game.history.nodes[game.history.nodes.length - 1];
-    const dice = args.d?.[0];
     const validMoveCoords = getAdjacentCoords(game);
     const targetNode = game.nodes[target.toUpperCase()];
 
@@ -144,30 +161,21 @@ const Commands = {
       return game;
     }
 
-    if (!dice) {
-      console.log('No valid dice given');
-      return game;
+    try {
+      game = consumeDice(game, args);
+    } catch (error) {
+      if (error instanceof GameError) {
+        return appendMessage(game, {
+          type: error.type,
+          value: error.message,
+        });
+      } else {
+        throw error;
+      }
     }
-
-    if (getDiceCounts(game.player.dice)[dice] < 1) {
-      console.log(`No available dice of value ${dice}`);
-      return game;
-    }
-
-    game.nodes[target].isVisited = true;
-
-    const diceIndex = game.player.dice.findIndex(d => d.value === dice && d.isAvailable);
 
     game = {
       ...game,
-      player: {
-        ...game.player,
-        actions: game.player.actions - 1,
-        dice: replace(game.player.dice, diceIndex, [{
-          value: dice,
-          isAvailable: false,
-        }]),
-      },
       hovered: target,
       history: {
         nodes: [...game.history.nodes, game.hovered],
@@ -232,13 +240,22 @@ const Commands = {
       return;
     }
 
+    try {
+      game = consumeDice(game, args);
+    } catch (error) {
+      if (error instanceof GameError) {
+        return appendMessage(game, {
+          type: error.type,
+          value: error.message,
+        });
+      } else {
+        throw error;
+      }
+    }
+
     game = hoveredNode.ice.break(game, layer);
     return {
       ...game,
-      player: {
-        ...game.player,
-        actions: game.player.actions - 1,
-      },
       history: {
         ...game.history,
         terminal: [
@@ -262,14 +279,23 @@ const Commands = {
       return game;
     }
 
+    try {
+      game = consumeDice(game, args);
+    } catch (error) {
+      if (error instanceof GameError) {
+        return appendMessage(game, {
+          type: error.type,
+          value: error.message,
+        });
+      } else {
+        throw error;
+      }
+    }
+
     // complete all layers of ice
     game = hoveredNode.ice.complete(game);
     return {
       ...game,
-      player: {
-        ...game.player,
-        actions: game.player.actions - 1,
-      },
       history: {
         ...game.history,
         terminal: [
@@ -308,12 +334,21 @@ const Commands = {
       game = node.content.onCapture(game) ?? game;
     }
 
+    try {
+      game = consumeDice(game, args);
+    } catch (error) {
+      if (error instanceof GameError) {
+        return appendMessage(game, {
+          type: error.type,
+          value: error.message,
+        });
+      } else {
+        throw error;
+      }
+    }
+
     return {
       ...game,
-      player: {
-        ...game.player,
-        actions: game.player.actions - 1,
-      },
       history: {
         ...game.history,
         terminal: [
@@ -328,6 +363,10 @@ const Commands = {
   },
 } as const satisfies Record<Command, (game: Game, args: CLIArgs<any, any>, derived?: GameDerived) => Game>;
 
+const executeCommand = (command: keyof typeof Commands, game: Game, args: CLIArgs, derived: GameDerived): Game => {
+  return Commands[command](game, args, derived);
+}
+
 export const useCommands = ({
   game,
   setGame,
@@ -338,74 +377,74 @@ export const useCommands = ({
   gameDerived: GameDerived,
 }) => {
   const { hoveredNode, nodeMap } = gameDerived;
+  // let game = rfdc(gameSource);
 
-  const onCommand = (command: Command, ...rawArgs: string[]) => {
+  // to fix: immutable
+
+  const onCommand = useCallback((game: Game, command: Command, commandArgs: CLIArgs): Game => {
+    if (command === 'next') {
+      return executeCommand('next', game, commandArgs, gameDerived)
+    }
+
+    if (game.player.actions <= 0) {
+      return appendMessage(game, {
+        type: 'output',
+        value: `No actions left`
+      });
+    }
+
+    if (command === 'retreat') {
+      return executeCommand('retreat', game, commandArgs, gameDerived)
+    }
+
+    if (command === 'break') {
+      return executeCommand('break', game, commandArgs, gameDerived)
+    }
+
+    if (command === 'drill') {
+      return executeCommand('drill', game, commandArgs, gameDerived)
+    }
+
+    if (command === 'move') {
+      return executeCommand('move', game, commandArgs, gameDerived)
+    }
+
+    if (command === 'nav') {
+      return executeCommand('nav', game, commandArgs, gameDerived)
+    }
+
+    // if ice active, disable other commands
+    if (hoveredNode?.ice && hoveredNode.ice.status === 'ACTIVE') {
+      return appendMessage(game, {
+        type: 'output',
+        value: `ICE is active - cannot open`
+      });
+    }
+
+    if (command === 'open') {
+      return executeCommand('open', game, commandArgs, gameDerived);
+    }
+  }, [game, gameDerived]);
+
+  return useCallback((command: Command, ...rawArgs: string[]) => {
     if (game.mode === 'VIEW') {
       console.log('cannot issue commands in view mode');
       return;
     }
 
-    const parsedArgs = parseArgs(rawArgs);
+    game = appendMessage(game, {
+      type: 'command',
+      value: `${command} ${rawArgs.join(' ')}`
+    });
 
-    if (command === 'next') {
-      setGame((prev) => {
-        return Commands.next(game);
-      });
+    const commandArgs = parseArgs(rawArgs);
+
+    const newGame = onCommand(game, command, commandArgs);
+
+    if (newGame) {
+      setGame(newGame)
+    } else {
+      setGame(game);
     }
-
-    if (game.player.actions <= 0) {
-      console.log('no actions left');
-      return;
-    }
-
-    if (command === 'retreat') {
-      setGame(prev => {
-        // @ts-ignore
-        return Commands.retreat(prev, parsedArgs, gameDerived);
-      });
-    }
-
-    if (command === 'break') {
-      setGame(prev => {
-        // @ts-ignore
-        return Commands.break(prev, parsedArgs, gameDerived);
-      });
-    }
-
-    if (command === 'drill') {
-      setGame(prev => {
-        // @ts-ignore
-        return Commands.drill(prev, parsedArgs, gameDerived);
-      });
-    }
-
-    if (command === 'move') {
-      setGame(prev => {
-        // @ts-ignore
-        return Commands.move(prev, parsedArgs);
-      });
-    }
-
-    if (command === 'nav') {
-      setGame(prev => {
-        // @ts-ignore
-        return Commands.nav(prev, parsedArgs, gameDerived);
-      });
-    }
-
-    // if ice active, disable other commands
-    if (hoveredNode?.ice && hoveredNode.ice.status === 'ACTIVE') {
-      console.log('ice is active. cannot do other actions');
-      return;
-    }
-
-    if (command === 'open') {
-      setGame(prev => {
-        // @ts-ignore
-        return Commands.open(prev, parsedArgs, gameDerived);
-      });
-    }
-  }
-
-  return onCommand;
+  }, [game, gameDerived, onCommand])
 }
