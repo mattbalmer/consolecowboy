@@ -4,7 +4,7 @@ import { GameEffects } from '@shared/constants/effects';
 import { CLIArgs } from '@shared/types/game/cli';
 import { appendMessage } from '@shared/utils/game/cli';
 
-export class Level1Controller extends LevelController {
+export default class extends LevelController {
   levelID: string = '1';
 
   hasShownIntro = false;
@@ -18,7 +18,7 @@ export class Level1Controller extends LevelController {
         ...game.stack,
         GameEffects.SimpleDialog({
           title: 'Welcome to Netrunner!',
-          body: `To play the game, use the terminal at the bottom to enter commands. First try moving nodes, using "move {TARGET}" (eg. "move B")`,
+          body: `To play the game, use the terminal at the bottom to enter commands. First try moving nodes, using "move <target>" (eg. "move B")`,
         }),
       ];
     }

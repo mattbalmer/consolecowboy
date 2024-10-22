@@ -4,7 +4,7 @@ import { GameEffects } from '@shared/constants/effects';
 import { CLIArgs } from '@shared/types/game/cli';
 import { appendMessage } from '@shared/utils/game/cli';
 
-export class Level2Controller extends LevelController {
+export default class extends LevelController {
   levelID: string = '2';
 
   hasShownOpen = false;
