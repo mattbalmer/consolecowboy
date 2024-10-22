@@ -297,7 +297,7 @@ const Commands = {
           ...game.history.terminal,
           {
             type: 'output',
-            value: `(${game.hovered}) drill`,
+            value: `(${game.hovered}) drilled through Lvl${hoveredNode.ice.strength} ${hoveredNode.ice.id}`,
           },
         ],
       },

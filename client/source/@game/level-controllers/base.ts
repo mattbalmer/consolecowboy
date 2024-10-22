@@ -27,5 +27,5 @@ export abstract class LevelController {
     command?: Command,
     args?: CLIArgs,
     shouldContinue: boolean,
-  };
+  } | void;
 }

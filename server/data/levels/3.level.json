@@ -1,0 +1,32 @@
+{
+  "nodes": {
+    "0,0": {
+      "isVisited": true,
+      "content": {
+        "type": "installation",
+        "status": "STANDBY",
+        "key": "ExternalConnection",
+        "args": [
+          false
+        ]
+      }
+    },
+    "1,0": {
+      "ice": {
+        "key": "NeuralKatana",
+        "status": "READY",
+        "args": null
+      },
+      "content": {
+        "type": "installation",
+        "status": "STANDBY",
+        "key": "ExternalConnection"
+      }
+    }
+  },
+  "start": "A",
+  "offset": [
+    0,
+    -1
+  ]
+}

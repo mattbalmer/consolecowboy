@@ -1,11 +1,15 @@
 import { Condition, Game, GameEffect } from '@shared/types/game';
+import { appendMessage } from '@shared/utils/game/cli';
 
 export const GameEffects = {
   MentalDamage: ({ amount }: { amount?: number }) => ({
     id: 'damage.mental',
     amount: amount || 1,
     trigger(game) {
-      console.log('trigger for amount', this.amount);
+      game = appendMessage(game, {
+        type: 'output',
+        value: `${this.amount} mental damage taken`,
+      });
       return {
         ...game,
         player: {
