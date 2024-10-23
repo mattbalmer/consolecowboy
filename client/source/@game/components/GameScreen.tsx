@@ -127,7 +127,7 @@ export const GameScreen = ({
                   return <li key={i}>
                     ({i}) - {layer.status}
                     {layer.effects.map((effect, j) => {
-                      return <Typography key={j} variant={'body2'}>- {effect.id}</Typography>
+                      return <Typography key={j} variant={'body2'} sx={{ ml: 1 }}>- {effect.id}</Typography>
                     })}
                   </li>
                 })}
