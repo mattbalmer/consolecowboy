@@ -108,6 +108,7 @@ export type Player = {
   history: Record<string, [entered: number, completed: number]>,
   config: {
     autonext: boolean,
+    autodice: 'lowest' | 'highest' | null,
   },
   scripts: Pick<Script, 'id' | 'props'>[],
 }

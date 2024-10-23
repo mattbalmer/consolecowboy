@@ -12,8 +12,24 @@ import { GameError } from '@shared/errors/GameError';
 import { LevelController } from '@game/level-controllers/base';
 import { GameEffects } from '@shared/constants/effects';
 
+const getAutoDice = (game: Game): number => {
+  const dice = game.player.config.autodice;
+  if (!dice) {
+    return undefined;
+  }
+  const availableValues = game.player.dice
+    .filter(d => d.isAvailable)
+    .map(d => d.value);
+  if (dice === 'lowest') {
+    return Math.min(...availableValues);
+  } else if (dice === 'highest') {
+    return Math.max(...availableValues);
+  }
+}
+
 const consumeDice = (game: Game, args: CLIArgs<Record<string, any>, any>): Game => {
-  const dice = args.d?.[0];
+  const givenDice = args.d?.[0];
+  const dice = givenDice ?? getAutoDice(game);
 
   if (!dice) {
     throw new GameError('No valid dice given');

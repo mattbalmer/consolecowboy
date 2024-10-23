@@ -27,6 +27,7 @@ export const getInitialPlayerProps = (): Player => {
     history: {},
     config: {
       autonext: false,
+      autodice: 'lowest',
     },
     scripts: [],
   };
