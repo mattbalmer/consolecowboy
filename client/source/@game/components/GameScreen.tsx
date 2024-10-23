@@ -120,6 +120,7 @@ export const GameScreen = ({
               }}
             >
               <Typography variant={'h6'}>ICE is active!</Typography>
+              <Typography variant={'body1'}>{hoveredNode.ice.id} | Lvl{hoveredNode.ice.strength} {hoveredNode.ice.types.join(', ')}</Typography>
               <Typography variant={'body1'}>Layers:</Typography>
               <ul>
                 {hoveredNode.ice.layers.map((layer, i) => {

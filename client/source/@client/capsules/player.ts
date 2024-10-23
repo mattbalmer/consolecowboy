@@ -15,7 +15,11 @@ export const getInitialPlayerProps = (): Player => {
     dicePerRound: 3,
     xp: 0,
     stats: {
-      icebreaker: 1,
+      icebreaker: {
+        barrier: 1,
+        codegate: 1,
+        sentry: 1,
+      },
     },
     history: {},
     config: {

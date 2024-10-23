@@ -2,12 +2,15 @@ import { GameEffects } from '@shared/constants/effects';
 import { Game, Ice } from '@shared/types/game';
 import { appendMessage } from '@shared/utils/game/cli';
 
+export const ICE_TYPES = ['barrier', 'codegate', 'sentry'] as const;
+
 export const ICE = {
   NeuralKatana: () => ({
     id: 'NeuralKatana',
     activationCount: 0,
     status: 'READY',
     strength: 1,
+    types: ['barrier'],
     layers: [
       {
         status: 'ACTIVE',
@@ -40,7 +43,11 @@ export const ICE = {
       };
     },
     break(game: Game, layer: number): Game {
-      if (game.player.stats.icebreaker >= this.strength) {
+      const highest = Object.entries(game.player.stats.icebreaker)
+        .filter(([type]) => this.types.includes(type))
+        .reduce((highest, [, value]) => Math.max(highest, value), 0);
+
+      if (highest >= this.strength) {
         this.layers[layer].status = 'BROKEN';
         if (this.layers.filter(l => l.status === 'ACTIVE').length === 0) {
           this.status = 'BROKEN';

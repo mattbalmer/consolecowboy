@@ -49,7 +49,10 @@ export const OverworldScreen = ({
         <Typography variant={'body1'}>XP: {player.xp}</Typography>
         <Typography variant={'body1'}>Actions per turn: {player.actions}</Typography>
         <Typography variant={'body1'}>RAM: {player.ram}</Typography>
-        <Typography variant={'body1'}>Icebreaker: {player.stats.icebreaker}</Typography>
+        <Typography variant={'body1'}>Icebreaker:</Typography>
+        <Typography variant={'body1'} sx={{ ml: 1}}>Barrier: {player.stats.icebreaker.barrier}</Typography>
+        <Typography variant={'body1'} sx={{ ml: 1}}>Sentry: {player.stats.icebreaker.sentry}</Typography>
+        <Typography variant={'body1'} sx={{ ml: 1}}>Codegate: {player.stats.icebreaker.codegate}</Typography>
       </FlexCol>
       <FlexCol>
         <Typography variant={'subtitle1'}>Actions</Typography>

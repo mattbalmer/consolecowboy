@@ -8,6 +8,7 @@ export default class extends LevelController {
   levelID = '4';
 
   hasShownBreak = false;
+  hasShownNoise = false;
   hasShownMultilayer = false;
 
   onChange({ game }: { game: Game }) {
@@ -18,7 +19,7 @@ export default class extends LevelController {
         ...game.stack,
         GameEffects.SimpleDialog({
           title: 'ICEBreaker',
-          body: `To break ICE, you can use "break -l <layer#> -d <dice>" (eg. "break -l 0 -d ${nextDie?.value || '<dice>'})`,
+          body: `To break ICE, you can use "break -l <layer#> -d <dice>" (eg. "break -l 0 -d ${nextDie?.value || '<dice>'}).`,
         }),
       ];
     }
@@ -34,6 +35,17 @@ export default class extends LevelController {
       ];
     }
 
+    if (game.hovered === 'C' && !this.hasShownNoise) {
+      this.hasShownNoise = true;
+      game.stack = [
+        ...game.stack,
+        GameEffects.SimpleDialog({
+          title: 'Noise',
+          body: `Almost every action generates noise (including moving!). ICEBreaking is particularly noise - each layer generates 1 noise when broken, and breaking the entire ICE generates noise equal to the dice value used minus the ICE's strength (eg. "break -d 4" on ICE of Strength 2 generates 2 noise.). Noise will dissipate over time, but it can alert the Net Corps to your presence.`,
+        }),
+      ];
+    }
+
     return { game };
   };
 
@@ -45,6 +57,16 @@ export default class extends LevelController {
         game: appendMessage(game, {
           type: 'output',
           value: `Cheeky, eh? Use the 'break' command for now.`
+        })
+      }
+    }
+
+    if (game.hovered === 'B' && game.nodes['B'].ice.status !== 'BROKEN' && !['config', 'next', 'break'].includes(command)) {
+      return {
+        shouldContinue: false,
+        game: appendMessage(game, {
+          type: 'output',
+          value: `Break the ICE before moving on`
         })
       }
     }

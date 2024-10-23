@@ -8,13 +8,14 @@ export type CompassCardinal = 'N' | 'S' | 'E' | 'W';
 export type CompassDir = CompassCardinal | 'NE' | 'NW' | 'SE' | 'SW';
 
 export type IceStatus = 'READY' | 'ACTIVE' | 'BROKEN' | 'DEACTIVATED' | 'COMPLETE';
-
+export type IceType = 'barrier' | 'sentry' | 'codegate';
 export type Ice<ID extends string = string> = {
   id: ID,
   layers: {
     status: 'ACTIVE' | 'BROKEN' | 'DEACTIVATED',
     effects: GameEffect[],
   }[],
+  types: IceType[],
   activationCount: number,
   strength: number,
   status: IceStatus,
@@ -84,7 +85,11 @@ export type Player = {
   dicePerRound: number,
   xp: number,
   stats: {
-    icebreaker: number,
+    icebreaker: {
+      barrier: number,
+      sentry: number,
+      codegate: number,
+    },
   },
   /**
    * Record of level IDs to number of times entered & completed
@@ -133,9 +138,7 @@ export type Game = {
     money: number,
     actions: number,
     actionsPerTurn: number,
-    stats: {
-      icebreaker: number,
-    },
+    stats: Player['stats'],
     conditions: Condition[],
     dice: GameDie[], // make this a map, but somehow track max available for the round too
     config: Player['config'],

@@ -46,15 +46,14 @@ export const HUD = ({
         <Typography variant={'subtitle1'}>Mental: {game.player.mental}</Typography>
       </FlexRow>
       <FlexRow sx={{ alignItems: 'center' }}>
-        <Typography variant={'subtitle1'} sx={{ ml: 2 }}>RAM: {game.player.ram.current} / {game.player.ram.max}</Typography>
+        <Typography variant={'subtitle1'} sx={{ ml: 0 }}>RAM: {game.player.ram.current} / {game.player.ram.max}</Typography>
       </FlexRow>
       <FlexRow sx={{ alignItems: 'center' }}>
-        <Typography variant={'subtitle1'} sx={{ ml: 2 }}>Money: {game.player.money}</Typography>
+        <Typography variant={'subtitle1'} sx={{ ml: 0 }}>Money: {game.player.money}</Typography>
       </FlexRow>
-      <FlexRow sx={{ alignItems: 'center' }}>
-        <Typography variant={'subtitle1'} sx={{ ml: 2 }}>ICEBreaker Power: {game.player.stats.icebreaker}</Typography>
-      </FlexRow>
-
+      <FlexCol sx={{ alignItems: 'center' }}>
+        <Typography variant={'subtitle1'} sx={{ ml: 0 }}>Icebreaker: {game.player.stats.icebreaker.barrier}/{game.player.stats.icebreaker.sentry}/{game.player.stats.icebreaker.codegate}</Typography>
+      </FlexCol>
     </FlexCol>
   </FlexRow>
 }

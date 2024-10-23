@@ -304,6 +304,9 @@ const Commands = {
     const didBreakLayer = hoveredNode.ice.layers[layer].status === 'BROKEN';
     const isICEBroken = hoveredNode.ice.status === 'BROKEN';
 
+    const diceUsed = args.d?.[0];
+    const noiseGeneratedFromExcess = diceUsed - hoveredNode.ice.strength;
+
     return {
       ...game,
       history: {
@@ -340,7 +343,7 @@ const Commands = {
           node: game.hovered,
           source: 'ice',
           actor: 'network',
-          amount: 2,
+          amount: noiseGeneratedFromExcess,
           round: game.round,
           duration: 3,
         }) : null,
