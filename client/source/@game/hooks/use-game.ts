@@ -99,8 +99,8 @@ export const useGame = ({
   }, [level, player]);
 
   useEffect(() => {
-    if (game.player.mental < 1) {
-      return setGame({
+    if (game.mode !== 'FROZEN' && game.player.mental < 1 && !game.stack.some((effect) => effect.id === 'finish.mental-drained')) {
+      setGame({
         ...game,
         stack: [
           ...game.stack,

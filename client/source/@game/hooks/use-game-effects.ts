@@ -19,6 +19,11 @@ export const useGameEffects = ({
   useEffect(() => {
     const effect = game.stack[0];
 
+    if (game.mode === 'FROZEN') {
+      console.log('game frozen - processing no effects');
+      return;
+    }
+
     if (effect) {
       console.log('trigger effect!', effect.id, { ...effect, trigger: null });
 
@@ -27,6 +32,7 @@ export const useGameEffects = ({
           return {
             ...prev,
             mode: 'VIEW',
+            stack: prev.stack.slice(1),
           };
         });
         setTimeout(() => {
@@ -34,7 +40,6 @@ export const useGameEffects = ({
             return {
               ...prev,
               mode: 'PLAY',
-              stack: prev.stack.slice(1),
             }
           });
         }, effect['amount']);
@@ -70,6 +75,7 @@ export const useGameEffects = ({
         });
       } else {
         setGame((prev) => {
+          console.log('trigger else', effect.id, prev.stack);
           prev.stack = prev.stack.slice(1);
           return {
             ...prev,
@@ -79,8 +85,7 @@ export const useGameEffects = ({
       }
       if (effect.id === 'finish.extraction') {
         onExtract(true);
-
-        setGame(effect.trigger(game));
+        // setGame(effect.trigger(game));
 
         setDialog({
           title: 'Extraction Complete',
@@ -92,9 +97,11 @@ export const useGameEffects = ({
           },
         });
       }
+
       if (effect.id === 'finish.mental-drained') {
         onExtract(false);
-        setGame(effect.trigger(game));
+        // setGame(effect.trigger(game));
+
         setDialog({
           title: 'Mental Drained',
           body: `You've run out of mental energy - emergency eject from the net.`,

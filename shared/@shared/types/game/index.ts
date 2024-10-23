@@ -136,7 +136,7 @@ export type NoiseEvent = {
 export type NoiseMap = Record<NodeID, NoiseEvent[]>
 
 export type Game = {
-  mode: 'PLAY' | 'VIEW',
+  mode: 'PLAY' | 'VIEW' | 'FROZEN',
   nodes: Record<NodeID, GameNode>,
   noise: NoiseMap,
   edges: Record<EdgeString, 'oneway' | 'bi'>,

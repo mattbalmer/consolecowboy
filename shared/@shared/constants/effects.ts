@@ -140,7 +140,7 @@ export const GameEffects = {
     trigger(game: Game): Game {
       return {
         ...game,
-        mode: 'VIEW',
+        mode: 'FROZEN',
         history: {
           ...game.history,
           terminal: [...game.history.terminal, {
@@ -156,7 +156,7 @@ export const GameEffects = {
     trigger(game: Game): Game {
       return {
         ...game,
-        mode: 'VIEW',
+        mode: 'FROZEN',
         history: {
           ...game.history,
           terminal: [...game.history.terminal, {

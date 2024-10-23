@@ -125,8 +125,16 @@ export const getDice = (quantity: number): GameDie[] => {
 
 export const gameFromLevel = (level: Level, player: Game['player']): Game => {
   const idTracker = new IDTracker();
-  const nodes = Object.entries(level.nodes)
-    .sort((a, b) => 'id' in a[1] ? -1 : 'id' in b[1] ? 0 : 1)
+  const sorted = (Object.entries(level.nodes) as [CoordString, Level['nodes'][CoordString]][])
+    .sort((a, b) => {
+      const aCoord = stringToCoord(a[0]);
+      const bCoord = stringToCoord(b[0]);
+      const distFromCenterA = Math.abs(0 - aCoord.x) + Math.abs(0 - aCoord.y);
+      const distFromCenterB = Math.abs(0 - bCoord.x) + Math.abs(0 - bCoord.y);
+      return 'id' in a[1] ? -1 : 'id' in b[1] ? 1 : distFromCenterA - distFromCenterB || aCoord.x - bCoord.x;
+    });
+
+  const nodes = sorted
     .reduce((
       acc,
       [coordString, node]: [CoordString, Level['nodes'][CoordString]],
