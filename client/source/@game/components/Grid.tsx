@@ -60,7 +60,7 @@ const Node = ({ id, coord, selected, exist, isVisited, wasExecuted, hasContent, 
       boxSizing: 'border-box',
       position: 'absolute',
     }}/>}
-    <Typography variant={'subtitle1'}>{id}{hasContent ? '*' : ''}</Typography>
+    <Typography variant={'subtitle1'}>{id}{hasContent ? wasExecuted ? '-' : '*' : ''}</Typography>
   </Box>
 }
 
