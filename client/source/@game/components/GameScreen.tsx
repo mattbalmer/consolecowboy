@@ -103,9 +103,8 @@ export const GameScreen = ({
           <Grid
             size={[-2, 2]}
             offset={level.offset}
-            hoveredNode={hoveredNode}
-            nodeMap={nodeMap}
             game={game}
+            derived={gameDerived}
           />
           {hoveredNode.ice && hoveredNode.ice.status === 'ACTIVE' &&
             <FlexCol

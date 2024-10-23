@@ -5,6 +5,7 @@ import { Box, Typography } from '@mui/material';
 import { coordToString } from '@game/utils/grid';
 import { FlexRow } from '@client/components/FlexRow';
 import { useMemo } from 'react';
+import { GameDerived } from '@game/hooks/use-game';
 
 const Spacer = () => {
   return <Box
@@ -13,7 +14,7 @@ const Spacer = () => {
   />
 }
 
-const Node = ({ id, coord, selected, exist, isVisited, wasExecuted, hasContent }: {
+const Node = ({ id, coord, selected, exist, isVisited, wasExecuted, hasContent, noise, }: {
   id: string,
   coord: string,
   selected: boolean,
@@ -21,6 +22,7 @@ const Node = ({ id, coord, selected, exist, isVisited, wasExecuted, hasContent }
   isVisited?: boolean,
   wasExecuted?: boolean,
   hasContent?: boolean,
+  noise?: number,
 }) => {
   const color = selected ? '#c44'
     : wasExecuted ? '#454'
@@ -43,8 +45,21 @@ const Node = ({ id, coord, selected, exist, isVisited, wasExecuted, hasContent }
       justifyContent: 'center',
       alignItems: 'center',
       boxSizing: 'border-box',
+      position: 'relative',
     }}
   >
+    {noise > 0 && <Box sx={{
+      width: 54 + (Math.min(5, noise) * 3),
+      height: 54 + (Math.min(5, noise) * 3),
+      boxShadow:
+        `inset 0 0 ${Math.min(10, noise) * 2}px rgba(255,255,255,${Math.min(10, noise) * 0.05 + 0.5})`,
+      borderRadius: `50%`,
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      boxSizing: 'border-box',
+      position: 'absolute',
+    }}/>}
     <Typography variant={'subtitle1'}>{id}{hasContent ? '*' : ''}</Typography>
   </Box>
 }
@@ -86,17 +101,16 @@ const Edge = ({ connecting, coord, dirs }: {
 
 export const Grid = ({
   size,
-  hoveredNode,
-  nodeMap,
   game,
+  derived,
   offset = [0,0],
 }: {
   size: [number, number],
   offset: [number, number],
-  hoveredNode: GameNode,
-  nodeMap: NodeMap,
+  derived: GameDerived,
   game: Game,
 }) => {
+  const { hoveredNode, nodeMap } = derived;
   const sizeList = Array
     .from({ length: size[1] - size[0] + 1 }, (_, i) => i + size[0])
     .reduce((s, n) => [...s, n, n + 0.5], [])
@@ -116,10 +130,11 @@ export const Grid = ({
         >
           {sizeList.slice(0).map(y => {
             const coordStr = coordToString({ x, y });
-            const node = game.nodes[nodeMap[coordStr]];
+            const nodeID = nodeMap[coordStr];
+            const node = game.nodes[nodeID];
             if (x % 1 === 0 && y % 1 === 0) {
               return <Node
-                id={nodeMap[coordStr]}
+                id={nodeID}
                 key={coordStr}
                 coord={coordStr}
                 selected={coordStr === hoveredNodeXY}
@@ -127,6 +142,7 @@ export const Grid = ({
                 wasExecuted={node?.wasExecuted}
                 isVisited={node?.isVisited}
                 hasContent={!!node?.content}
+                noise={derived.noise[nodeID]}
               />
             } else {
               return <Spacer key={coordStr} />
