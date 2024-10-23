@@ -5,8 +5,9 @@ export const savedPlayerToGamePlayer = (savedPlayer: Player): Game['player'] => 
   return {
     mental: savedPlayer.mental,
     ram: {
-      max: savedPlayer.ram,
-      current: savedPlayer.ram,
+      max: savedPlayer.ram.max,
+      current: savedPlayer.ram.max,
+      recovery: savedPlayer.ram.recovery,
     },
     money: savedPlayer.money,
     actions: savedPlayer.actions,

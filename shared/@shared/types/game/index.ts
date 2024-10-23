@@ -79,7 +79,10 @@ export type Condition = {
 export type Player = {
   mental: number,
   bodyHP: number,
-  ram: number,
+  ram: {
+    max: number,
+    recovery: number,
+  },
   money: number,
   actions: number,
   dicePerRound: number,
@@ -134,6 +137,7 @@ export type Game = {
     ram: {
       current: number,
       max: number,
+      recovery: number,
     },
     money: number,
     actions: number,

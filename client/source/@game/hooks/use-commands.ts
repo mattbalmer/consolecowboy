@@ -258,6 +258,10 @@ const Commands = {
         actions: game.player.actionsPerTurn,
         dice: getDice(game.player.actionsPerTurn),
         mental: game.player.mental - 1,
+        ram: {
+          ...game.player.ram,
+          current: game.player.ram.current + game.player.ram.recovery,
+        },
       },
     };
   },
@@ -285,6 +289,13 @@ const Commands = {
       });
     }
 
+    if (game.player.ram.current < 2) {
+      return appendMessage(game, {
+        type: 'error',
+        value: `Not enough RAM to drill ICE`,
+      });
+    }
+
     try {
       game = consumeDice(game, args);
     } catch (error) {
@@ -309,6 +320,13 @@ const Commands = {
 
     return {
       ...game,
+      player: {
+        ...game.player,
+        ram: {
+          ...game.player.ram,
+          current: game.player.ram.current - 2,
+        }
+      },
       history: {
         ...game.history,
         terminal: [
@@ -365,6 +383,13 @@ const Commands = {
       });
     }
 
+    if (game.player.ram.current < 1) {
+      return appendMessage(game, {
+        type: 'error',
+        value: `Not enough RAM to drill ICE`,
+      });
+    }
+
     try {
       game = consumeDice(game, args);
     } catch (error) {
@@ -382,6 +407,13 @@ const Commands = {
     game = hoveredNode.ice.complete(game);
     return {
       ...game,
+      player: {
+        ...game.player,
+        ram: {
+          ...game.player.ram,
+          current: game.player.ram.current - 1,
+        }
+      },
       history: {
         ...game.history,
         terminal: [

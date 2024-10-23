@@ -9,7 +9,10 @@ export const getInitialPlayerProps = (): Player => {
   return {
     mental: 10,
     bodyHP: 5,
-    ram: 3,
+    ram: {
+      max: 3,
+      recovery: 1,
+    },
     money: 0,
     actions: 3,
     dicePerRound: 3,
