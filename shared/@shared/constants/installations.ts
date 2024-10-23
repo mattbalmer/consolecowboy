@@ -2,6 +2,7 @@ import { Installation, NodeID } from '@shared/types/game';
 import { GameEffects } from '@shared/constants/effects';
 import { appendMessage } from '@shared/utils/game/cli';
 import { Scripts } from '@shared/constants/scripts';
+import { GameError } from '@shared/errors/GameError';
 
 export const Installations = {
   Wallet: ({ amount }: { amount: number }) => ({
@@ -78,10 +79,7 @@ export const Installations = {
           stack: [...game.stack, GameEffects.ExtractFromNetwork()],
         }
       } else {
-        return appendMessage(game, {
-          type: 'error',
-          value: `Connection is not open, use a different external connection.`,
-        });
+        throw new GameError(`Connection is not open, use a different external connection.`);
       }
     },
   }),

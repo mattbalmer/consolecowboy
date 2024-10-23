@@ -522,7 +522,21 @@ const Commands = {
     const node = game.nodes[game.hovered];
 
     try {
-      game = consumeDice(game, args);
+      if (node.content.type === 'trap') {
+        game = appendMessage(game, {
+          type: 'output',
+          value: `(${game.hovered}) Trap activated - ${node.content.id}`,
+        });
+        game = node.content.onExecute(game) ?? game;
+      }
+
+      if (node.content.type === 'installation') {
+        game = appendMessage(game, {
+          type: 'output',
+          value: `(${game.hovered}) Server content executed - ${node.content.id}`,
+        });
+        game = node.content.onExecute(game) ?? game;
+      }
     } catch (error) {
       if (error instanceof GameError) {
         return appendMessage(game, {
@@ -538,20 +552,17 @@ const Commands = {
     node.wasExecuted = true;
     node.content.status = 'EXECUTED';
 
-    if (node.content.type === 'trap') {
-      game = appendMessage(game, {
-        type: 'output',
-        value: `(${game.hovered}) Trap activated - ${node.content.id}`,
-      });
-      game = node.content.onExecute(game) ?? game;
-    }
-
-    if (node.content.type === 'installation') {
-      game = appendMessage(game, {
-        type: 'output',
-        value: `(${game.hovered}) Server content executed - ${node.content.id}`,
-      });
-      game = node.content.onExecute(game) ?? game;
+    try {
+      game = consumeDice(game, args);
+    } catch (error) {
+      if (error instanceof GameError) {
+        return appendMessage(game, {
+          type: error.type,
+          value: error.message,
+        });
+      } else {
+        throw error;
+      }
     }
 
     return {
