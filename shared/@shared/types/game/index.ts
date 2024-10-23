@@ -170,6 +170,7 @@ export type NodeMap = Record<CoordString, NodeID>;
 
 export const COMMANDS = {
   'm': 'move',
+  'mv': 'move',
   'x': 'execute',
   'scripts': true,
   'run': true,

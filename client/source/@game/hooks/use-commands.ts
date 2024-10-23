@@ -61,6 +61,7 @@ const consumeDice = (game: Game, args: CLIArgs<Record<string, any>, any>): Game 
 
 const Commands = {
   m: game => game,
+  mv: game => game,
   x: game => game,
   info: game => game,
   scripts: (game: Game) => {
@@ -592,13 +593,20 @@ const Commands = {
     const [key, value] = args._;
 
     if (!key) {
+      const keys = Object.keys(game.player.config);
+      keys.forEach(k => {
+        game = appendMessage(game, {
+          type: 'output',
+          value: `${k}: ${typeof game.player.config[k] === 'string' ? `'${game.player.config[k]}'` : game.player.config[k]}`
+        });
+      });
       return game;
     }
 
     if (!value) {
       return appendMessage(game, {
         type: 'output',
-        value: `Config value for '${key}': ${game.player.config[key]}`
+        value: `'${game.player.config[key]}'`
       });
     }
 
