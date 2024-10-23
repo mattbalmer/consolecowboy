@@ -105,9 +105,23 @@ export type CLIMessage = {
   value: string,
 }
 
+export type NoiseActor = 'player' | 'daemon' | 'active-defense' | 'network';
+// todo: figure out good way to abstract out differing types of related events, eg. trap activated vs broken, or ice drilled vs activated etc.
+export type NoiseSource = 'program' | 'script' | 'ice' | 'trap' | 'installation';
+export type NoiseEvent = {
+  actor: NoiseActor,
+  source: NoiseSource,
+  amount: number,
+  round: number,
+  duration?: number,
+  decay?: number,
+};
+export type NoiseMap = Record<NodeID, NoiseEvent[]>
+
 export type Game = {
   mode: 'PLAY' | 'VIEW',
   nodes: Record<NodeID, GameNode>,
+  noise: NoiseMap,
   edges: Record<EdgeString, 'oneway' | 'bi'>,
   hovered: NodeID,
   player: {

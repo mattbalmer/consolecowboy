@@ -1,5 +1,5 @@
 import { Level } from '@shared/types/game/level';
-import { CoordString, Game, GameDie, NodeMap } from '@shared/types/game';
+import { CoordString, Game, GameDie, NodeID, NodeMap } from '@shared/types/game';
 import { ICE } from '@shared/constants/ice';
 import { Installations } from '@shared/constants/installations';
 import { Traps } from '@shared/constants/traps';
@@ -45,6 +45,10 @@ export const createGame = (partial: Pick<Game, 'nodes' | 'player' | 'hovered'>):
     mode: 'PLAY',
     round: 0,
     edges,
+    noise: Object.keys(partial.nodes).reduce<Record<NodeID, []>>((a, n) => ({
+      ...a,
+      [n]: []
+    }), {}),
     stack: [],
     history: {
       nodes: [],

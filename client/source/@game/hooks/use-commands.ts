@@ -10,6 +10,7 @@ import { getDiceCounts } from '@shared/utils/game/dice';
 import { appendMessage, parseArgs } from '@shared/utils/game/cli';
 import { GameError } from '@shared/errors/GameError';
 import { LevelController } from '@game/level-controllers/base';
+import { GameEffects } from '@shared/constants/effects';
 
 const consumeDice = (game: Game, args: CLIArgs<Record<string, any>, any>): Game => {
   const dice = args.d?.[0];
@@ -88,6 +89,23 @@ const Commands = {
         ...game.history,
         nodes: [...game.history.nodes, game.hovered],
       },
+      stack: [
+        ...game.stack,
+        GameEffects.AddNoise({
+          node: game.hovered,
+          source: 'program',
+          actor: 'player',
+          amount: 1,
+          round: game.round,
+        }),
+        GameEffects.AddNoise({
+          node: target,
+          source: 'program',
+          actor: 'player',
+          amount: 1,
+          round: game.round,
+        }),
+      ],
     };
 
     if (game.nodes[target].ice) {
@@ -137,6 +155,23 @@ const Commands = {
         ...game.history,
         nodes: [...game.history.nodes, game.hovered],
       },
+      stack: [
+        ...game.stack,
+        GameEffects.AddNoise({
+          node: game.hovered,
+          source: 'program',
+          actor: 'player',
+          amount: 1,
+          round: game.round,
+        }),
+        GameEffects.AddNoise({
+          node: target,
+          source: 'program',
+          actor: 'player',
+          amount: 1,
+          round: game.round,
+        }),
+      ],
     };
 
     if (game.nodes[target].ice) {
@@ -180,6 +215,23 @@ const Commands = {
         ...game.history,
         nodes: [...game.history.nodes, game.hovered],
       },
+      stack: [
+        ...game.stack,
+        GameEffects.AddNoise({
+          node: game.hovered,
+          source: 'program',
+          actor: 'player',
+          amount: 1,
+          round: game.round,
+        }),
+        GameEffects.AddNoise({
+          node: target,
+          source: 'program',
+          actor: 'player',
+          amount: 1,
+          round: game.round,
+        }),
+      ],
     };
 
     if (game.nodes[target].ice) {
@@ -266,6 +318,33 @@ const Commands = {
           },
         ],
       },
+      stack: [
+        ...game.stack,
+        GameEffects.AddNoise({
+          node: game.hovered,
+          source: 'program',
+          actor: 'player',
+          amount: 1,
+          round: game.round,
+          duration: 2,
+        }),
+        didBreakLayer ? GameEffects.AddNoise({
+          node: game.hovered,
+          source: 'ice',
+          actor: 'network',
+          amount: 1,
+          round: game.round,
+          duration: 2,
+        }) : null,
+        isICEBroken ? GameEffects.AddNoise({
+          node: game.hovered,
+          source: 'ice',
+          actor: 'network',
+          amount: 2,
+          round: game.round,
+          duration: 3,
+        }) : null,
+      ],
     };
   },
   drill: (game, args, { hoveredNode }) => {
@@ -310,6 +389,25 @@ const Commands = {
           },
         ],
       },
+      stack: [
+        ...game.stack,
+        GameEffects.AddNoise({
+          node: game.hovered,
+          source: 'program',
+          actor: 'player',
+          amount: 1,
+          round: game.round,
+          duration: 2,
+        }),
+        GameEffects.AddNoise({
+          node: game.hovered,
+          source: 'ice',
+          actor: 'network',
+          amount: 1,
+          round: game.round,
+          duration: 2,
+        }),
+      ],
     };
   },
   execute: (game, args, { hoveredNode }) => {
@@ -366,6 +464,25 @@ const Commands = {
 
     return {
       ...game,
+      stack: [
+        ...game.stack,
+        GameEffects.AddNoise({
+          node: game.hovered,
+          source: 'program',
+          actor: 'player',
+          amount: 1,
+          round: game.round,
+          duration: 2,
+        }),
+        GameEffects.AddNoise({
+          node: game.hovered,
+          source: node.content.type,
+          actor: 'network',
+          amount: 1,
+          round: game.round,
+          duration: 2,
+        }),
+      ],
     };
   },
   config: (game, args) => {

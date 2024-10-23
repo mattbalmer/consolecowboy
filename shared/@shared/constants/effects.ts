@@ -1,7 +1,29 @@
-import { Condition, Game, GameEffect } from '@shared/types/game';
+import { Condition, Game, GameEffect, NoiseEvent } from '@shared/types/game';
 import { appendMessage } from '@shared/utils/game/cli';
 
 export const GameEffects = {
+  AddNoise: ({
+    node,
+    ...noise
+  }: {
+    node: string,
+  } & NoiseEvent) => ({
+    id: 'noise.add',
+    node,
+    noise,
+    trigger(game) {
+      return {
+        ...game,
+        noise: {
+          ...game.noise,
+          [this.node]: [
+            ...(game.noise[this.node] || []),
+            this.noise,
+          ],
+        },
+      };
+    }
+  }),
   Execute: ({ target }: { target: string }) => ({
     id: 'execute',
     target,

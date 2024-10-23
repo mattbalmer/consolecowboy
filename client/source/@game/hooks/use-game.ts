@@ -1,16 +1,31 @@
 import { Level } from '@shared/types/game/level';
-import { Game, GameNode, NodeMap } from '@shared/types/game';
+import { Game, GameNode, NodeID, NodeMap, NoiseEvent } from '@shared/types/game';
 import { useEffect, useMemo, useState } from 'react';
 import { gameFromLevel, invertNodes } from '@shared/utils/game';
 import { coordToString } from '@shared/utils/game/grid';
 import { getControllerFor } from '@game/level-controllers';
 import { useCommands } from '@game/hooks/use-commands';
-import { appendMessage } from '@shared/utils/game/cli';
 import { GameEffects } from '@shared/constants/effects';
 
 export type GameDerived = {
   hoveredNode: GameNode,
-  nodeMap: NodeMap
+  nodeMap: NodeMap,
+  noise: {
+    [nodeID: string]: number,
+    total: number,
+  },
+}
+
+const noiseAtNode = (round: number, events: NoiseEvent[]): number => {
+  return events.reduce((sum, event) => {
+    const decay = event.decay || 1;
+    const duration = event.duration || 1;
+    const lastRound = event.round + (duration - 1);
+    const roundsSince = round - lastRound;
+    const noiseFromEvent = Math.max(0, event.amount - (roundsSince * decay));
+
+    return sum + noiseFromEvent;
+  }, 0);
 }
 
 const getGameDerived = (game: Game): GameDerived => {
@@ -18,9 +33,23 @@ const getGameDerived = (game: Game): GameDerived => {
   const nodeMap = invertNodes(game.nodes);
   const hoveredNode = game.nodes[nodeMap[hoveredNodeXY]];
 
+  let totalNoise = 0;
+  const noiseMap = Object.entries(game.noise).reduce<Record<NodeID, number>>(
+    (map, [node, noiseEvents]) => {
+      map[node] = noiseAtNode(game.round, noiseEvents);
+      totalNoise += map[node];
+      return map;
+    },
+    {}
+  );
+
   return {
     hoveredNode,
     nodeMap,
+    noise: {
+      ...noiseMap,
+      total: totalNoise,
+    }
   };
 }
 
@@ -50,6 +79,7 @@ export const useGame = ({
 
   console.log('level', { ...level });
   console.log('game', { ...game });
+  console.log('derived', { ...gameDerived });
 
   const onCommand = useCommands({
     game,

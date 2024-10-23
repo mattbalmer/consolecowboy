@@ -2,8 +2,6 @@ import { ComponentProps, useEffect, useState } from 'react';
 import { GameEffects } from '@shared/constants/effects';
 import { Game } from '@shared/types/game';
 import { SimpleDialog } from '@client/components/SimpleDialog';
-import { playerCapsule } from '@client/capsules/player';
-import { transitionsCapsule } from '@client/capsules/transitions';
 
 export const useGameEffects = ({
   game,
