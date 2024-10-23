@@ -1,5 +1,6 @@
 import type { OverworldState } from '@overworld/hooks/use-overworld';
 import { useEffect } from 'react';
+import { FEEDBACK_URL } from '@client/constants/feedback';
 
 export const useOverworldController = (state: OverworldState) => {
   useEffect(() => {
@@ -30,6 +31,19 @@ export const useOverworldController = (state: OverworldState) => {
         acknowledge: 'Ok',
         onFinish() {
           state.setDialog(null);
+        },
+      });
+    }
+
+    if (state.player.history['5']?.[1] > 0 && (state.player.history['6'] || [0,0])[0] < 1) {
+      state.setMisc({ ...state.misc, hasShownFeedbackDialog: true });
+      state.setDialog({
+        title: `Feedback`,
+        body: `Please give your feedback on the game so far. What did you like? What could be improved?`,
+        acknowledge: 'Ok',
+        onFinish() {
+          state.setDialog(null);
+          window.open(FEEDBACK_URL, '_blank');
         },
       });
     }

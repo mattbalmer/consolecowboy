@@ -16,6 +16,7 @@ export const useOverworld = () => {
   const [misc, setMisc] = useState({
     hasShownIntroDialog: false,
     hasShownDeadDialog: false,
+    hasShownFeedbackDialog: false,
   });
 
   const state = {

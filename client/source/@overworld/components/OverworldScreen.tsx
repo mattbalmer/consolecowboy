@@ -7,6 +7,7 @@ import { useOverworld } from '@overworld/hooks/use-overworld';
 import { SimpleDialog } from '@client/components/SimpleDialog';
 import { ConfirmDialog } from '@client/components/ConfirmDialog';
 import { getInitialPlayerProps } from '@client/capsules/player';
+import { FEEDBACK_URL } from '@client/constants/feedback';
 
 export const OverworldScreen = ({
   levels,
@@ -49,6 +50,7 @@ export const OverworldScreen = ({
         <Typography variant={'subtitle1'}>Actions</Typography>
         <Divider />
         <Button onClick={() => setShowConfirmReset(true)}>Reset Game</Button>
+        <Button href={FEEDBACK_URL} target={'_blank'}>Give Feedback</Button>
       </FlexCol>
     </FlexRow>
     <SimpleDialog
