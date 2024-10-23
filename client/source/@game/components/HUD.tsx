@@ -25,7 +25,7 @@ export const HUD = ({
       </FlexRow>
       <FlexRow sx={{ alignItems: 'center' }}>
         <Typography variant={'subtitle1'}>Content: {hoveredNode.content ?
-          <>{hoveredNode.content.type} ({hoveredNode.content.status.toLowerCase()})</>
+          <>({hoveredNode.content.status.toLowerCase()})</>
           : '--'}</Typography>
       </FlexRow>
     </FlexCol>
