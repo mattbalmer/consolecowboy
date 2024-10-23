@@ -1,5 +1,6 @@
 import { Game, Player } from '@shared/types/game';
 import { getDice } from '@shared/utils/game/index';
+import { Scripts } from '@shared/constants/scripts';
 
 export const savedPlayerToGamePlayer = (savedPlayer: Player): Game['player'] => {
   return {
@@ -18,5 +19,8 @@ export const savedPlayerToGamePlayer = (savedPlayer: Player): Game['player'] => 
     conditions: [],
     dice: getDice(savedPlayer.dicePerRound),
     config: savedPlayer.config,
+    scripts: savedPlayer.scripts.map(({ id, props }) =>
+      Scripts[id](props)
+    ),
   };
 }

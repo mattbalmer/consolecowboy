@@ -1,6 +1,7 @@
 import { Installation, NodeID } from '@shared/types/game';
 import { GameEffects } from '@shared/constants/effects';
 import { appendMessage } from '@shared/utils/game/cli';
+import { Scripts } from '@shared/constants/scripts';
 
 export const Installations = {
   Wallet: ({ amount }: { amount: number }) => ({
@@ -24,6 +25,23 @@ export const Installations = {
       return {
         ...game,
         stack: [...game.stack, GameEffects.Execute({ target: this.target })],
+      }
+    },
+  }),
+  ScriptStorage: <K extends keyof typeof Scripts>(scriptID: K, props: Parameters<typeof Scripts[K]>) => ({
+    id: 'server.script-storage',
+    scriptID,
+    scriptProps: props,
+    onExecute(game) {
+      return {
+        ...game,
+        player: {
+          ...game.player,
+          scripts: [
+            ...game.player.scripts,
+            Scripts[this.scriptID](this.scriptProps),
+          ]
+        }
       }
     },
   }),

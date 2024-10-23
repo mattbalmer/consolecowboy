@@ -67,7 +67,7 @@ export const GameEffects = {
           ...game.player,
           ram: {
             ...game.player.ram,
-            current: game.player.ram.current - this.amount
+            current: Math.max(0, game.player.ram.current - this.amount),
           }
         },
       };
@@ -83,7 +83,7 @@ export const GameEffects = {
           ...game.player,
           ram: {
             ...game.player.ram,
-            current: game.player.ram.current + this.amount
+            current: Math.min(game.player.ram.current + this.amount, game.player.ram.max)
           }
         },
       };

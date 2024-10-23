@@ -2,7 +2,7 @@ import { Command, CompassDir, Game } from '@shared/types/game';
 import { getDice } from '@shared/utils/game';
 import { useCallback, useState } from 'react';
 import { coordToString, getAdjacentCoords } from '@shared/utils/game/grid';
-import { replace } from '@shared/utils/arrays';
+import { removeRange, replace } from '@shared/utils/arrays';
 import { pick } from '@shared/utils/objects';
 import { GameDerived } from '@game/hooks/use-game';
 import { CLIArgs } from '@shared/types/game/cli';
@@ -47,6 +47,47 @@ const Commands = {
   m: game => game,
   x: game => game,
   info: game => game,
+  scripts: (game: Game) => {
+    return appendMessage(game, {
+      type: 'output',
+      value: `Available scripts: ${game.player.scripts.map(s => s.name).join(', ')}`
+    });
+  },
+  run: (game: Game, args: CLIArgs) => {
+    const name = args._[0];
+
+    if (!name) {
+      return appendMessage(game, {
+        type: 'error',
+        value: `No script name provided`
+      });
+    }
+
+    const i = game.player.scripts.findIndex(s => s.name.toLowerCase() === name);
+    const script = game.player.scripts[i];
+
+    if (i < 0) {
+      return appendMessage(game, {
+        type: 'error',
+        value: `Script not found: ${name}`
+      });
+    }
+
+    game = appendMessage(game, {
+      type: 'output',
+      value: `Running script: ${script.name}`
+    });
+
+    game = script.onExecute(game, args);
+
+    return {
+      ...game,
+      player: {
+        ...game.player,
+        scripts: removeRange(game.player.scripts, i, 1),
+      },
+    }
+  },
   move: (game, args: CLIArgs<void, [target: string]>) => {
     const target = args._[0]?.toUpperCase();
     const validMoveCoords = getAdjacentCoords(game);
@@ -260,7 +301,7 @@ const Commands = {
         mental: game.player.mental - 1,
         ram: {
           ...game.player.ram,
-          current: game.player.ram.current + game.player.ram.recovery,
+          current: Math.min(game.player.ram.current + game.player.ram.recovery, game.player.ram.max),
         },
       },
     };
@@ -324,7 +365,7 @@ const Commands = {
         ...game.player,
         ram: {
           ...game.player.ram,
-          current: game.player.ram.current - 2,
+          current: Math.max(0, game.player.ram.current - 2),
         }
       },
       history: {
@@ -411,7 +452,7 @@ const Commands = {
         ...game.player,
         ram: {
           ...game.player.ram,
-          current: game.player.ram.current - 1,
+          current: Math.max(0, game.player.ram.current - 1),
         }
       },
       history: {
@@ -628,6 +669,8 @@ export const useCommands = ({
     if (command === 'execute') {
       return executeCommand('execute', game, commandArgs, gameDerived);
     }
+
+    return executeCommand(command, game, commandArgs, gameDerived);
   }, [game, gameDerived]);
 
   return useCallback((command: Command, ...rawArgs: string[]) => {

@@ -28,6 +28,7 @@ export const getInitialPlayerProps = (): Player => {
     config: {
       autonext: false,
     },
+    scripts: [],
   };
 }
 

@@ -1,3 +1,4 @@
+import { CLIArgs } from '@shared/types/game/cli';
 
 export type Coord = { x: number, y: number };
 export type CoordString = `${number},${number}`;
@@ -48,6 +49,13 @@ export type Trap = {
   amount?: number,
   duration?: number,
   onExecute: (game: Game) => Game,
+}
+
+export type Script <P = any> = {
+  id: string,
+  name: string,
+  props: P,
+  onExecute: (game: Game, args: CLIArgs) => Game,
 }
 
 export type NodeContent = {
@@ -101,6 +109,7 @@ export type Player = {
   config: {
     autonext: boolean,
   },
+  scripts: Pick<Script, 'id' | 'props'>[],
 }
 
 export type GameDie = {
@@ -146,6 +155,7 @@ export type Game = {
     conditions: Condition[],
     dice: GameDie[], // make this a map, but somehow track max available for the round too
     config: Player['config'],
+    scripts: Script[],
   },
   stack: GameEffect[],
   round: number,
@@ -160,6 +170,8 @@ export type NodeMap = Record<CoordString, NodeID>;
 export const COMMANDS = {
   'm': 'move',
   'x': 'execute',
+  'scripts': true,
+  'run': true,
   'next': true,
   'move': true,
   'nav': true,
