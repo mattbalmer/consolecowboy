@@ -47,6 +47,16 @@ export default class extends LevelController {
       }
     }
 
+    if (game.hovered === 'B' && !game.nodes['B'].wasExecuted && !['x', 'execute', 'next'].includes(command)) {
+      return {
+        shouldContinue: false,
+        game: appendMessage(game, {
+          type: 'output',
+          value: `You need to "execute" on a server to steal the wallet's contents.`
+        })
+      }
+    }
+
     const nextDie = game.player.dice.find(d => d.isAvailable);
     return {
       shouldContinue: true,

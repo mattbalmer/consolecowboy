@@ -3,6 +3,7 @@ import { GameEffects } from '@shared/constants/effects';
 import { Game } from '@shared/types/game';
 import { SimpleDialog } from '@client/components/SimpleDialog';
 import { playerCapsule } from '@client/capsules/player';
+import { transitionsCapsule } from '@client/capsules/transitions';
 
 export const useGameEffects = ({
   game,
@@ -15,7 +16,7 @@ export const useGameEffects = ({
   setDialog: ReturnType<typeof useState<
     Omit<ComponentProps<typeof SimpleDialog>, 'id'>
   >>[1],
-  onExtract: () => void,
+  onExtract: (success: boolean) => void,
 }) => {
   useEffect(() => {
     const effect = game.stack[0];
@@ -79,7 +80,7 @@ export const useGameEffects = ({
         });
       }
       if (effect.id === 'finish.extraction') {
-        onExtract();
+        onExtract(true);
 
         setGame(effect.trigger(game));
 
@@ -94,16 +95,13 @@ export const useGameEffects = ({
         });
       }
       if (effect.id === 'finish.mental-drained') {
+        onExtract(false);
         setGame(effect.trigger(game));
         setDialog({
           title: 'Mental Drained',
           body: `You've run out of mental energy - emergency eject from the net.`,
           acknowledge: 'Okay',
           onClose: () => {
-            const savedPlayer = playerCapsule.get('player');
-            savedPlayer.bodyHP -= 1;
-            savedPlayer.mental = 10;
-            playerCapsule.set('player', savedPlayer);
             window.location.href = '/play';
             setDialog(null);
           },

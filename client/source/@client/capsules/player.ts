@@ -13,6 +13,7 @@ export const getInitialPlayerProps = (): Player => {
     money: 0,
     actions: 3,
     dicePerRound: 3,
+    xp: 0,
     stats: {
       icebreaker: 1,
     },

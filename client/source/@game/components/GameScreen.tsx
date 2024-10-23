@@ -12,6 +12,7 @@ import { playerCapsule } from '@client/capsules/player';
 import { HUD } from '@game/components/HUD';
 import { useGame } from '@game/hooks/use-game';
 import { useGameEffects } from '@game/hooks/use-game-effects';
+import { transitionsCapsule } from '@client/capsules/transitions';
 
 const savePlayer = (levelID: string, game: Game) => {
   const savedPlayer = playerCapsule.get('player');
@@ -66,8 +67,26 @@ export const GameScreen = ({
     game,
     setGame,
     setDialog,
-    onExtract: () => {
-      savePlayer(levelID, game);
+    onExtract: (success: boolean) => {
+      if (success) {
+        savePlayer(levelID, game);
+        transitionsCapsule.set('extraction', {
+          levelID,
+          success: true,
+          game,
+        });
+      } else {
+        const savedPlayer = playerCapsule.get('player');
+        savedPlayer.bodyHP -= 1;
+        savedPlayer.mental = 10;
+        playerCapsule.set('player', savedPlayer);
+
+        transitionsCapsule.set('extraction', {
+          levelID,
+          success: false,
+          game,
+        });
+      }
     },
   });
 

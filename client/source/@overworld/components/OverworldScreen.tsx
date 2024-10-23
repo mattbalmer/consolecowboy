@@ -6,8 +6,10 @@ import { FlexRow } from '@client/components/FlexRow';
 import { useOverworld } from '@overworld/hooks/use-overworld';
 import { SimpleDialog } from '@client/components/SimpleDialog';
 import { ConfirmDialog } from '@client/components/ConfirmDialog';
-import { getInitialPlayerProps } from '@client/capsules/player';
+import { playerCapsule } from '@client/capsules/player';
 import { FEEDBACK_URL } from '@client/constants/feedback';
+import { useEffect } from 'react';
+import { transitionsCapsule } from '@client/capsules/transitions';
 
 export const OverworldScreen = ({
   levels,
@@ -22,7 +24,9 @@ export const OverworldScreen = ({
 
   const handleReset = () => {
     setShowConfirmReset(false);
-    setPlayer(getInitialPlayerProps());
+    playerCapsule.flush();
+    transitionsCapsule.flush();
+    window.location.reload();
   };
 
   return <FlexCol sx={{ flexGrow: 1, p: 2 }}>
@@ -42,6 +46,7 @@ export const OverworldScreen = ({
         <Typography variant={'body1'}>HP: {player.bodyHP}</Typography>
         <Typography variant={'body1'}>Mental HP: {player.mental}</Typography>
         <Typography variant={'body1'}>Money: {player.money}</Typography>
+        <Typography variant={'body1'}>XP: {player.xp}</Typography>
         <Typography variant={'body1'}>Actions per turn: {player.actions}</Typography>
         <Typography variant={'body1'}>RAM: {player.ram}</Typography>
         <Typography variant={'body1'}>Icebreaker: {player.stats.icebreaker}</Typography>

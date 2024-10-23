@@ -82,6 +82,7 @@ export type Player = {
   money: number,
   actions: number,
   dicePerRound: number,
+  xp: number,
   stats: {
     icebreaker: number,
   },

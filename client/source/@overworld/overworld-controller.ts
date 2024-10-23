@@ -47,7 +47,30 @@ export const useOverworldController = (state: OverworldState) => {
         },
       });
     }
-  }, [state.player.history]);
+
+    if (state.extraction?.success) {
+      const timesCompleted = state.player.history[state.extraction.levelID]?.[1];
+      if (timesCompleted === 1) {
+        state.setPlayer({
+          ...state.player,
+          xp: state.player.xp += 10,
+        });
+        state.setExtraction(null);
+
+        if (state.extraction?.levelID === '1') {
+          state.setDialog({
+            title: 'Extraction Successful',
+            body: 'You have successfully extracted from the level. Each time you do this, you will gain 10XP.',
+            acknowledge: 'Continue',
+            onFinish: () => {
+              state.setDialog(null);
+            },
+          });
+        }
+      }
+    }
+
+  }, [state.player.history, state.extraction]);
 
   return {};
 }
