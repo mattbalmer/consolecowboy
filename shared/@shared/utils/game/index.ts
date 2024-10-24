@@ -174,7 +174,7 @@ export const gameFromLevel = (level: Level, player: Game['player']): Game => {
     })
   ) ?? [];
 
-  const hovered = nodeSpecifierToID(nodes, level.start);
+  const hovered = level.start ? nodeSpecifierToID(nodes, level.start) : 'A';
 
   nodes[hovered].isVisited = true;
 
