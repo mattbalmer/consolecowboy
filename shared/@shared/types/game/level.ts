@@ -1,7 +1,8 @@
-import { Content, CoordString, IceStatus, NodeContent, NodeID } from '@shared/types/game/index';
+import { Content, CoordString, Daemon, IceStatus, NodeContent, NodeID } from '@shared/types/game/index';
 import { ICE } from '@shared/constants/ice';
 import { Installations } from '@shared/constants/installations';
 import { Traps } from '@shared/constants/traps';
+import { Daemons } from '@shared/constants/daemons';
 
 // TODO idealistic
 // export type LevelICE<K extends keyof typeof ICE> = {
@@ -31,6 +32,13 @@ export type LevelContent<T extends Content['type'], K extends T extends 'install
   args: Record<string, unknown> | unknown[] | null | undefined,
 }
 
+export type LevelDaemon<K extends keyof typeof Daemons> = {
+  id: K,
+  node: Daemon['node'],
+  status: Daemon['status'],
+  args: Record<string, unknown> | null | undefined,
+}
+
 export type Level = {
   nodes: Record<CoordString, {
     id?: NodeID,
@@ -40,4 +48,5 @@ export type Level = {
   }>,
   start: string,
   offset?: [x: number, y: number],
+  daemons?: LevelDaemon<keyof typeof Daemons>[],
 }

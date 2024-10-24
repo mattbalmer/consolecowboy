@@ -40,6 +40,7 @@
       }
     },
     "2,1": {
+      "id": "D",
       "ice": {
         "key": "NeuralKatana",
         "status": "READY",
@@ -56,5 +57,12 @@
   "offset": [
     -1,
     -1
+  ],
+  "daemons": [
+    {
+      "id": "Hunter",
+      "status": "ACTIVE",
+      "node": "D"
+    }
   ]
 }

@@ -1,11 +1,10 @@
 import { FlexCol } from '@client/components/FlexCol';
 import * as React from 'react';
-import { CoordString, Dir, EdgeString, Game, GameNode, NodeID, NodeMap } from '@game/types';
+import { CoordString, Dir, EdgeString, Game, GameDerived } from '@game/types';
 import { Box, Typography } from '@mui/material';
 import { coordToString } from '@game/utils/grid';
 import { FlexRow } from '@client/components/FlexRow';
 import { useMemo } from 'react';
-import { GameDerived } from '@game/hooks/use-game';
 
 const Spacer = () => {
   return <Box

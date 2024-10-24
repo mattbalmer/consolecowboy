@@ -1,16 +1,16 @@
-import { Command, CompassDir, Game } from '@shared/types/game';
+import { BehaviorArgs, Command, CompassDir, Game } from '@shared/types/game';
 import { getDice } from '@shared/utils/game';
 import { useCallback, useState } from 'react';
 import { coordToString, getAdjacentCoords } from '@shared/utils/game/grid';
 import { removeRange, replace } from '@shared/utils/arrays';
 import { pick } from '@shared/utils/objects';
-import { GameDerived } from '@game/hooks/use-game';
 import { CLIArgs } from '@shared/types/game/cli';
 import { getDiceCounts } from '@shared/utils/game/dice';
 import { appendMessage, parseArgs } from '@shared/utils/game/cli';
 import { GameError } from '@shared/errors/GameError';
 import { LevelController } from '@game/level-controllers/base';
 import { GameEffects } from '@shared/constants/effects';
+import { GameDerived } from '@shared/types/game';
 
 const getAutoDice = (game: Game): number => {
   const dice = game.player.config.autodice;
@@ -57,6 +57,20 @@ const consumeDice = (game: Game, args: CLIArgs<Record<string, any>, any>): Game 
       }]),
     },
   };
+}
+
+const runDaemons = (args: BehaviorArgs): Game => {
+  let newGame = args.game;
+  newGame.daemons.forEach(daemon => {
+    daemon.behaviors.forEach(([trigger, behaviors]) => {
+      if (trigger.shouldRun(daemon, { ...args, game: newGame })) {
+        behaviors.forEach(behavior => {
+          newGame = behavior.onExecute({ ...args, game: newGame }).game;
+        });
+      }
+    });
+  });
+  return newGame;
 }
 
 const Commands = {
@@ -737,8 +751,22 @@ export const useCommands = ({
 
     let newGame = onCommand(game, command, commandArgs);
 
-    if (game.player.config.autonext && newGame.player.actions < 1) {
+    newGame = runDaemons({
+      game: newGame,
+      derived: gameDerived,
+      command,
+      args: commandArgs,
+    });
+
+    if (game.player.config.autonext && newGame?.player.actions < 1) {
       newGame = onCommand(newGame, 'next', {_:[]} as CLIArgs);
+
+      newGame = runDaemons({
+        game: newGame,
+        derived: gameDerived,
+        command,
+        args: commandArgs,
+      });
     }
 
     if (newGame) {

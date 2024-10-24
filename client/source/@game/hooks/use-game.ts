@@ -1,20 +1,11 @@
 import { Level } from '@shared/types/game/level';
-import { Game, GameNode, NodeID, NodeMap, NoiseEvent } from '@shared/types/game';
+import { Game, GameDerived, GameNode, NodeID, NodeMap, NoiseEvent } from '@shared/types/game';
 import { useEffect, useMemo, useState } from 'react';
 import { gameFromLevel, invertNodes } from '@shared/utils/game';
 import { coordToString } from '@shared/utils/game/grid';
 import { getControllerFor } from '@game/level-controllers';
 import { useCommands } from '@game/hooks/use-commands';
 import { GameEffects } from '@shared/constants/effects';
-
-export type GameDerived = {
-  hoveredNode: GameNode,
-  nodeMap: NodeMap,
-  noise: {
-    [nodeID: string]: number,
-    total: number,
-  },
-}
 
 const noiseAtNode = (round: number, events: NoiseEvent[]): number => {
   return events.reduce((sum, event) => {

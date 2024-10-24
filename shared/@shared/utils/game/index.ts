@@ -7,6 +7,7 @@ import { coordToString, stringToCoord } from '@shared/utils/game/grid';
 import { numberForStringID, stringIDForNumber } from '@shared/utils/strings';
 import { generate } from '@shared/utils/arrays';
 import { subBools } from '@shared/utils/booleans';
+import { Daemons } from '@shared/constants/daemons';
 
 export const invertNodes = (nodes: Game['nodes']): NodeMap => {
   const output: NodeMap = {};
@@ -37,7 +38,7 @@ export const getEdges = (nodes: Game['nodes']): Game['edges'] => {
   return output;
 }
 
-export const createGame = (partial: Pick<Game, 'nodes' | 'player' | 'hovered'>): Game => {
+export const createGame = (partial: Pick<Game, 'nodes' | 'player' | 'hovered' | 'daemons'>): Game => {
   const edges = getEdges(partial.nodes);
 
   return {
@@ -151,9 +152,18 @@ export const gameFromLevel = (level: Level, player: Game['player']): Game => {
       return acc;
     }, {} as Game['nodes']);
 
+  const daemons = level.daemons?.map(daemon =>
+    Daemons[daemon.id]({
+      node: daemon.node,
+      status: daemon.status,
+      ...daemon.args,
+    })
+  ) ?? [];
+
   return createGame({
     nodes,
     player,
+    daemons,
     hovered: level.start
   });
 }

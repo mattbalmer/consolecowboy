@@ -58,6 +58,40 @@ export type Script <P = any> = {
   onExecute: (game: Game, args: CLIArgs) => Game,
 }
 
+export type GameDerived = {
+  hoveredNode: GameNode,
+  nodeMap: NodeMap,
+  noise: {
+    [nodeID: string]: number,
+    total: number,
+  },
+}
+
+export type BehaviorArgs = { game: Game, derived: GameDerived, command: Command, args: CLIArgs };
+
+export type Trigger = {
+  id: string,
+  shouldRun: (daemon: Daemon, args: BehaviorArgs) => boolean,
+}
+export type Behavior <P = any> = {
+  id: string,
+  props: P,
+  daemon: Daemon,
+  onExecute: (args: BehaviorArgs) => {
+    daemon: Daemon,
+    game: Game,
+  },
+}
+
+export type Daemon = {
+  id: string,
+  name: string,
+  node: NodeID,
+  status: 'ACTIVE' | 'STANDBY' | 'DEACTIVATED',
+  conditions: Condition[],
+  get behaviors(): [Trigger, Behavior[]][],
+}
+
 export type NodeContent = {
   status: 'STANDBY' | 'EXECUTED',
 } & (
@@ -164,6 +198,7 @@ export type Game = {
     nodes: NodeID[],
     terminal: CLIMessage[],
   },
+  daemons: Daemon[],
 }
 
 export type NodeMap = Record<CoordString, NodeID>;
