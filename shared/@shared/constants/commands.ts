@@ -571,6 +571,7 @@ const Commands = {
     console.log('run the hovered node. trigger trap effects or capture effects. this should maybe be auto? dunno');
     const node = game.nodes[game.player.node];
 
+    // TODO: change that servers can only be executed once - for example, wallet could have a max per turn siphon amount, and a daemon could repeat each turn.
     try {
       if (node.content.type === 'trap') {
         game = appendMessage(game, {
