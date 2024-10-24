@@ -9,6 +9,7 @@ import {
 } from '@shared/types/game';
 import { coordToString, getAdjacentCoords, stringToCoord } from '@shared/utils/game/grid';
 import { insertIntoCopy } from '@shared/utils/arrays';
+import { GameEffects } from '@shared/constants/effects';
 
 const insertByFirstAsc = <T extends any>(array: [number, ...T[]][], first: number, rest: T[]): [number, ...T[]][] => {
   const i = array.findIndex(([n]) => first <= n);
@@ -144,7 +145,10 @@ export const Behaviors = {
     daemon,
     onExecute(this: Behavior, { game }: BehaviorArgs): { daemon: Daemon, game: Game } {
       const { daemon } = this;
-      game.player.mental -= this.props.amount;
+      game.stack = [
+        ...game.stack,
+        GameEffects.MentalDamage({ amount: this.props.amount }),
+      ];
       return { game, daemon };
     },
   }),

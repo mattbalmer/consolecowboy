@@ -11,7 +11,7 @@ const noiseAtNode = (round: number, events: NoiseEvent[]): number => {
   return events.reduce((sum, event) => {
     const decay = event.decay || 1;
     const duration = event.duration || 1;
-    const lastRound = event.round + (duration - 1);
+    const lastRound = Math.min(round, event.round + duration);
     const roundsSince = round - lastRound;
     const noiseFromEvent = Math.max(0, event.amount - (roundsSince * decay));
 

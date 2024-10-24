@@ -334,6 +334,16 @@ const Commands = {
     return {
       ...game,
       round: game.round + 1,
+      stack: [
+        ...game.stack,
+        GameEffects.AddNoise({
+          node: game.player.node,
+          source: 'program',
+          actor: 'player',
+          amount: 1,
+          round: game.round,
+        }),
+      ],
       player: {
         ...game.player,
         actions: game.player.actionsPerTurn,
