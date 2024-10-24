@@ -4,6 +4,7 @@ export type CLIArgs <N extends Record<string, unknown> | void = void, P extends 
   } : N)
   & ({
     d?: number[],
+    help?: boolean,
   })
   & ({
     _: P extends void ? string[] : P,
