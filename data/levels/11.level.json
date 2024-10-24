@@ -1,0 +1,47 @@
+{
+  "nodes": {
+    "-1,-1": {
+      "isVisited": true,
+      "content": {
+        "type": "installation",
+        "status": "STANDBY",
+        "key": "ExternalConnection",
+        "args": null
+      }
+    },
+    "-1,0": {
+      "ice": {
+        "key": "NeuralKatana",
+        "status": "READY",
+        "args": null
+      },
+      "content": {
+        "type": "installation",
+        "status": "STANDBY",
+        "key": "Wallet",
+        "args": {
+          "amount": 100
+        }
+      }
+    },
+    "0,-1": {},
+    "0,0": {
+      "ice": {
+        "key": "NeuralKatana",
+        "status": "READY",
+        "args": null
+      },
+      "content": {
+        "type": "trap",
+        "status": "STANDBY",
+        "key": "RabbitHole",
+        "args": {
+          "amount": 1,
+          "duration": 2
+        }
+      }
+    },
+    "1,-1": {}
+  },
+  "start": "A"
+}

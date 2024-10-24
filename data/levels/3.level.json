@@ -12,6 +12,11 @@
       }
     },
     "1,0": {
+      "ice": {
+        "key": "NeuralKatana",
+        "status": "READY",
+        "args": null
+      },
       "content": {
         "type": "installation",
         "status": "STANDBY",
@@ -20,5 +25,8 @@
     }
   },
   "start": "A",
-  "offset": [0,-1]
+  "offset": [
+    0,
+    -1
+  ]
 }
