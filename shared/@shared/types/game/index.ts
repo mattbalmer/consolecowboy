@@ -1,4 +1,5 @@
 import { CLIArgs } from '@shared/types/game/cli';
+import { ProgramKeywords, Programs } from '@shared/constants/programs';
 
 export type Coord = { x: number, y: number };
 export type CoordString = `${number},${number}`;
@@ -116,6 +117,15 @@ export type Condition = {
   onEnd: (game: Game) => Game,
 }
 
+export type ProgramKeyword = keyof typeof ProgramKeywords;
+export type ProgramID <K extends ProgramKeyword = ProgramKeyword> = `${K}${number}`;
+
+export type Program <K extends ProgramKeyword = ProgramKeyword> = {
+  id: ProgramID<K>,
+  keyword: K,
+  onExecute: (game: Game, args: CLIArgs, derived: GameDerived) => Game,
+}
+
 /**
  * Represents the player out-of-game, for saving purposes. The player on Game['player'] is the in-game player, with
  * status effects and other things we don't need to track between levels.
@@ -147,6 +157,7 @@ export type Player = {
     autodice: 'lowest' | 'highest' | null,
   },
   scripts: Pick<Script, 'id' | 'props'>[],
+  deck: (`command:${Command}` | `program:${ProgramID}`)[],
 }
 
 export type GameDie = {
@@ -193,6 +204,7 @@ export type Game = {
     dice: GameDie[], // make this a map, but somehow track max available for the round too
     config: Player['config'],
     scripts: Script[],
+    deck: Partial<Record<Command | ProgramKeyword, 'command' | Program>>,
   },
   stack: GameEffect[],
   round: number,
@@ -220,7 +232,8 @@ export const COMMANDS = {
   'drill': true,
   'break': true,
   'config': true,
-} as const;
+  'deck': true,
+};
 
 export type Command = keyof typeof COMMANDS;
 export type CommandArgs = {

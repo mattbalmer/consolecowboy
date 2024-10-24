@@ -30,6 +30,9 @@ export const getInitialPlayerProps = (): Player => {
       autodice: 'lowest',
     },
     scripts: [],
+    deck: [
+      'program:siphon1'
+    ],
   };
 }
 

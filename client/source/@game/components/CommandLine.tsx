@@ -53,10 +53,13 @@ export const CommandLine = ({
       return;
     }
     const inputs = input.match(/(".*?"|[^"\s]+)+(?=\s*|\s*$)/g);
-    if (inputs[0] in COMMANDS) {
-      const command = COMMANDS[inputs[0]] === true ? inputs[0] : COMMANDS[inputs[0]];
-      onCommand(command as Command, ...inputs.slice(1));
-    }
+    const command = inputs[0];
+    onCommand(command as Command, ...inputs.slice(1));
+
+    // if (inputs[0] in COMMANDS) {
+    //   const command = COMMANDS[inputs[0]] === true ? inputs[0] : COMMANDS[inputs[0]];
+    //   onCommand(command as Command, ...inputs.slice(1));
+    // }
   }, [input, onCommand]);
 
   // @ts-ignore TODO

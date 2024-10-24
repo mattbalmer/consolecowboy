@@ -1,4 +1,4 @@
-import { Command, CompassDir, Game, GameDerived } from '@shared/types/game';
+import { Command, COMMANDS, CompassDir, Game, GameDerived, Program, ProgramKeyword } from '@shared/types/game';
 import { appendMessage, appendMessages } from '@shared/utils/game/cli';
 import { CLIArgs } from '@shared/types/game/cli';
 import { removeRange } from '@shared/utils/arrays';
@@ -8,12 +8,21 @@ import { GameEffects } from '@shared/constants/effects';
 import { pick } from '@shared/utils/objects';
 import { getDice } from '@shared/utils/game';
 import { consumeDice } from '@shared/utils/game/dice';
+import { ProgramKeywords, Programs } from '@shared/constants/programs';
 
 const Commands = {
   m: game => game,
   mv: game => game,
   x: game => game,
   info: game => game,
+  deck: game => appendMessages(game,
+    Object.keys(game.player.deck).map(k => ({
+      type: 'output',
+      value: game.player.deck[k] === 'command'
+        ? k
+        : `${k.toLowerCase()}: ${game.player.deck[k].id}`
+    })),
+  ),
   scripts: (game: Game) => {
     return appendMessage(game, {
       type: 'output',
@@ -697,9 +706,51 @@ const Commands = {
   },
 } as const satisfies Record<Command, (game: Game, args: CLIArgs<any, any>, derived?: GameDerived) => Game>;
 
-export const executeCommand = (command: keyof typeof Commands, game: Game, args: CLIArgs, derived: GameDerived): Game => {
+export const CORE_COMMANDS = [
+  'info',
+  'config',
+  'move',
+  'nav',
+  'next',
+  'deck',
+  //
+  'scripts',
+  'run',
+  //
+  'retreat',
+  'break',
+  'drill',
+  'execute',
+] as const satisfies Command[];
+
+export const commandAlias = (command: Command | ProgramKeyword): Command | ProgramKeyword => {
+  if (typeof COMMANDS[command] === 'string') {
+    return COMMANDS[command] as Command;
+  }
+  return command;
+}
+
+export const executeCommand = (command: Command | ProgramKeyword, game: Game, args: CLIArgs, derived: GameDerived): Game => {
+  command = commandAlias(command);
+
+  if (!(command in game.player.deck)) {
+    return appendMessage(game, {
+      type: 'error',
+      value: `You don't have access to that command`
+    });
+  }
+
   if (command in Commands) {
     return Commands[command](game, args, derived);
   }
-  throw new Error(`Command not found: ${command}`);
+
+  if (command in ProgramKeywords) {
+    const program = game.player.deck[command] as Program;
+    return program.onExecute(game, args, derived);
+  }
+
+  return appendMessage(game, {
+    type: 'error',
+    value: `Command not found: ${command}`
+  });
 }
