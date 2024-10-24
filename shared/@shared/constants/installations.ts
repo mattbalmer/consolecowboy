@@ -1,8 +1,9 @@
-import { Installation, NodeID } from '@shared/types/game';
+import { Installation, NodeID, NodeSpecifier } from '@shared/types/game';
 import { GameEffects } from '@shared/constants/effects';
 import { appendMessage } from '@shared/utils/game/cli';
 import { Scripts } from '@shared/constants/scripts';
 import { GameError } from '@shared/errors/GameError';
+import { nodeSpecifierToID } from '@shared/utils/game';
 
 export const Installations = {
   Wallet: ({ amount }: { amount: number }) => ({
@@ -46,18 +47,19 @@ export const Installations = {
       }
     },
   }),
-  RemoteEnableConnection: (target: NodeID) => ({
+  RemoteEnableConnection: (target: NodeSpecifier) => ({
     id: 'exe.remote-enable-connection',
     target,
     onExecute(game) {
+      const target = nodeSpecifierToID(game.nodes, this.target);
       game = appendMessage(game, {
         type: 'output',
-        value: `External connection at ${this.target} opened`,
+        value: `External connection at ${target} opened`,
       });
       return {
         ...game,
         stack: [...game.stack, GameEffects.ModifyServerContent({
-          target: this.target,
+          target,
           props: { isConnected: true },
         })],
       }

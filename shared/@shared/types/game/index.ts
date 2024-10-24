@@ -3,6 +3,7 @@ import { CLIArgs } from '@shared/types/game/cli';
 export type Coord = { x: number, y: number };
 export type CoordString = `${number},${number}`;
 export type NodeID = `${string}`;
+export type NodeSpecifier = NodeID | CoordString;
 export type EdgeString = `${string}:${string}`;
 export type Dir = 'up' | 'down' | 'right' | 'left';
 export type CompassCardinal = 'N' | 'S' | 'E' | 'W';

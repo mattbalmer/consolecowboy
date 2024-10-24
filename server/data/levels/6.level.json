@@ -1,7 +1,6 @@
 {
   "nodes": {
     "0,0": {
-      "isVisited": true,
       "content": {
         "type": "installation",
         "status": "STANDBY",
@@ -40,7 +39,6 @@
       }
     },
     "2,1": {
-      "id": "D",
       "ice": {
         "key": "NeuralKatana",
         "status": "READY",
@@ -53,7 +51,7 @@
       }
     }
   },
-  "start": "A",
+  "start": "0,0",
   "offset": [
     -1,
     -1
@@ -62,7 +60,7 @@
     {
       "model": "Hunter",
       "status": "ACTIVE",
-      "node": "D"
+      "node": "2,1"
     }
   ]
 }

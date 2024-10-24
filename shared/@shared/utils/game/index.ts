@@ -1,5 +1,5 @@
 import { Level } from '@shared/types/game/level';
-import { CoordString, Game, GameDie, NodeID, NodeMap } from '@shared/types/game';
+import { CoordString, Game, GameDie, NodeID, NodeMap, NodeSpecifier } from '@shared/types/game';
 import { ICE } from '@shared/constants/ice';
 import { Installations } from '@shared/constants/installations';
 import { Traps } from '@shared/constants/traps';
@@ -8,6 +8,18 @@ import { numberForStringID, stringIDForNumber } from '@shared/utils/strings';
 import { generate } from '@shared/utils/arrays';
 import { subBools } from '@shared/utils/booleans';
 import { DaemonIDTracker, Daemons } from '@shared/constants/daemons';
+
+export const nodeSpecifierToID = (nodes: Game['nodes'], nodeString: NodeSpecifier): NodeID => {
+  if (nodeString in nodes) {
+    return nodeString;
+  }
+
+  if (nodeString.includes(',')) {
+    return invertNodes(nodes)[nodeString];
+  }
+
+  throw new Error(`Node ${nodeString} not found`);
+}
 
 export const invertNodes = (nodes: Game['nodes']): NodeMap => {
   const output: NodeMap = {};
@@ -156,18 +168,20 @@ export const gameFromLevel = (level: Level, player: Game['player']): Game => {
   const daemons = level.daemons?.map(daemon =>
     Daemons[daemon.model]({
       id: daemonIDTracker.next(daemon.model),
-      node: daemon.node,
+      node: nodeSpecifierToID(nodes, daemon.node),
       status: daemon.status,
       ...daemon.args,
     })
   ) ?? [];
 
+  const hovered = nodeSpecifierToID(nodes, level.start);
+
+  nodes[hovered].isVisited = true;
+
   return createGame({
     nodes,
     player,
     daemons,
-    hovered: level.start
+    hovered,
   });
 }
-
-// todo: validate game, eg. no two nodes for same coords.
