@@ -10,7 +10,7 @@ export const Triggers = {
   OnPlayer: () => ({
     id: `OnPlayer`,
     shouldRun(daemon, { game }): boolean {
-      return daemon.status === 'ACTIVE' && daemon.node === game.hovered;
+      return daemon.status === 'ACTIVE' && daemon.node === game.player.node;
     },
   }),
 } as const satisfies Record<string, (...args: unknown[]) => Trigger>;

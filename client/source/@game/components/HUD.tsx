@@ -15,7 +15,7 @@ export const HUD = ({
   return <FlexRow data-header sx={{ p: 2, justifyContent: 'space-between' }}>
     <FlexCol>
       <FlexRow sx={{ alignItems: 'center' }}>
-        <Typography variant={'h6'} sx={{ mr: 1 }}>{game.hovered}</Typography>
+        <Typography variant={'h6'} sx={{ mr: 1 }}>{game.player.node}</Typography>
         <Typography variant={'subtitle1'}>({hoveredNode.x}, {hoveredNode.y})</Typography>
       </FlexRow>
       <FlexRow sx={{ alignItems: 'center' }}>

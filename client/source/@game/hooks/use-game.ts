@@ -1,5 +1,5 @@
 import { Level } from '@shared/types/game/level';
-import { Game, GameDerived, GameNode, NodeID, NodeMap, NoiseEvent } from '@shared/types/game';
+import { Game, GameDerived, NodeID, NoiseEvent } from '@shared/types/game';
 import { useEffect, useMemo, useState } from 'react';
 import { gameFromLevel, invertNodes } from '@shared/utils/game';
 import { coordToString } from '@shared/utils/game/grid';
@@ -20,7 +20,7 @@ const noiseAtNode = (round: number, events: NoiseEvent[]): number => {
 }
 
 const getGameDerived = (game: Game): GameDerived => {
-  const hoveredNodeXY = coordToString(game.nodes[game.hovered]);
+  const hoveredNodeXY = coordToString(game.nodes[game.player.node]);
   const nodeMap = invertNodes(game.nodes);
   const hoveredNode = game.nodes[nodeMap[hoveredNodeXY]];
 
@@ -50,8 +50,8 @@ export const useGame = ({
   shouldBindController,
   levelID,
 }: {
-  level: Level,
   player: Game['player'],
+  level: Level,
 } & ({
   levelID: string,
   shouldBindController: true,
@@ -84,7 +84,10 @@ export const useGame = ({
       const newGame = gameFromLevel(level, player);
       return {
         ...newGame,
-        hovered: newGame.nodes[prev.hovered] ? prev.hovered : newGame.hovered,
+        player: {
+          ...newGame.player,
+          node: newGame.nodes[game.player.node] ? game.player.node : level.start,
+        },
       };
     });
   }, [level, player]);

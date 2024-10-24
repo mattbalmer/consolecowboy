@@ -156,15 +156,18 @@ const Commands = {
     game.nodes[target].isVisited = true;
     game = {
       ...game,
-      hovered: target,
+      player: {
+        ...game.player,
+        node: target,
+      },
       history: {
         ...game.history,
-        nodes: [...game.history.nodes, game.hovered],
+        nodes: [...game.history.nodes, game.player.node],
       },
       stack: [
         ...game.stack,
         GameEffects.AddNoise({
-          node: game.hovered,
+          node: game.player.node,
           source: 'program',
           actor: 'player',
           amount: 1,
@@ -193,7 +196,7 @@ const Commands = {
       return;
     }
 
-    const current = pick(game.nodes[game.hovered], 'x', 'y');
+    const current = pick(game.nodes[game.player.node], 'x', 'y');
     const targetCoord = coordToString({
       x: current.x + (dir.includes('e') ? 1 : dir.includes('w') ? -1 : 0),
       y: current.y + (dir.includes('s') ? 1 : dir.includes('n') ? -1 : 0),
@@ -222,15 +225,18 @@ const Commands = {
     game.nodes[target].isVisited = true;
     game = {
       ...game,
-      hovered: target,
+      player: {
+        ...game.player,
+        node: target,
+      },
       history: {
         ...game.history,
-        nodes: [...game.history.nodes, game.hovered],
+        nodes: [...game.history.nodes, game.player.node],
       },
       stack: [
         ...game.stack,
         GameEffects.AddNoise({
-          node: game.hovered,
+          node: game.player.node,
           source: 'program',
           actor: 'player',
           amount: 1,
@@ -282,15 +288,18 @@ const Commands = {
 
     game = {
       ...game,
-      hovered: target,
+      player: {
+        ...game.player,
+        node: target,
+      },
       history: {
         ...game.history,
-        nodes: [...game.history.nodes, game.hovered],
+        nodes: [...game.history.nodes, game.player.node],
       },
       stack: [
         ...game.stack,
         GameEffects.AddNoise({
-          node: game.hovered,
+          node: game.player.node,
           source: 'program',
           actor: 'player',
           amount: 1,
@@ -406,7 +415,7 @@ const Commands = {
           {
             type: 'output',
             value: didBreakLayer
-              ? isICEBroken ? `(${game.hovered}) broke Lvl${hoveredNode.ice.strength} ${hoveredNode.ice.id}` : `(${game.hovered}) broke layer ${layer} of Lvl${hoveredNode.ice.strength} ${hoveredNode.ice.id}`
+              ? isICEBroken ? `(${game.player.node}) broke Lvl${hoveredNode.ice.strength} ${hoveredNode.ice.id}` : `(${game.player.node}) broke layer ${layer} of Lvl${hoveredNode.ice.strength} ${hoveredNode.ice.id}`
               : `Failed to break layer ${layer} of Lvl${hoveredNode.ice.strength} ${hoveredNode.ice.id}`,
           },
         ],
@@ -414,7 +423,7 @@ const Commands = {
       stack: [
         ...game.stack,
         GameEffects.AddNoise({
-          node: game.hovered,
+          node: game.player.node,
           source: 'program',
           actor: 'player',
           amount: 1,
@@ -422,7 +431,7 @@ const Commands = {
           duration: 2,
         }),
         didBreakLayer ? GameEffects.AddNoise({
-          node: game.hovered,
+          node: game.player.node,
           source: 'ice',
           actor: 'network',
           amount: 1,
@@ -430,7 +439,7 @@ const Commands = {
           duration: 2,
         }) : null,
         isICEBroken ? GameEffects.AddNoise({
-          node: game.hovered,
+          node: game.player.node,
           source: 'ice',
           actor: 'network',
           amount: noiseGeneratedFromExcess,
@@ -492,14 +501,14 @@ const Commands = {
           ...game.history.terminal,
           {
             type: 'output',
-            value: `(${game.hovered}) drilled through Lvl${hoveredNode.ice.strength} ${hoveredNode.ice.id}`,
+            value: `(${game.player.node}) drilled through Lvl${hoveredNode.ice.strength} ${hoveredNode.ice.id}`,
           },
         ],
       },
       stack: [
         ...game.stack,
         GameEffects.AddNoise({
-          node: game.hovered,
+          node: game.player.node,
           source: 'program',
           actor: 'player',
           amount: 1,
@@ -507,7 +516,7 @@ const Commands = {
           duration: 2,
         }),
         GameEffects.AddNoise({
-          node: game.hovered,
+          node: game.player.node,
           source: 'ice',
           actor: 'network',
           amount: 1,
@@ -534,13 +543,13 @@ const Commands = {
 
     // or instead of auto, seeing the content is another progression system
     console.log('run the hovered node. trigger trap effects or capture effects. this should maybe be auto? dunno');
-    const node = game.nodes[game.hovered];
+    const node = game.nodes[game.player.node];
 
     try {
       if (node.content.type === 'trap') {
         game = appendMessage(game, {
           type: 'output',
-          value: `(${game.hovered}) Trap activated - ${node.content.id}`,
+          value: `(${game.player.node}) Trap activated - ${node.content.id}`,
         });
         game = node.content.onExecute(game) ?? game;
       }
@@ -548,7 +557,7 @@ const Commands = {
       if (node.content.type === 'installation') {
         game = appendMessage(game, {
           type: 'output',
-          value: `(${game.hovered}) Server content executed - ${node.content.id}`,
+          value: `(${game.player.node}) Server content executed - ${node.content.id}`,
         });
         game = node.content.onExecute(game) ?? game;
       }
@@ -585,7 +594,7 @@ const Commands = {
       stack: [
         ...game.stack,
         GameEffects.AddNoise({
-          node: game.hovered,
+          node: game.player.node,
           source: 'program',
           actor: 'player',
           amount: 1,
@@ -593,7 +602,7 @@ const Commands = {
           duration: 2,
         }),
         GameEffects.AddNoise({
-          node: game.hovered,
+          node: game.player.node,
           source: node.content.type,
           actor: 'network',
           amount: 1,

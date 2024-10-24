@@ -50,7 +50,7 @@ export const getEdges = (nodes: Game['nodes']): Game['edges'] => {
   return output;
 }
 
-export const createGame = (partial: Pick<Game, 'nodes' | 'player' | 'hovered' | 'daemons'>): Game => {
+export const createGame = (partial: Pick<Game, 'nodes' | 'player' | 'daemons'>): Game => {
   const edges = getEdges(partial.nodes);
 
   return {
@@ -174,14 +174,13 @@ export const gameFromLevel = (level: Level, player: Game['player']): Game => {
     })
   ) ?? [];
 
-  const hovered = level.start ? nodeSpecifierToID(nodes, level.start) : 'A';
+  player.node = level.start ? nodeSpecifierToID(nodes, level.start) : 'A';
 
-  nodes[hovered].isVisited = true;
+  nodes[player.node].isVisited = true;
 
   return createGame({
     nodes,
     player,
     daemons,
-    hovered,
   });
 }

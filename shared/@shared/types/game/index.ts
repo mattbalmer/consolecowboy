@@ -177,8 +177,8 @@ export type Game = {
   nodes: Record<NodeID, GameNode>,
   noise: NoiseMap,
   edges: Record<EdgeString, 'oneway' | 'bi'>,
-  hovered: NodeID,
   player: {
+    node: NodeID,
     mental: number,
     ram: {
       current: number,

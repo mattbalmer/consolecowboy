@@ -22,7 +22,7 @@ export default class extends LevelController {
       ];
     }
 
-    if (game.hovered === 'B' && !this.hasShownExit) {
+    if (game.player.node === 'B' && !this.hasShownExit) {
       this.hasShownExit = true;
       game.stack = [
         ...game.stack,
@@ -37,7 +37,7 @@ export default class extends LevelController {
   };
 
   onCommand(game: Game, command: Command, args: CLIArgs) {
-    if (game.hovered === 'A' && command !== 'move') {
+    if (game.player.node === 'A' && command !== 'move') {
       return {
         shouldContinue: false,
         game: appendMessage(game, {

@@ -8,7 +8,7 @@ export default class extends LevelController {
   hasShownIntro = false;
 
   onChange({ game }: { game: Game }) {
-    if (game.hovered === 'A' && !this.hasShownIntro) {
+    if (game.player.node === 'A' && !this.hasShownIntro) {
       this.hasShownIntro = true;
       game.stack = [
         ...game.stack,

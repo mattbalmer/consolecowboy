@@ -11,7 +11,7 @@ export default class extends LevelController {
   hasShownDrill = false;
 
   onChange({ game }: { game: Game }) {
-    if (game.hovered === 'A' && !this.hasShownDice) {
+    if (game.player.node === 'A' && !this.hasShownDice) {
       const nextDie = game.player.dice.find(d => d.isAvailable);
       this.hasShownDice = true;
       game.stack = [
@@ -23,7 +23,7 @@ export default class extends LevelController {
       ];
     }
 
-    if (game.hovered === 'B' && !this.hasShownDrill) {
+    if (game.player.node === 'B' && !this.hasShownDrill) {
       this.hasShownDrill = true;
       const nextDie = game.player.dice.find(d => d.isAvailable);
       game.stack = [

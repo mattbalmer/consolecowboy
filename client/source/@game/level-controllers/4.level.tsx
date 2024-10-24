@@ -12,7 +12,7 @@ export default class extends LevelController {
   hasShownMultilayer = false;
 
   onChange({ game }: { game: Game }) {
-    if (game.hovered === 'B' && !this.hasShownBreak) {
+    if (game.player.node === 'B' && !this.hasShownBreak) {
       this.hasShownBreak = true;
       const nextDie = game.player.dice.find(d => d.isAvailable);
       game.stack = [
@@ -24,7 +24,7 @@ export default class extends LevelController {
       ];
     }
 
-    if (game.hovered === 'B' && !this.hasShownMultilayer && game.nodes['B'].ice.status === 'BROKEN') {
+    if (game.player.node === 'B' && !this.hasShownMultilayer && game.nodes['B'].ice.status === 'BROKEN') {
       this.hasShownMultilayer = true;
       game.stack = [
         ...game.stack,
@@ -35,7 +35,7 @@ export default class extends LevelController {
       ];
     }
 
-    if (game.hovered === 'C' && !this.hasShownNoise) {
+    if (game.player.node === 'C' && !this.hasShownNoise) {
       this.hasShownNoise = true;
       game.stack = [
         ...game.stack,
@@ -61,7 +61,7 @@ export default class extends LevelController {
       }
     }
 
-    if (game.hovered === 'B' && game.nodes['B'].ice.status !== 'BROKEN' && !['config', 'next', 'break'].includes(command)) {
+    if (game.player.node === 'B' && game.nodes['B'].ice.status !== 'BROKEN' && !['config', 'next', 'break'].includes(command)) {
       return {
         shouldContinue: false,
         game: appendMessage(game, {

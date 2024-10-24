@@ -34,7 +34,7 @@ export const getEdgeDirs = (nodeMap: Record<string, string>, { x, y }: Coord): D
   return output
 }
 
-export const getAdjacentCoords = (game: Game, node: NodeID = game.hovered): CoordString[] => {
+export const getAdjacentCoords = (game: Game, node: NodeID = game.player.node): CoordString[] => {
   const allDirs: Dir[] = ['up', 'left', 'down', 'right'];
   const hoveredNode = game.nodes[node];
 

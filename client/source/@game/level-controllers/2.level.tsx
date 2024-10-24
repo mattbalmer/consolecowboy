@@ -11,7 +11,7 @@ export default class extends LevelController {
   hasShownOOA = false;
 
   onChange({ game }: { game: Game }) {
-    if (game.hovered === 'B' && !this.hasShownOpen) {
+    if (game.player.node === 'B' && !this.hasShownOpen) {
       this.hasShownOpen = true;
       game.stack = [
         ...game.stack,
@@ -47,7 +47,7 @@ export default class extends LevelController {
       }
     }
 
-    if (game.hovered === 'B' && !game.nodes['B'].wasExecuted && !['x', 'execute', 'next'].includes(command)) {
+    if (game.player.node === 'B' && !game.nodes['B'].wasExecuted && !['x', 'execute', 'next'].includes(command)) {
       return {
         shouldContinue: false,
         game: appendMessage(game, {

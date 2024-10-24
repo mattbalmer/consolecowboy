@@ -120,12 +120,12 @@ export const Behaviors = {
     onExecute(this: Behavior, { game, derived }: BehaviorArgs): { daemon: Daemon, game: Game } {
       console.log('ex', this);
       const { daemon } = this;
-      if (daemon.node === game.hovered) {
+      if (daemon.node === game.player.node) {
         console.log('already at player - doing nothing');
         return { game, daemon };
       }
-      console.log('moving to player', daemon.node, game.hovered);
-      const path = pathToNode(game, derived, daemon.node, game.hovered);
+      console.log('moving to player', daemon.node, game.player.node);
+      const path = pathToNode(game, derived, daemon.node, game.player.node);
       if (!path) {
         console.log('no valid path found - doing nothing');
         return { game, daemon };

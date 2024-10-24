@@ -4,6 +4,7 @@ import { Scripts } from '@shared/constants/scripts';
 
 export const savedPlayerToGamePlayer = (savedPlayer: Player): Game['player'] => {
   return {
+    node: null,
     mental: savedPlayer.mental,
     ram: {
       max: savedPlayer.ram.max,
