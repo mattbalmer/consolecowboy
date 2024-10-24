@@ -136,4 +136,27 @@ export const Behaviors = {
       }
     },
   }),
+  AttackMental: (daemon: Daemon, props: {
+    amount: number,
+  }) => ({
+    id: `AttackMental`,
+    props,
+    daemon,
+    onExecute(this: Behavior, { game }: BehaviorArgs): { daemon: Daemon, game: Game } {
+      const { daemon } = this;
+      game.player.mental -= this.props.amount;
+      return { game, daemon };
+    },
+  }),
+  SelfDestruct: (daemon: Daemon) => ({
+    id: `SelfDestruct`,
+    props: {},
+    daemon,
+    onExecute(this: Behavior, { game }: BehaviorArgs): { daemon: Daemon, game: Game } {
+      const { daemon } = this;
+      daemon.status = 'DEACTIVATED';
+      // game.daemons = game.daemons.filter(d => d.id !== daemon.id);
+      return { game, daemon };
+    },
+  }),
 } as const satisfies Record<string, (...args: unknown[]) => Behavior>;

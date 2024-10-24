@@ -86,6 +86,7 @@ export type Behavior <P = any> = {
 export type Daemon = {
   id: string,
   name: string,
+  model: string,
   node: NodeID,
   status: 'ACTIVE' | 'STANDBY' | 'DEACTIVATED',
   conditions: Condition[],

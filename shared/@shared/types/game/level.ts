@@ -33,7 +33,7 @@ export type LevelContent<T extends Content['type'], K extends T extends 'install
 }
 
 export type LevelDaemon<K extends keyof typeof Daemons> = {
-  id: K,
+  model: K,
   node: Daemon['node'],
   status: Daemon['status'],
   args: Record<string, unknown> | null | undefined,

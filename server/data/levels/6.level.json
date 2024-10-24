@@ -60,7 +60,7 @@
   ],
   "daemons": [
     {
-      "id": "Hunter",
+      "model": "Hunter",
       "status": "ACTIVE",
       "node": "D"
     }

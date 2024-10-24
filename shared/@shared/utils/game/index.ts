@@ -7,7 +7,7 @@ import { coordToString, stringToCoord } from '@shared/utils/game/grid';
 import { numberForStringID, stringIDForNumber } from '@shared/utils/strings';
 import { generate } from '@shared/utils/arrays';
 import { subBools } from '@shared/utils/booleans';
-import { Daemons } from '@shared/constants/daemons';
+import { DaemonIDTracker, Daemons } from '@shared/constants/daemons';
 
 export const invertNodes = (nodes: Game['nodes']): NodeMap => {
   const output: NodeMap = {};
@@ -126,6 +126,7 @@ export const getDice = (quantity: number): GameDie[] => {
 
 export const gameFromLevel = (level: Level, player: Game['player']): Game => {
   const idTracker = new IDTracker();
+  const daemonIDTracker = new DaemonIDTracker();
   const sorted = (Object.entries(level.nodes) as [CoordString, Level['nodes'][CoordString]][])
     .sort((a, b) => {
       const aCoord = stringToCoord(a[0]);
@@ -153,7 +154,8 @@ export const gameFromLevel = (level: Level, player: Game['player']): Game => {
     }, {} as Game['nodes']);
 
   const daemons = level.daemons?.map(daemon =>
-    Daemons[daemon.id]({
+    Daemons[daemon.model]({
+      id: daemonIDTracker.next(daemon.model),
       node: daemon.node,
       status: daemon.status,
       ...daemon.args,
