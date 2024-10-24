@@ -155,7 +155,7 @@ export const Behaviors = {
     onExecute(this: Behavior, { game }: BehaviorArgs): { daemon: Daemon, game: Game } {
       const { daemon } = this;
       daemon.status = 'DEACTIVATED';
-      // game.daemons = game.daemons.filter(d => d.id !== daemon.id);
+      game.daemons = game.daemons.filter(d => d.id !== daemon.id);
       return { game, daemon };
     },
   }),
