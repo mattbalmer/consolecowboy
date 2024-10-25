@@ -80,8 +80,7 @@ export type Trigger = {
 export type Behavior <P = any> = {
   id: string,
   props: P,
-  daemon: Daemon,
-  onExecute: (args: BehaviorArgs) => {
+  onExecute: (daemon: Daemon, args: BehaviorArgs) => {
     daemon: Daemon,
     game: Game,
   },
@@ -99,7 +98,7 @@ export type Daemon = {
   status: 'ACTIVE' | 'STANDBY' | 'DEACTIVATED' | 'TERMINATED',
   conditions: Condition[],
   onStatus?: (game: Game, newStatus: Daemon['status'], oldStatus: Daemon['status']) => Game,
-  get behaviors(): BehaviorPattern,
+  behaviors: BehaviorPattern,
 }
 
 export type NodeContent = {

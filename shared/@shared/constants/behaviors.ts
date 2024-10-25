@@ -86,16 +86,14 @@ const pathToNode = (game: Game, derived: GameDerived, from: NodeID, to: NodeID) 
 }
 
 export const Behaviors = {
-  MoveToNoise: (daemon: Daemon, props?: {
+  MoveToNoise: (props?: {
     min: number,
   }) => ({
     id: `MoveToNoise`,
     props: {
       min: props?.min ?? 2,
     },
-    daemon,
-    onExecute(this: Behavior, { game, derived }: BehaviorArgs): { daemon: Daemon, game: Game } {
-      const { daemon } = this;
+    onExecute(this: Behavior, daemon, { game, derived }: BehaviorArgs): { daemon: Daemon, game: Game } {
       const [highestNoiseNode] = Object.entries(derived.noise).reduce((highest, [nodeID, noise]) => {
         if (noise < highest[1]) return highest;
         return [nodeID, noise];
@@ -116,13 +114,11 @@ export const Behaviors = {
       }
     },
   }),
-  MoveToPlayer: (daemon: Daemon) => ({
+  MoveToPlayer: () => ({
     id: `MoveToPlayer`,
     props: {},
-    daemon,
-    onExecute(this: Behavior, { game, derived }: BehaviorArgs): { daemon: Daemon, game: Game } {
+    onExecute(this: Behavior, daemon, { game, derived }: BehaviorArgs): { daemon: Daemon, game: Game } {
       console.log('ex', this);
-      const { daemon } = this;
       if (daemon.node === game.player.node) {
         console.log('already at player - doing nothing');
         return { game, daemon };
@@ -139,13 +135,12 @@ export const Behaviors = {
       }
     },
   }),
-  AttackMental: (daemon: Daemon, props: {
+  AttackMental: (props: {
     amount: number,
   }) => ({
     id: `AttackMental`,
     props,
-    daemon,
-    onExecute(this: Behavior, { game }: BehaviorArgs): { daemon: Daemon, game: Game } {
+    onExecute(daemon, { game }: BehaviorArgs): { daemon: Daemon, game: Game } {
       game.stack = [
         ...game.stack,
         GameEffects.MentalDamage({ amount: this.props.amount }),
@@ -153,14 +148,12 @@ export const Behaviors = {
       return { game, daemon };
     },
   }),
-  SetStatus: (daemon: Daemon, props: {
+  SetStatus: (props: {
     status: Daemon['status'],
   }) => ({
     id: `SetStatus`,
     props,
-    daemon,
-    onExecute(this: Behavior, { game }: BehaviorArgs): { daemon: Daemon, game: Game } {
-      const { daemon } = this;
+    onExecute(daemon, { game }: BehaviorArgs): { daemon: Daemon, game: Game } {
       const { status } = this.props;
       const oldStatus = daemon.status;
       daemon.status = status;
@@ -173,14 +166,12 @@ export const Behaviors = {
       return { game, daemon };
     },
   }),
-  Message: (daemon: Daemon, getMessage: (daemon: Daemon) => CLIMessage) => ({
+  Message: (getMessage: (daemon: Daemon) => CLIMessage) => ({
     id: `Message`,
     props: {
       getMessage,
     },
-    daemon,
-    onExecute(this: Behavior, { game }: BehaviorArgs): { daemon: Daemon, game: Game } {
-      const { daemon } = this;
+    onExecute(daemon, { game }: BehaviorArgs): { daemon: Daemon, game: Game } {
       game = appendMessage(game, getMessage(daemon));
       return { game, daemon };
     },

@@ -21,7 +21,7 @@ const runDaemons = (args: BehaviorArgs): Game => {
 
       if (shouldRun) {
         behaviors.forEach(behavior => {
-          newGame = behavior.onExecute({ ...args, game: newGame }).game;
+          newGame = behavior.onExecute(daemon, { ...args, game: newGame }).game;
         });
       }
     });

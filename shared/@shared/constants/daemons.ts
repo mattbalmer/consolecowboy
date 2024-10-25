@@ -1,4 +1,4 @@
-import { BehaviorPattern, Daemon, NodeID } from '@shared/types/game';
+import { Daemon, NodeID } from '@shared/types/game';
 import { Triggers } from '@shared/constants/triggers';
 import { Behaviors } from '@shared/constants/behaviors';
 import { appendMessage } from '@shared/utils/game/cli';
@@ -46,43 +46,41 @@ export const Daemons = {
         });
       }
     },
-    get behaviors(): BehaviorPattern {
-      return [
+    behaviors: [
+      [
+        [Triggers.IsStatus('ACTIVE'), Triggers.RoundEnd()],
         [
-          [Triggers.IsStatus('ACTIVE'), Triggers.RoundEnd()],
-          [
-            // Behaviors.MoveToNoise(this, { min: 1 }),
-            Behaviors.MoveToPlayer(this),
-            Behaviors.Message(this, (daemon) => ({
-              type: `output`,
-              value: `Hunter moved to ${daemon.node}`,
-            })),
-          ]
-        ],
+          // Behaviors.MoveToNoise({ min: 1 }),
+          Behaviors.MoveToPlayer(),
+          Behaviors.Message((daemon) => ({
+            type: `output`,
+            value: `Hunter moved to ${daemon.node}`,
+          })),
+        ]
+      ],
+      [
+        [Triggers.IsStatus('ACTIVE'), Triggers.NoiseAtNode({
+          node: 'any',
+          max: 2,
+        })],
+        Behaviors.SetStatus({ status: 'STANDBY' }),
+      ],
+      [
+        [Triggers.IsStatus('STANDBY'), Triggers.NoiseAtNode({
+          node: 'any',
+          min: 3,
+        })],
+        Behaviors.SetStatus({ status: 'ACTIVE' }),
+      ],
+      [
+        [Triggers.IsStatus('ACTIVE'), Triggers.OnPlayer()],
         [
-          [Triggers.IsStatus('ACTIVE'), Triggers.NoiseAtNode({
-            node: 'any',
-            max: 2,
-          })],
-          Behaviors.SetStatus(this, { status: 'STANDBY' }),
-        ],
-        [
-          [Triggers.IsStatus('STANDBY'), Triggers.NoiseAtNode({
-            node: 'any',
-            min: 3,
-          })],
-          Behaviors.SetStatus(this, { status: 'ACTIVE' }),
-        ],
-        [
-          [Triggers.IsStatus('ACTIVE'), Triggers.OnPlayer()],
-          [
-            Behaviors.AttackMental(this, { amount: 2 }),
-            Behaviors.SetStatus(this, {
-              status: 'TERMINATED',
-            })
-          ]
-        ],
-      ];
-    },
+          Behaviors.AttackMental({ amount: 2 }),
+          Behaviors.SetStatus({
+            status: 'TERMINATED',
+          })
+        ]
+      ],
+    ],
   }),
 } as const satisfies Record<string, (...args: unknown[]) => Daemon>;
