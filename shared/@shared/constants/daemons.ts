@@ -2,6 +2,7 @@ import { BehaviorArgs, BehaviorPattern, Daemon, Game, NodeID } from '@shared/typ
 import { Triggers } from '@shared/constants/triggers';
 import { Behaviors, executeBehaviors, TargetSelectors } from '@shared/constants/behaviors';
 import { appendMessage } from '@shared/utils/game/cli';
+import { BehaviorPatterns } from '@shared/constants/behavior-patterns';
 
 export const runDaemons = (args: BehaviorArgs): Game => {
   let newGame = args.game;
@@ -74,14 +75,7 @@ export const Daemons = {
     },
     get behaviors() {
       return [
-        [
-          [Triggers.IsStatus('ACTIVE'), Triggers.RoundEnd()],
-          [
-            Behaviors.MoveTo(TargetSelectors.HighestNoise({
-              min: this.props.noiseActivate,
-            })),
-          ]
-        ],
+        BehaviorPatterns.MoveToNoise({ min: this.props.noiseActivate }),
         [
           [Triggers.IsStatus('ACTIVE'), Triggers.NoiseAtNode({
             node: 'any',
@@ -96,15 +90,7 @@ export const Daemons = {
           })],
           Behaviors.SetStatus({ status: 'ACTIVE' }),
         ],
-        [
-          [Triggers.IsStatus('ACTIVE'), Triggers.OnPlayer()],
-          [
-            Behaviors.AttackMental({ amount: this.props.damage }),
-            Behaviors.SetStatus({
-              status: 'TERMINATED',
-            })
-          ]
-        ],
+        BehaviorPatterns.ExplodeAtPlayer({ damage: this.props.damage })
       ] as BehaviorPattern;
     },
   }),
