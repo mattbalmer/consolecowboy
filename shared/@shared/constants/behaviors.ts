@@ -1,6 +1,7 @@
 import {
   Behavior,
   BehaviorArgs,
+  CLIMessage,
   Coord,
   Daemon,
   Game,
@@ -10,6 +11,7 @@ import {
 import { coordToString, getAdjacentCoords, stringToCoord } from '@shared/utils/game/grid';
 import { insertIntoCopy } from '@shared/utils/arrays';
 import { GameEffects } from '@shared/constants/effects';
+import { appendMessage } from '@shared/utils/game/cli';
 
 const insertByFirstAsc = <T extends any>(array: [number, ...T[]][], first: number, rest: T[]): [number, ...T[]][] => {
   const i = array.findIndex(([n]) => first <= n);
@@ -168,6 +170,18 @@ export const Behaviors = {
       if (status === 'TERMINATED') {
         game.daemons = game.daemons.filter(d => d.id !== daemon.id);
       }
+      return { game, daemon };
+    },
+  }),
+  Message: (daemon: Daemon, getMessage: (daemon: Daemon) => CLIMessage) => ({
+    id: `Message`,
+    props: {
+      getMessage,
+    },
+    daemon,
+    onExecute(this: Behavior, { game }: BehaviorArgs): { daemon: Daemon, game: Game } {
+      const { daemon } = this;
+      game = appendMessage(game, getMessage(daemon));
       return { game, daemon };
     },
   }),

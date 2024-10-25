@@ -13,40 +13,36 @@ export class DaemonIDTracker {
 }
 
 export const Daemons = {
-  Hunter: ({
-    id,
-    node,
-    status,
-  }: {
+  Hunter: (props: {
     id: string,
     node: NodeID,
     status?: Daemon['status'],
   }) => ({
-    id,
+    id: props.id,
     model: `Hunter`,
-    name: id,
+    name: props.id,
     conditions: [],
-    status: status ?? 'STANDBY',
-    node,
+    status: props.status ?? 'STANDBY',
+    node: props.node,
     onStatus(game, newStatus, oldStatus) {
       if (newStatus === 'ACTIVE') {
         return appendMessage(game, {
           type: 'output',
-          value: `Hunter activated at ${node}`,
+          value: `Hunter activated at ${this.node}`,
         });
       }
 
       if (newStatus === 'TERMINATED') {
         return appendMessage(game, {
           type: 'output',
-          value: `Hunter terminated at ${node}`,
+          value: `Hunter terminated at ${this.node}`,
         });
       }
 
       if (newStatus === 'STANDBY' && oldStatus === 'ACTIVE') {
         return appendMessage(game, {
           type: 'output',
-          value: `Hunter at ${node} moved into sleep mode.`,
+          value: `Hunter at ${this.node} moved into sleep mode.`,
         });
       }
     },
@@ -54,7 +50,14 @@ export const Daemons = {
       return [
         [
           [Triggers.IsStatus('ACTIVE'), Triggers.RoundEnd()],
-          Behaviors.MoveToNoise(this, { min: 1 }),
+          [
+            // Behaviors.MoveToNoise(this, { min: 1 }),
+            Behaviors.MoveToPlayer(this),
+            Behaviors.Message(this, (daemon) => ({
+              type: `output`,
+              value: `Hunter moved to ${daemon.node}`,
+            })),
+          ]
         ],
         [
           [Triggers.IsStatus('ACTIVE'), Triggers.NoiseAtNode({
