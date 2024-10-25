@@ -65,9 +65,11 @@ export type GameDerived = {
   hoveredNode: GameNode,
   nodeMap: NodeMap,
   noise: {
-    [nodeID: string]: number,
     total: number,
-    highest: number,
+    highest: [NodeID, number]
+    nodes: {
+      [nodeID: string]: number,
+    }
   },
 }
 
@@ -99,6 +101,9 @@ export type Daemon = {
   conditions: Condition[],
   onStatus?: (game: Game, newStatus: Daemon['status'], oldStatus: Daemon['status']) => Game,
   behaviors: BehaviorPattern,
+  history: {
+    path: NodeID[],
+  }
 }
 
 export type NodeContent = {

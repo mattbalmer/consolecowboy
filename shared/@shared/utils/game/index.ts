@@ -211,12 +211,14 @@ export const getGameDerived = (game: Game): GameDerived => {
   const hoveredNode = game.nodes[nodeMap[hoveredNodeXY]];
 
   let totalNoise = 0;
-  let highestNoise = 0;
+  let highestNoise: [NodeID, number] = null;
   const noiseMap = Object.entries(game.noise).reduce<Record<NodeID, number>>(
     (map, [node, noiseEvents]) => {
       map[node] = noiseAtNode(game.round, noiseEvents);
       totalNoise += map[node];
-      highestNoise = Math.max(highestNoise, map[node]);
+      if (map[node] > 0 && (!highestNoise || map[node] > highestNoise[1])) {
+        highestNoise = [node, map[node]];
+      }
       return map;
     },
     {}
@@ -226,7 +228,7 @@ export const getGameDerived = (game: Game): GameDerived => {
     hoveredNode,
     nodeMap,
     noise: {
-      ...noiseMap,
+      nodes: noiseMap,
       total: totalNoise,
       highest: highestNoise,
     }

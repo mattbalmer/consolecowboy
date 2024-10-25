@@ -1,4 +1,5 @@
-import { Coord, CoordString, Dir, Game, NodeID, NodeMap } from '@shared/types/game';
+import { Coord, CoordString, Dir, Game, GameDerived, NodeID, NodeMap } from '@shared/types/game';
+import { insertByFirstAsc, insertIntoCopy } from '@shared/utils/arrays';
 
 export const coordToString = ({ x, y }: Coord): CoordString => `${x},${y}`;
 export const stringToCoord = (str: CoordString): Coord => {
@@ -55,4 +56,59 @@ export const getAdjacentCoords = (game: Game, node: NodeID = game.player.node): 
       return coordToString({ x, y });
     })
     .filter(coord => coord in nodeMap);
+}
+
+export const pathToNode = (game: Game, derived: GameDerived, from: NodeID, to: NodeID) => {
+  if (!game.nodes[from] || !game.nodes[to]) {
+    return;
+  }
+  const fromCoords = { x: game.nodes[from].x, y: game.nodes[from].y };
+  const toCoords = { x: game.nodes[to].x, y: game.nodes[to].y };
+
+  const distanceTo = (coord: Coord) =>
+    Math.sqrt((coord.x - toCoords.x) ** 2 + (coord.y - toCoords.y) ** 2);
+
+  let paths = [
+    [distanceTo(fromCoords), fromCoords]
+  ] as unknown as [number, ...Coord[]][];
+  let current = derived.nodeMap[coordToString(fromCoords)];
+
+  console.log('starting pathfinding', { from, to, fromCoords, toCoords, paths, current });
+
+  while (current !== to) {
+    if (paths.length < 1) {
+      return;
+    }
+    const [dist, ...path] = paths.shift();
+    current = derived.nodeMap[coordToString(path[path.length - 1])];
+    console.log('head', { dist, current, path });
+
+    if (!current) {
+      return;
+    }
+    if (current === to) {
+      return path;
+    }
+
+    const neighbors = getAdjacentCoords(game, current)
+      .filter(coord => coord in derived.nodeMap)
+      .map(stringToCoord);
+    const adjacents = neighbors.map<
+      [number, ...Coord[]]
+    >((neighbor) => {
+      return [distanceTo(neighbor), ...path, neighbor];
+    }).sort((a, b) => a[0] - b[0]);
+
+    adjacents.forEach((adjacent) => {
+      const next = adjacent.slice(1) as Coord[];
+      paths = insertByFirstAsc<Coord>(paths, adjacent[0], next);
+      console.log('adjacent found', { dist: adjacent[0], path: next });
+
+      if (derived.nodeMap[coordToString(next[next.length - 1])] === to) {
+        return next;
+      }
+    });
+  }
+
+  return paths[0].slice(1) as Coord[];
 }

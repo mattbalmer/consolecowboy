@@ -29,3 +29,20 @@ export const generate = <T>(size: number, value: T | GenMapCallback<T>): T[] => 
     return Array.from({ length: size }).fill(value) as T[];
   }
 }
+
+export const insertByFirstAsc = <T extends any>(array: [number, ...T[]][], first: number, rest: T[]): [number, ...T[]][] => {
+  const i = array.findIndex(([n]) => first <= n);
+  if (i === 0) {
+    return [
+      [first, ...rest],
+      ...array,
+    ];
+  }
+  if (i < 0) {
+    return [
+      ...array,
+      [first, ...rest],
+    ];
+  }
+  return insertIntoCopy(array, i, [[first, ...rest]]);
+}

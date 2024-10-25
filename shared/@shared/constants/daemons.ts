@@ -24,6 +24,9 @@ export const Daemons = {
     conditions: [],
     status: props.status ?? 'STANDBY',
     node: props.node,
+    history: {
+      path: [],
+    },
     onStatus(game, newStatus, oldStatus) {
       if (newStatus === 'ACTIVE') {
         return appendMessage(game, {
@@ -42,7 +45,7 @@ export const Daemons = {
       if (newStatus === 'STANDBY' && oldStatus === 'ACTIVE') {
         return appendMessage(game, {
           type: 'output',
-          value: `Hunter at ${this.node} moved into sleep mode.`,
+          value: `Hunter at ${this.node} went into sleep mode.`,
         });
       }
     },
@@ -50,12 +53,9 @@ export const Daemons = {
       [
         [Triggers.IsStatus('ACTIVE'), Triggers.RoundEnd()],
         [
-          // Behaviors.MoveToNoise({ min: 1 }),
-          Behaviors.MoveToPlayer(),
-          Behaviors.Message((daemon) => ({
-            type: `output`,
-            value: `Hunter moved to ${daemon.node}`,
-          })),
+          Behaviors.MoveToNoise({
+            min: 1,
+          }),
         ]
       ],
       [

@@ -2,110 +2,41 @@ import {
   Behavior,
   BehaviorArgs,
   CLIMessage,
-  Coord,
   Daemon,
   Game,
-  GameDerived,
-  NodeID
 } from '@shared/types/game';
-import { coordToString, getAdjacentCoords, stringToCoord } from '@shared/utils/game/grid';
-import { insertIntoCopy } from '@shared/utils/arrays';
+import { coordToString, pathToNode } from '@shared/utils/game/grid';
 import { GameEffects } from '@shared/constants/effects';
 import { appendMessage } from '@shared/utils/game/cli';
-
-const insertByFirstAsc = <T extends any>(array: [number, ...T[]][], first: number, rest: T[]): [number, ...T[]][] => {
-  const i = array.findIndex(([n]) => first <= n);
-  if (i === 0) {
-    return [
-      [first, ...rest],
-      ...array,
-    ];
-  }
-  if (i < 0) {
-    return [
-      ...array,
-      [first, ...rest],
-    ];
-  }
-  return insertIntoCopy(array, i, [[first, ...rest]]);
-}
-
-const pathToNode = (game: Game, derived: GameDerived, from: NodeID, to: NodeID) => {
-  if (!game.nodes[from] || !game.nodes[to]) {
-    return;
-  }
-  const fromCoords = { x: game.nodes[from].x, y: game.nodes[from].y };
-  const toCoords = { x: game.nodes[to].x, y: game.nodes[to].y };
-
-  const distanceTo = (coord: Coord) =>
-    Math.sqrt((coord.x - toCoords.x) ** 2 + (coord.y - toCoords.y) ** 2);
-
-  let paths = [
-    [distanceTo(fromCoords), fromCoords]
-  ] as unknown as [number, ...Coord[]][];
-  let current = derived.nodeMap[coordToString(fromCoords)];
-
-  console.log('starting pathfinding', { from, to, fromCoords, toCoords, paths, current });
-
-  while (current !== to) {
-    if (paths.length < 1) {
-      return;
-    }
-    const [dist, ...path] = paths.shift();
-    current = derived.nodeMap[coordToString(path[path.length - 1])];
-    console.log('head', { dist, current, path });
-
-    if (!current) {
-      return;
-    }
-    if (current === to) {
-      return path;
-    }
-
-    const neighbors = getAdjacentCoords(game, current)
-      .filter(coord => coord in derived.nodeMap)
-      .map(stringToCoord);
-    const adjacents = neighbors.map<
-      [number, ...Coord[]]
-    >((neighbor) => {
-      return [distanceTo(neighbor), ...path, neighbor];
-    }).sort((a, b) => a[0] - b[0]);
-
-    adjacents.forEach((adjacent) => {
-      const next = adjacent.slice(1) as Coord[];
-      paths = insertByFirstAsc<Coord>(paths, adjacent[0], next);
-      console.log('adjacent found', { dist: adjacent[0], path: next });
-
-      if (derived.nodeMap[coordToString(next[next.length - 1])] === to) {
-        return next;
-      }
-    });
-  }
-
-  return paths[0].slice(1) as Coord[];
-}
 
 export const Behaviors = {
   MoveToNoise: (props?: {
     min: number,
+    announce?: boolean,
   }) => ({
     id: `MoveToNoise`,
     props: {
       min: props?.min ?? 2,
+      announce: props?.announce ?? true,
     },
     onExecute(this: Behavior, daemon, { game, derived }: BehaviorArgs): { daemon: Daemon, game: Game } {
-      const [highestNoiseNode] = Object.entries(derived.noise).reduce((highest, [nodeID, noise]) => {
-        if (noise < highest[1]) return highest;
-        return [nodeID, noise];
-      }, [null, 0]);
-      if (highestNoiseNode) {
+      if (derived.noise.highest) {
+        const highestNoiseNode = derived.noise.highest[0];
         const path = pathToNode(game, derived, daemon.node, highestNoiseNode);
         if (!path) {
           console.log('no valid path found - doing nothing');
           return { game, daemon };
-        } else {
-          console.log('moving to next node in path', path);
+        } else if (path.length > 1) {
           daemon.node = derived.nodeMap[coordToString(path[1])];
+          if (this.props.announce) {
+            game = appendMessage(game, {
+              type: 'output',
+              value: `${daemon.model} moved to ${daemon.node}`,
+            });
+          }
+          return { game, daemon };
+        } else {
+          console.log('Arrived at highest noise node', path);
           return { game, daemon };
         }
       } else {

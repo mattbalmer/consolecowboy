@@ -40,8 +40,9 @@ export const Triggers = {
       }
 
       if (node === 'any') {
-        console.log('is noise any', derived.noise.highest, min, max);
-        return derived.noise.highest >= min && derived.noise.highest <= max;
+        const highest = derived.noise.highest?.[1] || 0;
+        console.log('is noise any', highest, min, max);
+        return highest >= min && highest <= max;
       }
 
       if (game.noise[node]) {

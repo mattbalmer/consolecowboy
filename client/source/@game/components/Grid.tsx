@@ -141,7 +141,7 @@ export const Grid = ({
                 wasExecuted={node?.wasExecuted}
                 isVisited={node?.isVisited}
                 hasContent={!!node?.content}
-                noise={derived.noise[nodeID]}
+                noise={derived.noise.nodes[nodeID]}
               />
             } else {
               return <Spacer key={coordStr} />
