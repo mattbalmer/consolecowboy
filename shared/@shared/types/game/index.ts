@@ -66,6 +66,7 @@ export type GameDerived = {
   noise: {
     [nodeID: string]: number,
     total: number,
+    highest: number,
   },
 }
 
@@ -85,14 +86,19 @@ export type Behavior <P = any> = {
   },
 }
 
+export type BehaviorPattern = [
+  Trigger | Trigger[],
+  Behavior | Behavior[]
+][];
 export type Daemon = {
   id: string,
   name: string,
   model: string,
   node: NodeID,
-  status: 'ACTIVE' | 'STANDBY' | 'DEACTIVATED',
+  status: 'ACTIVE' | 'STANDBY' | 'DEACTIVATED' | 'TERMINATED',
   conditions: Condition[],
-  get behaviors(): [Trigger, Behavior[]][],
+  onStatus?: (game: Game, newStatus: Daemon['status'], oldStatus: Daemon['status']) => Game,
+  get behaviors(): BehaviorPattern,
 }
 
 export type NodeContent = {
@@ -234,12 +240,12 @@ export const COMMANDS = {
   'config': true,
   'deck': true,
 };
+export const DEBUG_COMMANDS = {
+  'noise': true,
+};
 
 export type Command = keyof typeof COMMANDS;
-export type CommandArgs = {
-  move: [string],
-  info: [],
-};
+export type DebugCommand = keyof typeof DEBUG_COMMANDS;
 
 export type GameEffect<ID extends string = string> = {
   id: ID,

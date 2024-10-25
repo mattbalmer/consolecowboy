@@ -10,3 +10,5 @@ if (Config.ENV === Environment.LOCAL) {
         transitionsCapsule,
     };
 }
+
+window['DEBUG_COMMANDS_ENABLED'] = true;

@@ -1,5 +1,14 @@
 import { Level } from '@shared/types/game/level';
-import { CoordString, Game, GameDie, NodeID, NodeMap, NodeSpecifier } from '@shared/types/game';
+import {
+  CoordString,
+  Game,
+  GameDerived,
+  GameDie,
+  NodeID,
+  NodeMap,
+  NodeSpecifier,
+  NoiseEvent
+} from '@shared/types/game';
 import { ICE } from '@shared/constants/ice';
 import { Installations } from '@shared/constants/installations';
 import { Traps } from '@shared/constants/traps';
@@ -183,4 +192,43 @@ export const gameFromLevel = (level: Level, player: Game['player']): Game => {
     player,
     daemons,
   });
+}
+export const noiseAtNode = (round: number, events: NoiseEvent[]): number => {
+  return events.reduce((sum, event) => {
+    const decay = event.decay || 1;
+    const duration = event.duration || 1;
+    const lastRound = Math.min(round, event.round + duration);
+    const roundsSince = round - lastRound;
+    const noiseFromEvent = Math.max(0, event.amount - (roundsSince * decay));
+
+    return sum + noiseFromEvent;
+  }, 0);
+}
+
+export const getGameDerived = (game: Game): GameDerived => {
+  const hoveredNodeXY = coordToString(game.nodes[game.player.node]);
+  const nodeMap = invertNodes(game.nodes);
+  const hoveredNode = game.nodes[nodeMap[hoveredNodeXY]];
+
+  let totalNoise = 0;
+  let highestNoise = 0;
+  const noiseMap = Object.entries(game.noise).reduce<Record<NodeID, number>>(
+    (map, [node, noiseEvents]) => {
+      map[node] = noiseAtNode(game.round, noiseEvents);
+      totalNoise += map[node];
+      highestNoise = Math.max(highestNoise, map[node]);
+      return map;
+    },
+    {}
+  );
+
+  return {
+    hoveredNode,
+    nodeMap,
+    noise: {
+      ...noiseMap,
+      total: totalNoise,
+      highest: highestNoise,
+    }
+  };
 }

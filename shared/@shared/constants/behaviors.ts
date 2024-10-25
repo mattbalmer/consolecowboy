@@ -144,7 +144,6 @@ export const Behaviors = {
     props,
     daemon,
     onExecute(this: Behavior, { game }: BehaviorArgs): { daemon: Daemon, game: Game } {
-      const { daemon } = this;
       game.stack = [
         ...game.stack,
         GameEffects.MentalDamage({ amount: this.props.amount }),
@@ -152,14 +151,23 @@ export const Behaviors = {
       return { game, daemon };
     },
   }),
-  SelfDestruct: (daemon: Daemon) => ({
-    id: `SelfDestruct`,
-    props: {},
+  SetStatus: (daemon: Daemon, props: {
+    status: Daemon['status'],
+  }) => ({
+    id: `SetStatus`,
+    props,
     daemon,
     onExecute(this: Behavior, { game }: BehaviorArgs): { daemon: Daemon, game: Game } {
       const { daemon } = this;
-      daemon.status = 'DEACTIVATED';
-      game.daemons = game.daemons.filter(d => d.id !== daemon.id);
+      const { status } = this.props;
+      const oldStatus = daemon.status;
+      daemon.status = status;
+      if (daemon.onStatus) {
+        game = daemon.onStatus(game, status, oldStatus);
+      }
+      if (status === 'TERMINATED') {
+        game.daemons = game.daemons.filter(d => d.id !== daemon.id);
+      }
       return { game, daemon };
     },
   }),
