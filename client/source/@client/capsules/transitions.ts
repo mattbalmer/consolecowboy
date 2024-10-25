@@ -14,4 +14,4 @@ export const getInitialTransitionsProps = (): typeof TransitionsCapsule.prototyp
   };
 }
 
-export const transitionsCapsule = new TransitionsCapsule('netrunner-transition', getInitialTransitionsProps());
+export const transitionsCapsule = new TransitionsCapsule('consolecowboy-transition', getInitialTransitionsProps());

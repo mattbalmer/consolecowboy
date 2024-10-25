@@ -16,7 +16,7 @@ export default class extends LevelController {
       game.stack = [
         ...game.stack,
         GameEffects.SimpleDialog({
-          title: 'Welcome to Netrunner!',
+          title: 'Welcome to Console Cowboy!',
           body: `Your goal in each hostile net is to grab as much as you can, then exit through an external connection. You always enter through one of these, but they generally close behind you - find another! To play the game, use the terminal at the bottom to enter commands. First try moving nodes, using "move <target>" (eg. "move B")`,
         }),
       ];

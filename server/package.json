@@ -1,5 +1,5 @@
 {
-  "name": "netrunner-server",
+  "name": "consolecowboy-server",
   "version": "0.1.0",
   "scripts": {
     "start": "./run.sh local watch",

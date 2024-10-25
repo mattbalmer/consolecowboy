@@ -498,18 +498,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@mbalmer/netrunner-shared@workspace:shared":
+"@mbalmer/consolecowboy-shared@workspace:shared":
   version: 0.0.0-use.local
-  resolution: "@mbalmer/netrunner-shared@workspace:shared"
+  resolution: "@mbalmer/consolecowboy-shared@workspace:shared"
   dependencies:
     "@types/node": "npm:^20.14.2"
     rfdc: "npm:^1.3.1"
   languageName: unknown
   linkType: soft
 
-"@mbalmer/netrunner@workspace:.":
+"@mbalmer/consolecowboy@workspace:.":
   version: 0.0.0-use.local
-  resolution: "@mbalmer/netrunner@workspace:."
+  resolution: "@mbalmer/consolecowboy@workspace:."
   dependencies:
     "@typescript-eslint/eslint-plugin": "npm:^7.13.0"
     "@typescript-eslint/parser": "npm:^7.13.0"
@@ -6690,9 +6690,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"netrunner-client@workspace:client":
+"consolecowboy-client@workspace:client":
   version: 0.0.0-use.local
-  resolution: "netrunner-client@workspace:client"
+  resolution: "consolecowboy-client@workspace:client"
   dependencies:
     "@date-io/date-fns": "npm:^2.17.0"
     "@emotion/react": "npm:^11.11.4"
@@ -6736,9 +6736,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"netrunner-server@workspace:server":
+"consolecowboy-server@workspace:server":
   version: 0.0.0-use.local
-  resolution: "netrunner-server@workspace:server"
+  resolution: "consolecowboy-server@workspace:server"
   dependencies:
     "@types/express": "npm:^4.17.21"
     "@types/express-session": "npm:^1.18.0"

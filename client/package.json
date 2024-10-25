@@ -1,5 +1,5 @@
 {
-  "name": "netrunner-client",
+  "name": "consolecowboy-client",
   "version": "0.1.0",
   "scripts": {
     "start": "./start.sh local",

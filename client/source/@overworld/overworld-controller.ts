@@ -14,7 +14,7 @@ export const useOverworldController = (state: OverworldState) => {
     if (numLevelsPlayed === 0 && !state.misc.hasShownIntroDialog) {
       state.setMisc({ ...state.misc, hasShownIntroDialog: true });
       state.setDialog({
-        title: 'Welcome to Netrunner',
+        title: 'Welcome to Console Cowboy',
         body: 'To start, click Level 1 to enter the first hostile net',
         acknowledge: 'Let\'s Go',
         onFinish() {

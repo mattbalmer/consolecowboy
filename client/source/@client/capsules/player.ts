@@ -36,6 +36,6 @@ export const getInitialPlayerProps = (): Player => {
   };
 }
 
-export const playerCapsule = new PlayerCapsule('netrunner', {
+export const playerCapsule = new PlayerCapsule('consolecowboy', {
   player: getInitialPlayerProps(),
 });

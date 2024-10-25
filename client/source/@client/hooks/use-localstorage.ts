@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-const PREFIX = 'netrunner';
+const PREFIX = 'consolecowboy';
 
 const loadJSON = <T>(key: string, defaultValue?: T): T => {
   const k = [PREFIX, key].join(',');

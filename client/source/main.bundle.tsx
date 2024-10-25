@@ -6,7 +6,7 @@ import { BrowserRouter } from 'react-router-dom';
 
 const USE_STRICT_MODE = false;
 
-const container = document.getElementById('netrunner-app');
+const container = document.getElementById('consolecowboy-app');
 const root = createRoot(container!);
 
 root.render(<>
