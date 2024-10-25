@@ -1,6 +1,6 @@
 import { Level } from '@shared/types/game/level';
 import {
-  CoordString,
+  CoordString, Daemon,
   Game,
   GameDerived,
   GameDie,
@@ -174,7 +174,7 @@ export const gameFromLevel = (level: Level, player: Game['player']): Game => {
       return acc;
     }, {} as Game['nodes']);
 
-  const daemons = level.daemons?.map(daemon =>
+  const daemons: Daemon[] = level.daemons?.map(daemon =>
     Daemons[daemon.model]({
       id: daemonIDTracker.next(daemon.model),
       node: nodeSpecifierToID(nodes, daemon.node),
@@ -182,6 +182,10 @@ export const gameFromLevel = (level: Level, player: Game['player']): Game => {
       ...daemon.args,
     })
   ) ?? [];
+
+  daemons.forEach(daemon => {
+    daemon.onInit?.();
+  });
 
   player.node = level.start ? nodeSpecifierToID(nodes, level.start) : 'A';
 

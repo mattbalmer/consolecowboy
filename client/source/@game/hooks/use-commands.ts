@@ -1,4 +1,4 @@
-import { BehaviorArgs, Command, DebugCommand, Game } from '@shared/types/game';
+import { Command, DebugCommand, Game } from '@shared/types/game';
 import { useCallback, useState } from 'react';
 import { CLIArgs } from '@shared/types/game/cli';
 import { appendMessage, parseArgs } from '@shared/utils/game/cli';
@@ -7,27 +7,7 @@ import { GameDerived } from '@shared/types/game';
 import { executeCommand } from '@shared/constants/commands';
 import { executeDebugCommand } from '@shared/constants/debug-commands';
 import { getGameDerived } from '@shared/utils/game';
-
-const runDaemons = (args: BehaviorArgs): Game => {
-  let newGame = args.game;
-  newGame.daemons.forEach(daemon => {
-    daemon.behaviors.forEach(([triggerOrTriggers, behaviorOrBehaviors]) => {
-      const triggers = Array.isArray(triggerOrTriggers) ? triggerOrTriggers : [triggerOrTriggers];
-      const behaviors = Array.isArray(behaviorOrBehaviors) ? behaviorOrBehaviors : [behaviorOrBehaviors];
-
-      const shouldRun = triggers.every(trigger =>
-        trigger.shouldRun(daemon, { ...args, game: newGame })
-      );
-
-      if (shouldRun) {
-        behaviors.forEach(behavior => {
-          newGame = behavior.onExecute(daemon, { ...args, game: newGame }).game;
-        });
-      }
-    });
-  });
-  return newGame;
-}
+import { runDaemons } from '@shared/constants/daemons';
 
 export const useCommands = ({
   game,

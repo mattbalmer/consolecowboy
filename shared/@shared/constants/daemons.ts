@@ -1,7 +1,28 @@
-import { Daemon, NodeID } from '@shared/types/game';
+import { BehaviorArgs, BehaviorPattern, Daemon, Game, NodeID } from '@shared/types/game';
 import { Triggers } from '@shared/constants/triggers';
-import { Behaviors } from '@shared/constants/behaviors';
+import { Behaviors, executeBehaviors, TargetSelectors } from '@shared/constants/behaviors';
 import { appendMessage } from '@shared/utils/game/cli';
+
+export const runDaemons = (args: BehaviorArgs): Game => {
+  let newGame = args.game;
+  newGame.daemons.forEach(daemon => {
+    daemon.behaviors.forEach(([triggerOrTriggers, behaviorOrBehaviors]) => {
+      const triggers = Array.isArray(triggerOrTriggers) ? triggerOrTriggers : [triggerOrTriggers];
+      const behaviors = Array.isArray(behaviorOrBehaviors) ? behaviorOrBehaviors : [behaviorOrBehaviors];
+
+      console.log('testing daemon behavior', triggers.map(trigger => trigger.id), behaviors.map(behavior => behavior.id));
+
+      const shouldRun = triggers.every(trigger =>
+        trigger.shouldRun(daemon, { ...args, game: newGame })
+      );
+
+      if (shouldRun) {
+        newGame = executeBehaviors(daemon, behaviors, args);
+      }
+    });
+  });
+  return newGame;
+}
 
 export class DaemonIDTracker {
   byType = new Map<keyof typeof Daemons, number>();
@@ -13,19 +34,21 @@ export class DaemonIDTracker {
 }
 
 export const Daemons = {
-  Hunter: (props: {
+  SuicideHunter: (props: {
     id: string,
     node: NodeID,
     status?: Daemon['status'],
   }) => ({
     id: props.id,
-    model: `Hunter`,
+    model: `SuicideHunter`,
     name: props.id,
     conditions: [],
     status: props.status ?? 'STANDBY',
     node: props.node,
-    history: {
-      path: [],
+    props: {
+      noiseActivate: 3,
+      noiseDeactivate: 2,
+      damage: 2,
     },
     onStatus(game, newStatus, oldStatus) {
       if (newStatus === 'ACTIVE') {
@@ -49,38 +72,40 @@ export const Daemons = {
         });
       }
     },
-    behaviors: [
-      [
-        [Triggers.IsStatus('ACTIVE'), Triggers.RoundEnd()],
+    get behaviors() {
+      return [
         [
-          Behaviors.MoveToNoise({
-            min: 1,
-          }),
-        ]
-      ],
-      [
-        [Triggers.IsStatus('ACTIVE'), Triggers.NoiseAtNode({
-          node: 'any',
-          max: 2,
-        })],
-        Behaviors.SetStatus({ status: 'STANDBY' }),
-      ],
-      [
-        [Triggers.IsStatus('STANDBY'), Triggers.NoiseAtNode({
-          node: 'any',
-          min: 3,
-        })],
-        Behaviors.SetStatus({ status: 'ACTIVE' }),
-      ],
-      [
-        [Triggers.IsStatus('ACTIVE'), Triggers.OnPlayer()],
+          [Triggers.IsStatus('ACTIVE'), Triggers.RoundEnd()],
+          [
+            Behaviors.MoveTo(TargetSelectors.HighestNoise({
+              min: this.props.noiseActivate,
+            })),
+          ]
+        ],
         [
-          Behaviors.AttackMental({ amount: 2 }),
-          Behaviors.SetStatus({
-            status: 'TERMINATED',
-          })
-        ]
-      ],
-    ],
+          [Triggers.IsStatus('ACTIVE'), Triggers.NoiseAtNode({
+            node: 'any',
+            max: this.props.noiseDeactivate,
+          })],
+          Behaviors.SetStatus({ status: 'STANDBY' }),
+        ],
+        [
+          [Triggers.IsStatus('STANDBY'), Triggers.NoiseAtNode({
+            node: 'any',
+            min: this.props.noiseActivate,
+          })],
+          Behaviors.SetStatus({ status: 'ACTIVE' }),
+        ],
+        [
+          [Triggers.IsStatus('ACTIVE'), Triggers.OnPlayer()],
+          [
+            Behaviors.AttackMental({ amount: this.props.damage }),
+            Behaviors.SetStatus({
+              status: 'TERMINATED',
+            })
+          ]
+        ],
+      ] as BehaviorPattern;
+    },
   }),
 } as const satisfies Record<string, (...args: unknown[]) => Daemon>;

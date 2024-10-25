@@ -69,7 +69,7 @@
   ],
   "daemons": [
     {
-      "model": "Hunter",
+      "model": "SuicideHunter",
       "status": "ACTIVE",
       "node": "2,1"
     }

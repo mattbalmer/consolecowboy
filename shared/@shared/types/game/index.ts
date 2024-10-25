@@ -73,7 +73,7 @@ export type GameDerived = {
   },
 }
 
-export type BehaviorArgs = { game: Game, derived: GameDerived, command: Command, args: CLIArgs };
+export type BehaviorArgs = { game: Game, derived: GameDerived, command?: Command, args?: CLIArgs };
 
 export type Trigger = {
   id: string,
@@ -82,6 +82,8 @@ export type Trigger = {
 export type Behavior <P = any> = {
   id: string,
   props: P,
+  state?: any,
+  shouldContinue?: (daemon: Daemon, args: BehaviorArgs) => boolean,
   onExecute: (daemon: Daemon, args: BehaviorArgs) => {
     daemon: Daemon,
     game: Game,
@@ -99,11 +101,11 @@ export type Daemon = {
   node: NodeID,
   status: 'ACTIVE' | 'STANDBY' | 'DEACTIVATED' | 'TERMINATED',
   conditions: Condition[],
+  onInit?(): void,
+  onInit?(game: Game): Game,
   onStatus?: (game: Game, newStatus: Daemon['status'], oldStatus: Daemon['status']) => Game,
   behaviors: BehaviorPattern,
-  history: {
-    path: NodeID[],
-  }
+  props: any,
 }
 
 export type NodeContent = {

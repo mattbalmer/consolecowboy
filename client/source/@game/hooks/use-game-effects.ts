@@ -2,6 +2,8 @@ import { ComponentProps, useEffect, useState } from 'react';
 import { GameEffects } from '@shared/constants/effects';
 import { Game } from '@shared/types/game';
 import { SimpleDialog } from '@client/components/SimpleDialog';
+import { runDaemons } from '@shared/constants/daemons';
+import { getGameDerived } from '@shared/utils/game';
 
 export const useGameEffects = ({
   game,
@@ -77,10 +79,18 @@ export const useGameEffects = ({
         setGame((prev) => {
           console.log('trigger else', effect.id, prev.stack);
           prev.stack = prev.stack.slice(1);
-          return {
+          prev = {
             ...prev,
             ...effect.trigger(prev),
-          }
+          };
+
+          // run deaemons
+          prev = runDaemons({
+            game: prev,
+            derived: getGameDerived(prev),
+          });
+
+          return prev;
         });
       }
       if (effect.id === 'finish.extraction') {
