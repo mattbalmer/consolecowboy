@@ -1,5 +1,6 @@
 import { Condition, Game, GameEffect, NoiseEvent } from '@shared/types/game';
 import { appendMessage } from '@shared/utils/game/cli';
+import { generate } from '@shared/utils/arrays';
 
 export const GameEffects = {
   AddNoise: ({
@@ -40,6 +41,19 @@ export const GameEffects = {
       return game;
     }
   }),
+  MentalDamageSilent: ({ amount }: { amount?: number }) => ({
+    id: 'damage.mental-silent',
+    amount: amount || 1,
+    trigger(game) {
+      return {
+        ...game,
+        player: {
+          ...game.player,
+          mental: game.player.mental - this.amount,
+        },
+      };
+    }
+  }),
   MentalDamage: ({ amount }: { amount?: number }) => ({
     id: 'damage.mental',
     amount: amount || 1,
@@ -48,6 +62,19 @@ export const GameEffects = {
         type: 'output',
         value: `${this.amount} mental damage taken`,
       });
+
+      // TODO: figure out how to handle visual and timed effects while working with react's instant rerendering
+      if (this.amount > 1) {
+        const remaining = this.amount - 1;
+        game.stack = [
+          ...game.stack,
+          ...generate(remaining, i => i % 2 === 0
+              ? GameEffects.Delay({ amount: 500 })
+              : GameEffects.MentalDamageSilent({ amount: 1 })
+          )
+        ];
+      }
+
       return {
         ...game,
         player: {
