@@ -16,6 +16,7 @@ export type Ice<ID extends string = string> = {
   id: ID,
   layers: {
     status: 'ACTIVE' | 'BROKEN' | 'DEACTIVATED',
+    description: string | string[],
     effects: GameEffect[],
   }[],
   types: IceType[],

@@ -125,9 +125,9 @@ export const GameScreen = ({
               <ul>
                 {hoveredNode.ice.layers.map((layer, i) => {
                   return <li key={i}>
-                    ({i}) - {layer.status}
-                    {layer.effects.map((effect, j) => {
-                      return <Typography key={j} variant={'body2'} sx={{ ml: 1 }}>- {effect.id}</Typography>
+                    <Typography variant={'body2'}>({i}) - {layer.status}</Typography>
+                    {(Array.isArray(layer.description) ? layer.description : [layer.description]).map((desc, i) => {
+                      return <Typography key={i} variant={'body2'} sx={{ ml: 1 }}>- {desc}</Typography>
                     })}
                   </li>
                 })}

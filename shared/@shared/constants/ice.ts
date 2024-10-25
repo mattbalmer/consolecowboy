@@ -2,8 +2,6 @@ import { GameEffects } from '@shared/constants/effects';
 import { Game, Ice } from '@shared/types/game';
 import { appendMessage } from '@shared/utils/game/cli';
 
-export const ICE_TYPES = ['barrier', 'codegate', 'sentry'] as const;
-
 export const ICE = {
   NeuralKatana: () => ({
     id: 'NeuralKatana',
@@ -14,6 +12,7 @@ export const ICE = {
     layers: [
       {
         status: 'ACTIVE',
+        description: `Take 3 Mental Damage`,
         effects: [
           GameEffects.MentalDamage({ amount: 3 }),
         ],
