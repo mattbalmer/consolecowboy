@@ -22,12 +22,12 @@ export const mergeInventory = (a: Inventory, b: Inventory, maxSize?: number): [i
 
       if (i === -1) {
         inv.push({ item, count });
-        continue;
+        break;
       }
 
       let remaining = Items[item].stackSize === -1
         ? count
-        : Math.min(Items[item].stackSize - a[i].count, count);
+        : Math.min(Items[item].stackSize - inv[i].count, count);
 
       if (remaining > 0) {
         inv[i] = {
@@ -87,3 +87,5 @@ export const savedPlayerToGamePlayer = (savedPlayer: Player): Game['player'] => 
     }, {}),
   };
 }
+
+window['mergeInventory'] = mergeInventory;

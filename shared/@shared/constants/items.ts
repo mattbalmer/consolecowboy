@@ -12,6 +12,11 @@ export const Items = {
     name: 'AI Core',
     stackSize: 1,
   },
+  [ItemID.UPGRADE_MODULE]: {
+    id: ItemID.UPGRADE_MODULE,
+    name: 'Upgrade Module',
+    stackSize: 10,
+  },
 } as const satisfies {
   [id in ItemID]: {
     id: id;
