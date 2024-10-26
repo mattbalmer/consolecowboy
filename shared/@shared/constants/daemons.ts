@@ -74,6 +74,8 @@ export const Daemons = {
       ] as BehaviorPattern;
     },
   }),
+
+  // todo: make daemon hold RAM from player. maybe refund partial if move to standby/deactive, and resume full usage on active. refund all on terminate
   SimpleSiphoner: (props: {
     id: DaemonID,
     node: NodeID,
