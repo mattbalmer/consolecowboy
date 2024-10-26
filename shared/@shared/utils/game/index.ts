@@ -59,7 +59,7 @@ export const getEdges = (nodes: Game['nodes']): Game['edges'] => {
   return output;
 }
 
-export const createGame = (partial: Pick<Game, 'nodes' | 'player' | 'daemons'>): Game => {
+export const createGame = (partial: Pick<Game, 'nodes' | 'player' | 'daemons' | 'daemonIDTracker' | 'idTracker'>): Game => {
   const edges = getEdges(partial.nodes);
 
   return {
@@ -95,7 +95,7 @@ const toContent = (content: Level['nodes'][CoordString]['content']): Game['nodes
   }
 }
 
-class IDTracker {
+export class IDTracker {
   private ids = new Set<number>();
 
   id(id?: string) {
@@ -180,7 +180,7 @@ export const gameFromLevel = (level: Level, player: Game['player']): Game => {
       node: nodeSpecifierToID(nodes, daemon.node),
       status: daemon.status,
       ...daemon.args,
-    })
+    } as any)
   ) ?? [];
 
   daemons.forEach(daemon => {
@@ -195,6 +195,8 @@ export const gameFromLevel = (level: Level, player: Game['player']): Game => {
     nodes,
     player,
     daemons,
+    idTracker,
+    daemonIDTracker,
   });
 }
 export const noiseAtNode = (round: number, events: NoiseEvent[]): number => {

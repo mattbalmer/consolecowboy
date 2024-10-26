@@ -1,6 +1,8 @@
 import { CLIArgs } from '@shared/types/game/cli';
-import { ProgramKeywords, Programs } from '@shared/constants/programs';
+import { ProgramKeywords } from '@shared/constants/programs';
 import { ItemID } from '@shared/types/game/items';
+import { DaemonIDTracker } from '@shared/constants/daemons';
+import { IDTracker } from '@shared/utils/game';
 
 export type Coord = { x: number, y: number };
 export type CoordString = `${number},${number}`;
@@ -41,9 +43,10 @@ export type InstallationCaptureEffect = {
 export type Installation = {
   id: string,
   executionCount: number,
-  canExecute?: (game: Game) => boolean,
+  inventory?: Inventory,
+  canExecute?: (game: Game, actor: EntityURN, node: NodeID, benefactor?: EntityURN) => boolean,
   onInfo?: (game: Game, args: CLIArgs) => Game,
-  onExecute: (game: Game) => Game,
+  onExecute: (game: Game, actor: EntityURN, node: NodeID, benefactor?: EntityURN) => Game,
 };
 
 export type TrapEffect = {
@@ -53,6 +56,7 @@ export type TrapEffect = {
 
 export type Trap = {
   id: string,
+  inventory?: Inventory,
   amount?: number,
   duration?: number,
   executionCount: number,
@@ -107,8 +111,9 @@ export type BehaviorPattern = [
   Trigger | Trigger[],
   Behavior | Behavior[]
 ][];
+export type DaemonID = `${string}${number}`;
 export type Daemon = {
-  id: string,
+  id: DaemonID,
   name: string,
   model: string,
   node: NodeID,
@@ -119,6 +124,7 @@ export type Daemon = {
   onStatus?: (game: Game, newStatus: Daemon['status'], oldStatus: Daemon['status']) => Game,
   behaviors: BehaviorPattern,
   props: any,
+  state?: Record<string, unknown>,
   inventory: Inventory;
   stats: Partial<
     {
@@ -257,6 +263,8 @@ export type Game = {
     terminal: CLIMessage[],
   },
   daemons: Daemon[],
+  idTracker: IDTracker,
+  daemonIDTracker: DaemonIDTracker,
 }
 
 export type NodeMap = Record<CoordString, NodeID>;
@@ -282,6 +290,13 @@ export const COMMANDS = {
 export const DEBUG_COMMANDS = {
   'noise': true,
 };
+export const FREE_COMMANDS = {
+  scripts: true,
+  info: true,
+  deck: true,
+  config: true,
+  inv: true,
+} as const satisfies Partial<Record<Command, boolean>>;
 
 export type Command = keyof typeof COMMANDS;
 export type DebugCommand = keyof typeof DEBUG_COMMANDS;
@@ -290,3 +305,5 @@ export type GameEffect<ID extends string = string> = {
   id: ID,
   trigger(game: Game): Game,
 }
+
+export type EntityURN = 'player' | `daemon:${DaemonID}` | `server:${NodeID}`;

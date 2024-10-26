@@ -1,4 +1,5 @@
 import {
+  EntityURN,
   Behavior,
   BehaviorArgs,
   CLIMessage,
@@ -8,6 +9,9 @@ import {
 import { coordToString, pathToNode } from '@shared/utils/game/grid';
 import { GameEffects } from '@shared/constants/effects';
 import { appendMessage } from '@shared/utils/game/cli';
+import { executeContent } from '@shared/utils/game/servers';
+import { GameError } from '@shared/errors/GameError';
+import { ItemID } from '@shared/types/game/items';
 
 export const executeBehaviors = (daemon: Daemon, behaviors: Behavior[], args: BehaviorArgs): Game => {
   let game = args.game;
@@ -139,13 +143,83 @@ export const Behaviors = {
       return { game, daemon };
     },
   }),
-  Message: (getMessage: (daemon: Daemon) => CLIMessage) => ({
+  SetState: (props: Record<string, unknown>) => ({
+    id: `SetState`,
+    props,
+    onExecute(daemon, { game }: BehaviorArgs): { daemon: Daemon, game: Game } {
+      if (!daemon.state) {
+        daemon.state = {};
+      }
+      console.log('assigning state', this.props);
+      Object.entries(this.props).forEach(([key, value]) => {
+        daemon.state[key] = value;
+      });
+      return { game, daemon };
+    },
+  }),
+  ExecuteAtSelf: (props: { benefactor: EntityURN }) => ({
+    id: `ExecuteAtSelf`,
+    props,
+    onExecute(daemon, { game }: BehaviorArgs): { daemon: Daemon, game: Game } {
+      try {
+        console.log('execute at self', game);
+        game = appendMessage(game, {
+          type: 'output',
+          value: `Executing daemon ${daemon.id} at self`,
+        });
+        game = executeContent(game, daemon.node, `daemon:${daemon.id}`, this.props.benefactor);
+      } catch (error) {
+        if (error instanceof GameError) {
+          game = appendMessage(game, {
+            type: 'error',
+            value: error.message,
+          });
+        } else {
+          throw error;
+        }
+      }
+      return { game, daemon };
+    },
+  }),
+  // TransferItemTo: (props: { item: ItemID, amount: number, target: EntityURN }) => ({
+  //   id: `TransferItemTo`,
+  //   props,
+  //   onExecute(daemon, { game }: BehaviorArgs): { daemon: Daemon, game: Game } {
+  //     const { target, item, amount } = this.props;
+  //     if () {
+  //
+  //     }
+  //     if (target === 'player') {
+  //       game.player.inventory = [
+  //         ...game.player.inventory,
+  //         {
+  //           item: this.props.item,
+  //           count: this.props.amount
+  //         },
+  //       ];
+  //     }
+  //     try {
+  //       game = executeContent(game, daemon.node, `daemon:${daemon.id}`);
+  //     } catch (error) {
+  //       if (error instanceof GameError) {
+  //         game = appendMessage(game, {
+  //           type: 'error',
+  //           value: error.message,
+  //         });
+  //       } else {
+  //         throw error;
+  //       }
+  //     }
+  //     return { game, daemon };
+  //   },
+  // }),
+  Message: (getMessage: CLIMessage | ((daemon: Daemon) => CLIMessage)) => ({
     id: `Message`,
     props: {
-      getMessage,
+      getMessage: typeof getMessage === 'function' ? getMessage : () => getMessage,
     },
     onExecute(daemon, { game }: BehaviorArgs): { daemon: Daemon, game: Game } {
-      game = appendMessage(game, getMessage(daemon));
+      game = appendMessage(game, this.props.getMessage(daemon));
       return { game, daemon };
     },
   }),

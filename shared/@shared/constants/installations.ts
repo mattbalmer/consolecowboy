@@ -7,7 +7,7 @@ import { nodeSpecifierToID } from '@shared/utils/game';
 
 export const Installations = {
   Wallet: ({ amount }: { amount: number }) => ({
-    id: 'wallet',
+    id: 'Wallet',
     executionCount: 0,
     amount,
     props: {
@@ -22,16 +22,19 @@ export const Installations = {
     canExecute(game) {
       return this.amount > 0;
     },
-    onExecute(game) {
+    onExecute(game, actor, node, benefactor) {
       const amountToDrain = Math.min(this.amount, this.props.drainPerExecute);
       this.amount -= amountToDrain;
+      console.log('drain from wallet', amountToDrain, game);
       game = appendMessage(game, {
         type: 'output',
-        value: `Stole $${amountToDrain} from wallet`,
+        value: actor.startsWith('daemon:')
+          ? `${actor.split(':')[1]} stole $${amountToDrain} from wallet`
+          : `Stole $${amountToDrain} from wallet`
       });
       return {
         ...game,
-        stack: [...game.stack, GameEffects.AddMoney({ amount: amountToDrain })],
+        stack: [...game.stack, GameEffects.AddMoney({ amount: amountToDrain, to: benefactor || actor })],
       }
     },
   }),
@@ -39,10 +42,13 @@ export const Installations = {
     id: 'exe.remote',
     executionCount: 0,
     target,
-    onExecute(game) {
+    onExecute(game, actor, node) {
       return {
         ...game,
-        stack: [...game.stack, GameEffects.Execute({ target: this.target })],
+        stack: [...game.stack, GameEffects.Execute({
+          target: this.target,
+          actor: `server:${node}`
+        })],
       }
     },
   }),

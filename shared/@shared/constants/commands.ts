@@ -628,20 +628,20 @@ const Commands = {
 
     // TODO: change that servers can only be executed once - for example, wallet could have a max per turn siphon amount, and a daemon could repeat each turn.
     try {
-      if (node.content.type === 'trap' && canExecute(node.content, game)) {
+      if (node.content.type === 'trap' && canExecute(game, game.player.node, 'player')) {
         game = appendMessage(game, {
           type: 'output',
           value: `(${game.player.node}) Trap activated - ${node.content.id}`,
         });
-        game = executeContent(node.content, game);
+        game = executeContent(game, game.player.node, 'player');
       }
 
-      if (node.content.type === 'installation' && canExecute(node.content, game)) {
+      if (node.content.type === 'installation' && canExecute(game, game.player.node, 'player')) {
         game = appendMessage(game, {
           type: 'output',
           value: `(${game.player.node}) Server content executed - ${node.content.id}`,
         });
-        game = executeContent(node.content, game);
+        game = executeContent(game, game.player.node, 'player');
       }
     } catch (error) {
       if (error instanceof GameError) {
