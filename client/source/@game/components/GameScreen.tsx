@@ -89,8 +89,6 @@ export const GameScreen = ({
     },
   });
 
-  console.log('render dialog', dialog);
-
   return <>
     <FlexCol data-game sx={{ flexGrow: 1 }}>
       <HUD

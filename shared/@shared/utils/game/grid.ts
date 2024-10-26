@@ -73,7 +73,7 @@ export const pathToNode = (game: Game, derived: GameDerived, from: NodeID, to: N
   ] as unknown as [number, ...Coord[]][];
   let current = derived.nodeMap[coordToString(fromCoords)];
 
-  console.log('starting pathfinding', { from, to, fromCoords, toCoords, paths, current });
+  console.debug('starting pathfinding', { from, to, fromCoords, toCoords, paths, current });
 
   while (current !== to) {
     if (paths.length < 1) {
@@ -81,7 +81,7 @@ export const pathToNode = (game: Game, derived: GameDerived, from: NodeID, to: N
     }
     const [dist, ...path] = paths.shift();
     current = derived.nodeMap[coordToString(path[path.length - 1])];
-    console.log('head', { dist, current, path });
+    console.debug('head', { dist, current, path });
 
     if (!current) {
       return;
@@ -102,7 +102,7 @@ export const pathToNode = (game: Game, derived: GameDerived, from: NodeID, to: N
     adjacents.forEach((adjacent) => {
       const next = adjacent.slice(1) as Coord[];
       paths = insertByFirstAsc<Coord>(paths, adjacent[0], next);
-      console.log('adjacent found', { dist: adjacent[0], path: next });
+      console.debug('adjacent found', { dist: adjacent[0], path: next });
 
       if (derived.nodeMap[coordToString(next[next.length - 1])] === to) {
         return next;

@@ -27,7 +27,7 @@ export const useGameEffects = ({
     }
 
     if (effect) {
-      console.log('trigger effect!', effect.id, { ...effect, trigger: null });
+      console.debug('trigger effect!', effect.id, { ...effect, trigger: null });
 
       if (effect.id === 'delay') {
         setGame((prev) => {
@@ -46,7 +46,7 @@ export const useGameEffects = ({
           });
         }, effect['amount']);
       } else if((effect as ReturnType<typeof GameEffects.SimpleDialog>).id === 'dialog.simple') {
-        console.log('trigger dialog effect');
+        console.debug('trigger dialog effect');
         const dialogSettings = {
           title: (effect as ReturnType<typeof GameEffects.SimpleDialog>).title,
           body: (effect as ReturnType<typeof GameEffects.SimpleDialog>).body,
@@ -55,7 +55,7 @@ export const useGameEffects = ({
         setDialog({
           ...dialogSettings,
           onClose: () => {
-            console.log('onFinish dialog');
+            console.debug('onFinish dialog');
             setGame((prev) => {
               return {
                 ...prev,
@@ -77,7 +77,7 @@ export const useGameEffects = ({
         });
       } else {
         setGame((prev) => {
-          console.log('trigger else', effect.id, prev.stack);
+          console.debug('trigger else', effect.id, prev.stack);
           prev.stack = prev.stack.slice(1);
           prev = {
             ...prev,

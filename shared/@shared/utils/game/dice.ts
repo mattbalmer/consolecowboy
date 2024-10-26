@@ -50,7 +50,7 @@ export const consumeDice = (game: Game, args: CLIArgs<Record<string, any>, any>)
   const diceIndex = game.player.dice.findIndex(d => d.value === dice && d.isAvailable);
 
   if (diceIndex < 0) {
-    console.log('error allocating dice used', dice, diceIndex, game.player.dice);
+    console.debug('error allocating dice used', dice, diceIndex, game.player.dice);
     throw new GameError(`Error allocating dice usage (-d ${args.d})`);
   }
 

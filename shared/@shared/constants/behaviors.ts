@@ -72,19 +72,19 @@ export const Behaviors = {
       hasArrived: false,
     },
     onExecute(this: Behavior, daemon, { game, derived, ...args }: BehaviorArgs): { daemon: Daemon, game: Game } {
-      console.log(`Daemon ${daemon.id} attempting to move using target selector ${this.props.selector.id}`);
+      console.debug(`Daemon ${daemon.id} attempting to move using target selector ${this.props.selector.id}`);
       const targetNode = this.props.selector.getNode({ game, derived, ...args });
       if (targetNode) {
-        console.log(`Daemon ${daemon.id} attempting to move to ${targetNode}`);
+        console.debug(`Daemon ${daemon.id} attempting to move to ${targetNode}`);
         const path = pathToNode(game, derived, daemon.node, targetNode);
         if (!path) {
-          console.log('no valid path found - doing nothing');
+          console.debug('no valid path found - doing nothing');
           return { game, daemon };
         } else if (path.length > 1) {
           this.state.hasArrived = false;
           daemon.node = derived.nodeMap[coordToString(path[1])];
           if (daemon.node === targetNode) {
-            console.log('Arrived at target node', path);
+            console.debug('Arrived at target node', path);
             if (this.props.onArrive && !this.state.hasArrived) {
               this.state.hasArrived = true;
               game = executeBehaviors(daemon, this.props.onArrive, { game, derived, ...args });
@@ -98,7 +98,7 @@ export const Behaviors = {
           }
           return { game, daemon };
         } else {
-          console.log('Already at target node', path);
+          console.debug('Already at target node', path);
           if (this.props.onArrive && !this.state.hasArrived) {
             this.state.hasArrived = true;
             game = executeBehaviors(daemon, this.props.onArrive, { game, derived, ...args });
@@ -107,7 +107,7 @@ export const Behaviors = {
         }
       } else {
         this.state.hasArrived = false;
-        console.log('No target node found - doing nothing');
+        console.debug('No target node found - doing nothing');
         return { game, daemon };
       }
     },
@@ -158,7 +158,7 @@ export const Behaviors = {
     props,
     onExecute(daemon, { game }: BehaviorArgs): { daemon: Daemon, game: Game } {
       try {
-        console.log('execute at self', game);
+        console.debug('execute at self', game);
         game = appendMessage(game, {
           type: 'output',
           value: `Executing daemon ${daemon.id} at self`,

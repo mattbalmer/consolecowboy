@@ -86,7 +86,7 @@ export const useCommands = ({
   }, [game, gameDerived]);
 
   return useCallback((command: Command, ...rawArgs: string[]) => {
-    console.log('oNCommand', command);
+    console.debug('oNCommand', command);
     // @ts-ignore
     if (window['DEBUG_COMMANDS_ENABLED'] && command === 'dbg') {
       const debugCommand = rawArgs[0] as DebugCommand;

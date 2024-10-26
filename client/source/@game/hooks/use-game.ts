@@ -30,9 +30,9 @@ export const useGame = ({
     return shouldBindController ? getControllerFor(levelID) : null;
   }, [shouldBindController, levelID]);
 
-  console.log('level', { ...level });
-  console.log('game', { ...game });
-  console.log('derived', { ...gameDerived });
+  console.debug('level', { ...level });
+  console.debug('game', { ...game });
+  console.debug('derived', { ...gameDerived });
 
   const onCommand = useCommands({
     game,

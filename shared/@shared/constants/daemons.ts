@@ -194,7 +194,7 @@ export const Daemons = {
             Triggers.PlayerAction(),
             // Can no longer execute (because empty)
             Triggers.Custom((daemon, { game }) => {
-              console.log('wtfffff', daemon.node, game.nodes[daemon.node]?.content);
+              console.debug('wtfffff', daemon.node, game.nodes[daemon.node]?.content);
               if (game.nodes[daemon.node]?.content?.id !== 'Wallet') {
                 return true;
               }

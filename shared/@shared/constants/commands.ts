@@ -233,7 +233,7 @@ const Commands = {
     const validMoveCoords = getAdjacentCoords(game);
 
     if (!target || !validMoveCoords.includes(targetCoord)) {
-      console.log('cannot nav via', dir);
+      console.debug('cannot nav via', dir);
       return game;
     }
 
@@ -308,7 +308,7 @@ const Commands = {
     const targetCoord = coordToString(targetNode);
 
     if (!target || !validMoveCoords.includes(targetCoord)) {
-      console.log('cannot retreat to', target);
+      console.debug('cannot retreat to', target);
       return game;
     }
 
@@ -623,7 +623,7 @@ const Commands = {
     }
 
     // or instead of auto, seeing the content is another progression system
-    console.log('run the hovered node. trigger trap effects or capture effects. this should maybe be auto? dunno');
+    console.debug('run the hovered node. trigger trap effects or capture effects. this should maybe be auto? dunno');
     const node = game.nodes[game.player.node];
 
     // TODO: change that servers can only be executed once - for example, wallet could have a max per turn siphon amount, and a daemon could repeat each turn.

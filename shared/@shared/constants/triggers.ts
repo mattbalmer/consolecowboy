@@ -57,7 +57,7 @@ export const Triggers = {
 
       if (node === 'any') {
         const highest = derived.noise.highest?.[1] || 0;
-        console.log('is noise any', highest, min, max);
+        console.debug('is noise any', highest, min, max);
         return highest >= min && highest <= max;
       }
 
