@@ -13,6 +13,7 @@
 - Daemon
 - Behavior
 - Trigger
+- Inventory
 
 ### CLI
 
@@ -67,3 +68,7 @@ A set of instructions that a Daemon will run when a Trigger is met. Usually by a
 ### Trigger
 
 A condition that, when met, will cause a Daemon to run its Behaviors.
+
+### Inventory
+
+A list of items that the Player, a Daemon, or Installation may contain. Daemons and Installations may have a max inventory size, and some items have a maximum stack size. Each "stack" represents 1GB of "storage", and a max inventory size is represented in total GB that the inventory holder can contain.
