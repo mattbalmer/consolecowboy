@@ -362,7 +362,6 @@ const Commands = {
         ...game.player,
         actions: game.player.actionsPerTurn,
         dice: getDice(game.player.actionsPerTurn),
-        mental: game.player.mental - 1,
         ram: {
           ...game.player.ram,
           current: Math.min(game.player.ram.current + game.player.ram.recovery, game.player.ram.max),
