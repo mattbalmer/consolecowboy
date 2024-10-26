@@ -138,7 +138,7 @@ export const Behaviors = {
         game = daemon.onStatus(game, status, oldStatus);
       }
       if (status === 'TERMINATED') {
-        game.daemons = game.daemons.filter(d => d.id !== daemon.id);
+        delete game.daemons[daemon.id];
       }
       return { game, daemon };
     },

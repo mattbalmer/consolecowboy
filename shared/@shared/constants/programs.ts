@@ -15,7 +15,12 @@ export const Programs = {
       const power = 50;
       // Create SiphonDaemon at player's location, which will interact with Wallet at the location each turn for $50 per turn.
 
-      if (game.daemons.find(d => d.model === 'SimpleSiphoner' && d.node === game.player.node)) {
+      const nodeContainsDaemon = Object.values(game.daemons)
+        .some(d =>
+          d.model === 'SimpleSiphoner' && d.node === game.player.node
+        );
+
+      if (nodeContainsDaemon) {
         return appendMessages(game, [{
           type: 'error',
           value: `A siphon daemon already exists at ${game.player.node}`,
@@ -33,10 +38,10 @@ export const Programs = {
 
       daemon.onInit?.();
 
-      game.daemons = [
+      game.daemons = {
         ...game.daemons,
-        daemon
-      ];
+        [daemon.id]: daemon,
+      };
 
       return appendMessages(game, [{
         type: 'output',

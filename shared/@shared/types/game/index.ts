@@ -262,7 +262,7 @@ export type Game = {
     nodes: NodeID[],
     terminal: CLIMessage[],
   },
-  daemons: Daemon[],
+  daemons: Record<DaemonID, Daemon>,
   idTracker: IDTracker,
   daemonIDTracker: DaemonIDTracker,
 }

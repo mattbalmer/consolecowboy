@@ -162,7 +162,7 @@ export const GameEffects = {
         };
       } else if (this.to.startsWith('daemon:')) {
         const daemonID = this.to.split(':')[1];
-        const daemon = game.daemons.find(d => d.id === daemonID);
+        const daemon = game.daemons[daemonID];
         const [inventory] = mergeInventory(daemon.inventory || [], [{
           item: 'Money',
           count: this.amount,
@@ -170,7 +170,10 @@ export const GameEffects = {
         daemon.inventory = inventory;
         return {
           ...game,
-          daemons: game.daemons.map(d => d.id === daemonID ? daemon : d),
+          daemons: {
+            ...game.daemons,
+            [daemonID]: daemon,
+          },
         };
       } else if (this.to.startsWith('server:')) {
         const nodeID = this.to.split(':')[1];

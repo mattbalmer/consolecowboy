@@ -1,6 +1,6 @@
 import { Level } from '@shared/types/game/level';
 import {
-  CoordString, Daemon,
+  CoordString, Daemon, DaemonID,
   Game,
   GameDerived,
   GameDie,
@@ -174,18 +174,17 @@ export const gameFromLevel = (level: Level, player: Game['player']): Game => {
       return acc;
     }, {} as Game['nodes']);
 
-  const daemons: Daemon[] = level.daemons?.map(daemon =>
-    Daemons[daemon.model]({
-      id: daemonIDTracker.next(daemon.model),
-      node: nodeSpecifierToID(nodes, daemon.node),
-      status: daemon.status,
-      ...daemon.args,
-    } as any)
-  ) ?? [];
-
-  daemons.forEach(daemon => {
+  const daemons = level.daemons?.reduce<Record<DaemonID, Daemon>>((daemons, levelDaemon) => {
+    const daemon: Daemon = Daemons[levelDaemon.model]({
+      id: daemonIDTracker.next(levelDaemon.model),
+      node: nodeSpecifierToID(nodes, levelDaemon.node),
+      status: levelDaemon.status,
+      ...levelDaemon.args,
+    } as any);
     daemon.onInit?.();
-  });
+    daemons[daemon.id] = daemon;
+    return daemons;
+  }, {}) || {};
 
   player.node = level.start ? nodeSpecifierToID(nodes, level.start) : 'A';
 
