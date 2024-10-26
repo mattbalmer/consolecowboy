@@ -129,6 +129,9 @@ export const Behaviors = {
       if (daemon.onStatus) {
         game.daemons[daemon.id] = daemon;
         game = daemon.onStatus(game, status, oldStatus);
+        if (!game) {
+          throw new Error(`Daemon ${daemon.id} failed to update game state`);
+        }
       }
       if (status === 'TERMINATED') {
         delete game.daemons[daemon.id];

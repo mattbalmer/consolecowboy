@@ -50,6 +50,8 @@ export const Daemons = {
           value: `${this.model} at ${this.node} went into sleep mode.`,
         });
       }
+
+      return game;
     },
     get behaviors() {
       return [
@@ -105,13 +107,6 @@ export const Daemons = {
         });
       }
 
-      // if (newStatus === 'TERMINATED') {
-      //   return appendMessage(game, {
-      //     type: 'output',
-      //     value: `${this.model} terminated at ${this.node}`,
-      //   });
-      // }
-
       if (newStatus === 'STANDBY' && oldStatus === 'ACTIVE') {
         return appendMessage(game, {
           type: 'output',
@@ -162,67 +157,5 @@ export const Daemons = {
 
       return game;
     },
-    // get behaviors() {
-    //   return [
-    //     // todo: something about this being at the end of the list breaks the references
-    //     [
-    //       [
-    //         Triggers.IsStatus('ACTIVE'),
-    //         Triggers.PlayerAction()
-    //       ],
-    //       [
-    //         Behaviors.SetState((daemon) => ({
-    //           ...daemon.state || {},
-    //           turnsActive: (daemon.state?.turnsActive as number || 0) + 1,
-    //         }))
-    //       ],
-    //     ],
-    //     [
-    //       [
-    //         Triggers.IsStatus('ACTIVE'),
-    //         Triggers.PlayerAction(),
-    //         Triggers.Custom((daemon, { game }) =>
-    //           game.nodes[daemon.node]?.content?.id === 'Wallet' && canExecute(game, daemon.node, `daemon:${daemon.id}`)
-    //         )
-    //       ],
-    //       [
-    //         // todo: figure out how this is reducing value of the installation, but not adding it to the player
-    //         Behaviors.ExecuteAtSelf({ benefactor: 'player' }),
-    //       ],
-    //     ],
-    //     [
-    //       [
-    //         Triggers.IsStatus('ACTIVE'),
-    //         Triggers.PlayerAction(),
-    //         Triggers.Custom((daemon: any) =>
-    //           daemon.state.turnsActive >= 3
-    //         )
-    //       ],
-    //       [
-    //         Behaviors.Message({ type: `output`, value: `SimpleSiphoner has run out of turns` }),
-    //         Behaviors.SetStatus({ status: 'TERMINATED' }),
-    //       ],
-    //     ],
-    //     [
-    //       [
-    //         Triggers.IsStatus('ACTIVE'),
-    //         Triggers.PlayerAction(),
-    //         // Can no longer execute (because empty)
-    //         Triggers.Custom((daemon, { game }) => {
-    //           console.debug('wtfffff', daemon.node, game.nodes[daemon.node]?.content);
-    //           if (game.nodes[daemon.node]?.content?.id !== 'Wallet') {
-    //             return true;
-    //           }
-    //           const amountLeft = (game.nodes[daemon.node]?.content?.['amount'] as unknown as number) || 0;
-    //           return amountLeft < 1;
-    //         }),
-    //       ],
-    //       [
-    //         Behaviors.Message({ type: `output`, value: `SimpleSiphoner has completed siphoning` }),
-    //         Behaviors.SetStatus({ status: 'TERMINATED' }),
-    //       ],
-    //     ],
-    //   ] as BehaviorPattern;
-    // },
   }),
 } as const satisfies Record<string, (...args: unknown[]) => Daemon>;

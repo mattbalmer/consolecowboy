@@ -192,7 +192,10 @@ const Commands = {
     };
 
     if (game.nodes[target].ice) {
-      game = game.nodes[target].ice.activate(game) ?? game;
+      game = game.nodes[target].ice.activate(game);
+      if (!game) {
+        throw new GameError(`ICE at ${target} failed to update game state`);
+      }
     }
 
     return game;
@@ -272,7 +275,10 @@ const Commands = {
     };
 
     if (game.nodes[target].ice) {
-      game = game.nodes[target].ice.activate(game) ?? game;
+      game = game.nodes[target].ice.activate(game);
+      if (!game) {
+        throw new Error(`ICE at ${target} failed to update game state`);
+      }
     }
 
     return game;
@@ -346,7 +352,10 @@ const Commands = {
     };
 
     if (game.nodes[target].ice) {
-      game = game.nodes[target].ice.activate(game) ?? game;
+      game = game.nodes[target].ice.activate(game);
+      if (!game) {
+        throw new Error(`ICE at ${target} failed to update game state`);
+      }
     }
 
     return game;
