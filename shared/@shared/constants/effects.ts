@@ -1,6 +1,8 @@
 import { Condition, Game, GameEffect, NoiseEvent } from '@shared/types/game';
 import { appendMessage } from '@shared/utils/game/cli';
 import { generate } from '@shared/utils/arrays';
+import { canExecute, executeContent } from '@shared/utils/game/servers';
+import { GameError } from '@shared/errors/GameError';
 
 export const GameEffects = {
   AddNoise: ({
@@ -29,7 +31,17 @@ export const GameEffects = {
     id: 'execute',
     target,
     trigger(game) {
-      return game.nodes[this.target].content?.onExecute(game);
+      try {
+        return executeContent(game.nodes[this.target].content, game);
+      } catch (error) {
+        if (error instanceof GameError) {
+          return appendMessage(game, {
+            type: 'error',
+            value: error.message,
+          });
+        }
+        return game;
+      }
     }
   }),
   ModifyServerContent: ({ target, props }: { target: string, props: Record<string, unknown> }) => ({

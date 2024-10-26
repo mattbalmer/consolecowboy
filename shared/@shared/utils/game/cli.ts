@@ -1,5 +1,6 @@
 import { CLIArgs } from '@shared/types/game/cli';
 import { CLIMessage, Game } from '@shared/types/game';
+import { getAutoDice } from '@shared/utils/game/dice';
 
 const isNamed = (str: string): boolean => Boolean(
   (/-([a-zA-Z]+)/).exec(str)?.[1]
@@ -38,6 +39,7 @@ export const parseArgs = (args: string[]): CLIArgs => {
       positional.push(a);
     }
   }
+
   return {
     ...named,
     _: positional,

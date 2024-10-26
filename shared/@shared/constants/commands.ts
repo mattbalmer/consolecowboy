@@ -9,12 +9,31 @@ import { pick } from '@shared/utils/objects';
 import { getDice } from '@shared/utils/game';
 import { consumeDice } from '@shared/utils/game/dice';
 import { ProgramKeywords, Programs } from '@shared/constants/programs';
+import { canExecute, executeContent } from '@shared/utils/game/servers';
 
 const Commands = {
   m: game => game,
   mv: game => game,
   x: game => game,
-  info: game => game,
+  info: (game, args) => {
+    const content = game.nodes[game.player.node].content;
+
+    if (!content) {
+      return appendMessage(game, {
+        type: 'output',
+        value: `Nothing installed`
+      });
+    }
+
+    if (content.onInfo) {
+      return content.onInfo(game, args);
+    } else {
+      return appendMessage(game, {
+        type: 'output',
+        value: `No information available`
+      });
+    }
+  },
   deck: game => appendMessages(game,
     Object.keys(game.player.deck).map(k => ({
       type: 'output',
@@ -569,33 +588,26 @@ const Commands = {
       });
     }
 
-    if (hoveredNode.content.status === 'EXECUTED' || hoveredNode.wasExecuted) {
-      return appendMessage(game, {
-        type: 'error',
-        value: `Already executed`,
-      });
-    }
-
     // or instead of auto, seeing the content is another progression system
     console.log('run the hovered node. trigger trap effects or capture effects. this should maybe be auto? dunno');
     const node = game.nodes[game.player.node];
 
     // TODO: change that servers can only be executed once - for example, wallet could have a max per turn siphon amount, and a daemon could repeat each turn.
     try {
-      if (node.content.type === 'trap') {
+      if (node.content.type === 'trap' && canExecute(node.content, game)) {
         game = appendMessage(game, {
           type: 'output',
           value: `(${game.player.node}) Trap activated - ${node.content.id}`,
         });
-        game = node.content.onExecute(game) ?? game;
+        game = executeContent(node.content, game);
       }
 
-      if (node.content.type === 'installation') {
+      if (node.content.type === 'installation' && canExecute(node.content, game)) {
         game = appendMessage(game, {
           type: 'output',
           value: `(${game.player.node}) Server content executed - ${node.content.id}`,
         });
-        game = node.content.onExecute(game) ?? game;
+        game = executeContent(node.content, game);
       }
     } catch (error) {
       if (error instanceof GameError) {
@@ -607,10 +619,6 @@ const Commands = {
         throw error;
       }
     }
-
-    // todo: no more 2 sources of truth
-    node.wasExecuted = true;
-    node.content.status = 'EXECUTED';
 
     try {
       game = consumeDice(game, args);

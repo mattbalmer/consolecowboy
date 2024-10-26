@@ -3,6 +3,7 @@ import { Command, Game } from '@game/types';
 import { GameEffects } from '@shared/constants/effects';
 import { CLIArgs } from '@shared/types/game/cli';
 import { appendMessage } from '@shared/utils/game/cli';
+import { canExecute } from '@shared/utils/game/servers';
 
 export default class extends LevelController {
   levelID: string = '2';
@@ -47,7 +48,7 @@ export default class extends LevelController {
       }
     }
 
-    if (game.player.node === 'B' && !game.nodes['B'].wasExecuted && !['x', 'execute', 'next'].includes(command)) {
+    if (game.player.node === 'B' && canExecute(game.nodes['B'].content, game) && !['x', 'execute', 'next', 'info'].includes(command)) {
       return {
         shouldContinue: false,
         game: appendMessage(game, {

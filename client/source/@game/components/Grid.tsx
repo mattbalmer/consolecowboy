@@ -5,6 +5,7 @@ import { Box, Typography } from '@mui/material';
 import { coordToString } from '@game/utils/grid';
 import { FlexRow } from '@client/components/FlexRow';
 import { useMemo } from 'react';
+import { canExecute } from '@shared/utils/game/servers';
 
 const Spacer = () => {
   return <Box
@@ -13,18 +14,18 @@ const Spacer = () => {
   />
 }
 
-const Node = ({ id, coord, selected, exist, isVisited, wasExecuted, hasContent, noise, }: {
+const Node = ({ id, coord, selected, exist, isVisited, canBeExecuted, hasContent, noise, }: {
   id: string,
   coord: string,
   selected: boolean,
   exist?: boolean,
   isVisited?: boolean,
-  wasExecuted?: boolean,
+  canBeExecuted?: boolean,
   hasContent?: boolean,
   noise?: number,
 }) => {
   const color = selected ? '#c44'
-    : wasExecuted ? '#454'
+    : hasContent && !canBeExecuted ? '#454'
     : isVisited ? '#8c8'
     : exist ? '#44c'
     : '#222';
@@ -59,7 +60,7 @@ const Node = ({ id, coord, selected, exist, isVisited, wasExecuted, hasContent, 
       boxSizing: 'border-box',
       position: 'absolute',
     }}/>}
-    <Typography variant={'subtitle1'}>{id}{hasContent ? wasExecuted ? '-' : '*' : ''}</Typography>
+    <Typography variant={'subtitle1'}>{id}{hasContent ? !canBeExecuted ? '-' : '*' : ''}</Typography>
   </Box>
 }
 
@@ -138,7 +139,7 @@ export const Grid = ({
                 coord={coordStr}
                 selected={coordStr === hoveredNodeXY}
                 exist={coordStr in nodeMap}
-                wasExecuted={node?.wasExecuted}
+                canBeExecuted={canExecute(node?.content, game)}
                 isVisited={node?.isVisited}
                 hasContent={!!node?.content}
                 noise={derived.noise.nodes[nodeID]}

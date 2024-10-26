@@ -40,6 +40,9 @@ export type InstallationCaptureEffect = {
 
 export type Installation = {
   id: string,
+  executionCount: number,
+  canExecute?: (game: Game) => boolean,
+  onInfo?: (game: Game, args: CLIArgs) => Game,
   onExecute: (game: Game) => Game,
 };
 
@@ -52,6 +55,9 @@ export type Trap = {
   id: string,
   amount?: number,
   duration?: number,
+  executionCount: number,
+  canExecute?: (game: Game) => boolean,
+  onInfo?: (game: Game, args: CLIArgs) => Game,
   onExecute: (game: Game) => Game,
 }
 
@@ -60,6 +66,7 @@ export type Script <P = any> = {
   name: string,
   props: P,
   onExecute: (game: Game, args: CLIArgs) => Game,
+  onInfo?: (game: Game, args: CLIArgs) => Game,
 }
 
 export type GameDerived = {
@@ -119,7 +126,10 @@ export type Daemon = {
         barrier: number,
         sentry: number,
         codegate: number,
-      }
+      },
+      recon: {
+        info: number,
+      },
     }> &
     {
       inventorySize: number,
@@ -138,7 +148,6 @@ export type GameNode = {
   ice?: Ice,
   content?: NodeContent,
   isVisited?: boolean,
-  wasExecuted?: boolean,
 }
 
 export type Condition = {
@@ -177,6 +186,9 @@ export type Player = {
       barrier: number,
       sentry: number,
       codegate: number,
+    },
+    recon: {
+      info: number,
     },
     inventorySize: number,
   },

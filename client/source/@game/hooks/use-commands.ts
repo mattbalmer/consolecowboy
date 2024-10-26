@@ -8,6 +8,7 @@ import { executeCommand } from '@shared/constants/commands';
 import { executeDebugCommand } from '@shared/constants/debug-commands';
 import { getGameDerived } from '@shared/utils/game';
 import { runDaemons } from '@shared/constants/daemons';
+import { getAutoDice } from '@shared/utils/game/dice';
 
 export const useCommands = ({
   game,
@@ -32,6 +33,10 @@ export const useCommands = ({
 
     if (command === 'config') {
       return executeCommand('config', game, commandArgs, gameDerived)
+    }
+
+    if (command === 'info') {
+      return executeCommand('info', game, commandArgs, gameDerived)
     }
 
     if (game.player.actions <= 0) {
@@ -114,6 +119,11 @@ export const useCommands = ({
     }
 
     let commandArgs = parseArgs(rawArgs);
+
+    // Auto use a dice
+    if (!commandArgs.d) {
+      commandArgs.d = [getAutoDice(game)];
+    }
 
     game = appendMessage(game, {
       type: 'command',

@@ -54,6 +54,9 @@ export const HUD = ({
       <FlexCol sx={{ alignItems: 'center' }}>
         <Typography variant={'subtitle1'} sx={{ ml: 0 }}>Icebreaker: {game.player.stats.icebreaker.barrier}/{game.player.stats.icebreaker.sentry}/{game.player.stats.icebreaker.codegate}</Typography>
       </FlexCol>
+      <FlexCol sx={{ alignItems: 'center' }}>
+        <Typography variant={'subtitle1'} sx={{ ml: 0 }}>Recon: {game.player.stats.recon.info}</Typography>
+      </FlexCol>
     </FlexCol>
   </FlexRow>
 }

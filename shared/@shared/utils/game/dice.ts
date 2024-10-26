@@ -37,8 +37,7 @@ export const getAutoDice = (game: Game): number => {
 }
 
 export const consumeDice = (game: Game, args: CLIArgs<Record<string, any>, any>): Game => {
-  const givenDice = args.d?.[0];
-  const dice = givenDice ?? getAutoDice(game);
+  const dice = args.d?.[0];
 
   if (!dice) {
     throw new GameError('No valid dice given');
