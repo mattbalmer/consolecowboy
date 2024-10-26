@@ -88,4 +88,16 @@ export const savedPlayerToGamePlayer = (savedPlayer: Player): Game['player'] => 
   };
 }
 
-window['mergeInventory'] = mergeInventory;
+export const gamePlayerToSavedPlayer = (savedPlayer: Player, gamePlayer: Game['player']): Player => {
+  const [inventory, excess] = mergeInventory(savedPlayer.inventory, gamePlayer.inventory);
+
+  console.log('losing items', excess);
+
+  return {
+    ...savedPlayer,
+    inventory,
+    config: gamePlayer.config,
+    mental: gamePlayer.mental,
+    money: gamePlayer.money,
+  };
+}

@@ -2,7 +2,7 @@ import * as React from 'react';
 import { FlexCol } from '@client/components/FlexCol';
 import { FlexRow } from '@client/components/FlexRow';
 import { ComponentProps, useState } from 'react';
-import { Game, Player } from '@game/types';
+import { Game } from '@game/types';
 import { Grid } from '@game/components/Grid';
 import { Typography } from '@mui/material';
 import { CommandLine } from '@game/components/CommandLine';
@@ -13,32 +13,24 @@ import { HUD } from '@game/components/HUD';
 import { useGame } from '@game/hooks/use-game';
 import { useGameEffects } from '@game/hooks/use-game-effects';
 import { transitionsCapsule } from '@client/capsules/transitions';
-import { mergeInventory } from '@shared/utils/game/player';
+import { gamePlayerToSavedPlayer, mergeInventory } from '@shared/utils/game/player';
 
 const savePlayer = (levelID: string, game: Game) => {
   const savedPlayer = playerCapsule.get('player');
-  const previousHistoryForLevel = savedPlayer.history[levelID] ?? [0, 0];
+  const player = gamePlayerToSavedPlayer(savedPlayer, game.player);
 
-  const [inventory, excess] = mergeInventory(savedPlayer.inventory, game.player.inventory);
+  const previousHistoryForLevel = player.history[levelID] ?? [0, 0];
 
-  console.log('losing items', excess);
-
-  const newPlayer: Player = {
-    ...savedPlayer,
-    inventory,
-    config: game.player.config,
-    mental: game.player.mental,
-    money: game.player.money,
+  playerCapsule.set('player', {
+    ...player,
     history: {
-      ...savedPlayer.history,
+      ...player.history,
       [levelID]: [
         previousHistoryForLevel[0],
         previousHistoryForLevel[1] + 1,
       ],
     },
-  };
-
-  playerCapsule.set('player', newPlayer);
+  });
 }
 
 export const GameScreen = ({
