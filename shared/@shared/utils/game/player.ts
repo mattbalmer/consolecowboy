@@ -3,7 +3,7 @@ import { getDice } from '@shared/utils/game/index';
 import { Scripts } from '@shared/constants/scripts';
 import { CORE_COMMANDS } from '@shared/constants/commands';
 import { Programs } from '@shared/constants/programs';
-import { getTotalCount, mergeInventory } from '@shared/utils/game/inventory';
+import { formatItemCount, getTotalCount, mergeInventory } from '@shared/utils/game/inventory';
 import { ItemID } from '@shared/types/game/items';
 
 export const savedPlayerToGamePlayer = (savedPlayer: Player): Game['player'] => {
@@ -61,6 +61,6 @@ export const gamePlayerToSavedPlayer = (savedPlayer: Player, gamePlayer: Game['p
   };
 }
 
-export const itemCount = <P extends { inventory: Inventory }>(player: P, item: ItemID): number => {
-  return getTotalCount(player.inventory, item);
+export const itemCountFormatted = <P extends { inventory: Inventory }>(container: P, item: ItemID): string => {
+  return formatItemCount(item, getTotalCount(container.inventory, item));
 }

@@ -1,4 +1,11 @@
-export const Items = {
+export const Items: {
+  [id in string]: {
+    id: id;
+    name: string;
+    stackSize: number;
+    format?: (amount: number) => string;
+  }
+} = {
   Money: {
     id: 'Money',
     name: 'Money',
@@ -15,11 +22,4 @@ export const Items = {
     name: 'Upgrade Module',
     stackSize: 10,
   },
-} as const satisfies {
-  [id in string]: {
-    id: id;
-    name: string;
-    stackSize: number;
-    format?: (amount: number) => string;
-  }
-}
+};

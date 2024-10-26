@@ -39,6 +39,10 @@ export const useCommands = ({
       return executeCommand('info', game, commandArgs, gameDerived)
     }
 
+    if (command === 'inv') {
+      return executeCommand('inv', game, commandArgs, gameDerived)
+    }
+
     if (game.player.actions <= 0) {
       return appendMessage(game, {
         type: 'output',

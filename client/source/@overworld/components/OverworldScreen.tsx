@@ -8,10 +8,8 @@ import { SimpleDialog } from '@client/components/SimpleDialog';
 import { ConfirmDialog } from '@client/components/ConfirmDialog';
 import { playerCapsule } from '@client/capsules/player';
 import { FEEDBACK_URL } from '@client/constants/feedback';
-import { useEffect } from 'react';
 import { transitionsCapsule } from '@client/capsules/transitions';
-import { itemCount } from '@shared/utils/game/player';
-import { ItemID } from '@shared/types/game/items';
+import { itemCountFormatted } from '@shared/utils/game/player';
 import { Items } from '@shared/constants/items';
 
 export const OverworldScreen = ({
@@ -48,7 +46,7 @@ export const OverworldScreen = ({
         <Divider sx={{ mb: 2 }} />
         <Typography variant={'body1'}>HP: {player.bodyHP}</Typography>
         <Typography variant={'body1'}>Mental HP: {player.mental}</Typography>
-        <Typography variant={'body1'}>Money: {itemCount(player, Items.Money.id)}</Typography>
+        <Typography variant={'body1'}>Money: {itemCountFormatted(player, Items.Money.id)}</Typography>
         <Typography variant={'body1'}>XP: {player.xp}</Typography>
         <Typography variant={'body1'}>Actions per turn: {player.actions}</Typography>
         <Typography variant={'body1'}>RAM: {player.ram.max}</Typography>

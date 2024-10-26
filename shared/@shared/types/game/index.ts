@@ -277,6 +277,7 @@ export const COMMANDS = {
   'break': true,
   'config': true,
   'deck': true,
+  'inv': true,
 };
 export const DEBUG_COMMANDS = {
   'noise': true,

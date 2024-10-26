@@ -48,7 +48,7 @@ export default class extends LevelController {
       }
     }
 
-    if (game.player.node === 'B' && canExecute(game.nodes['B'].content, game) && !['x', 'execute', 'next', 'info'].includes(command)) {
+    if (game.player.node === 'B' && canExecute(game.nodes['B'].content, game) && !['x', 'execute', 'next', 'info', 'inv'].includes(command)) {
       return {
         shouldContinue: false,
         game: appendMessage(game, {

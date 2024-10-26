@@ -1,4 +1,13 @@
-import { Command, COMMANDS, CompassDir, Game, GameDerived, Program, ProgramKeyword } from '@shared/types/game';
+import {
+  Command,
+  COMMANDS,
+  CompassDir,
+  Game,
+  GameDerived,
+  Inventory,
+  Program,
+  ProgramKeyword
+} from '@shared/types/game';
 import { appendMessage, appendMessages } from '@shared/utils/game/cli';
 import { CLIArgs } from '@shared/types/game/cli';
 import { removeRange } from '@shared/utils/arrays';
@@ -10,6 +19,9 @@ import { getDice } from '@shared/utils/game';
 import { consumeDice } from '@shared/utils/game/dice';
 import { ProgramKeywords, Programs } from '@shared/constants/programs';
 import { canExecute, executeContent } from '@shared/utils/game/servers';
+import { Items } from '@shared/constants/items';
+import { formatItemCount, mergeInventory } from '@shared/utils/game/inventory';
+import { ItemID } from '@shared/types/game/items';
 
 const Commands = {
   m: game => game,
@@ -42,6 +54,29 @@ const Commands = {
         : `${k.toLowerCase()}: ${game.player.deck[k].id}`
     })),
   ),
+  inv: game => {
+    const stacks = game.player.inventory
+      .reduce<Record<ItemID, {
+        stacks: number,
+        total: number,
+      }>>((stacks, { item, count }) => {
+        if (!stacks[item]) {
+          stacks[item] = { stacks: 0, total: 0 };
+        }
+        stacks[item].stacks++;
+        stacks[item].total += count;
+        return stacks;
+      }, {
+        'Money': { stacks: 0, total: 0 },
+      });
+
+    return appendMessages(game,
+      Object.entries(stacks).map(([item, { stacks, total }]) => ({
+        type: `output`,
+        value: `${Items[item].name}: ${formatItemCount(item, total)} (${stacks} GB)`
+      }))
+    );
+  },
   scripts: (game: Game) => {
     return appendMessage(game, {
       type: 'output',
@@ -720,6 +755,7 @@ export const CORE_COMMANDS = [
   'nav',
   'next',
   'deck',
+  'inv',
   //
   'scripts',
   'run',

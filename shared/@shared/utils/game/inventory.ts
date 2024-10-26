@@ -43,3 +43,10 @@ export const mergeInventory = (a: Inventory, b: Inventory, maxSize?: number): [i
 
   return [inventory, excess];
 }
+
+export const formatItemCount = (item: ItemID, count: number) => {
+  const format = Items[item].format;
+  return format ? format(count) : `${count}`;
+}
+
+window['mergeInventory'] = mergeInventory;

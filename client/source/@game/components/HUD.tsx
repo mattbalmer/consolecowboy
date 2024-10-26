@@ -4,8 +4,7 @@ import { Typography } from '@mui/material';
 import * as React from 'react';
 import { Game, GameNode } from '@shared/types/game';
 import { Dice } from '@client/components/Dice';
-import { itemCount } from '@shared/utils/game/player';
-import { ItemID } from '@shared/types/game/items';
+import { itemCountFormatted } from '@shared/utils/game/player';
 
 export const HUD = ({
   game,
@@ -51,7 +50,7 @@ export const HUD = ({
         <Typography variant={'subtitle1'} sx={{ ml: 0 }}>RAM: {game.player.ram.current} / {game.player.ram.max}</Typography>
       </FlexRow>
       <FlexRow sx={{ alignItems: 'center' }}>
-        <Typography variant={'subtitle1'} sx={{ ml: 0 }}>Money: {itemCount(game.player, 'Money')}</Typography>
+        <Typography variant={'subtitle1'} sx={{ ml: 0 }}>Money: {itemCountFormatted(game.player, 'Money')}</Typography>
       </FlexRow>
       <FlexCol sx={{ alignItems: 'center' }}>
         <Typography variant={'subtitle1'} sx={{ ml: 0 }}>Icebreaker: {game.player.stats.icebreaker.barrier}/{game.player.stats.icebreaker.sentry}/{game.player.stats.icebreaker.codegate}</Typography>
