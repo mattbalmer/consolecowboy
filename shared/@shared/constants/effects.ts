@@ -148,6 +148,7 @@ export const GameEffects = {
     amount: props.amount,
     to: props.to ?? 'player',
     trigger(game) {
+      console.log('pragma> add money', game, this.amount, this.to);
       if (this.to === 'player') {
         const [inventory] = mergeInventory(game.player.inventory, [{
           item: 'Money',

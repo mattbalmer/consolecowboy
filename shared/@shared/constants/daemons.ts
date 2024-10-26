@@ -20,7 +20,7 @@ export const runDaemons = (args: BehaviorArgs): Game => {
       console.debug('testing daemon behavior', triggers.map(trigger => `${trigger.id}:${trigger.shouldRun(daemon, { ...args, game: newGame })}`), behaviors.map(behavior => behavior.id));
 
       if (shouldRun) {
-        newGame = executeBehaviors(daemon, behaviors, args);
+        newGame = executeBehaviors(daemon, behaviors, { ...args, game: newGame });
       }
     });
   });

@@ -25,7 +25,7 @@ export const Installations = {
     onExecute(game, actor, node, benefactor) {
       const amountToDrain = Math.min(this.amount, this.props.drainPerExecute);
       this.amount -= amountToDrain;
-      console.debug('drain from wallet', amountToDrain, game);
+      console.log('pragma> drain from wallet', amountToDrain, game, actor, benefactor, node);
       game = appendMessage(game, {
         type: 'output',
         value: actor.startsWith('daemon:')

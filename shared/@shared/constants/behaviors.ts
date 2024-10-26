@@ -159,7 +159,7 @@ export const Behaviors = {
     props,
     onExecute(daemon, { game }: BehaviorArgs): Game {
       try {
-        console.debug('execute at self', game);
+        console.log('pragma> execute at self', daemon, game);
         game = appendMessage(game, {
           type: 'output',
           value: `Executing daemon ${daemon.id} at self`,
