@@ -1,5 +1,6 @@
 import { CLIArgs } from '@shared/types/game/cli';
 import { ProgramKeywords, Programs } from '@shared/constants/programs';
+import { ItemID } from '@shared/types/game/items';
 
 export type Coord = { x: number, y: number };
 export type CoordString = `${number},${number}`;
@@ -73,6 +74,11 @@ export type GameDerived = {
   },
 }
 
+export type Inventory = readonly {
+  item: ItemID,
+  count: number,
+}[];
+
 export type BehaviorArgs = { game: Game, derived: GameDerived, command?: Command, args?: CLIArgs };
 
 export type Trigger = {
@@ -106,6 +112,18 @@ export type Daemon = {
   onStatus?: (game: Game, newStatus: Daemon['status'], oldStatus: Daemon['status']) => Game,
   behaviors: BehaviorPattern,
   props: any,
+  inventory: Inventory;
+  stats: Partial<
+    {
+      icebreaker: {
+        barrier: number,
+        sentry: number,
+        codegate: number,
+      }
+    }> &
+    {
+      inventorySize: number,
+    },
 }
 
 export type NodeContent = {
@@ -160,6 +178,7 @@ export type Player = {
       sentry: number,
       codegate: number,
     },
+    inventorySize: number,
   },
   /**
    * Record of level IDs to number of times entered & completed
@@ -171,6 +190,7 @@ export type Player = {
   },
   scripts: Pick<Script, 'id' | 'props'>[],
   deck: (`command:${Command}` | `program:${ProgramID}`)[],
+  inventory: Inventory,
 }
 
 export type GameDie = {
@@ -218,6 +238,7 @@ export type Game = {
     config: Player['config'],
     scripts: Script[],
     deck: Partial<Record<Command | ProgramKeyword, 'command' | Program>>,
+    inventory: Inventory,
   },
   stack: GameEffect[],
   round: number,

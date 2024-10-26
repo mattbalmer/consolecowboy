@@ -46,6 +46,10 @@ export const Daemons = {
     conditions: [],
     status: props.status ?? 'STANDBY',
     node: props.node,
+    stats: {
+      inventorySize: 0,
+    },
+    inventory: [],
     props: {
       noiseActivate: 3,
       noiseDeactivate: 2,

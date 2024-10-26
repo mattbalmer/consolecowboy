@@ -23,7 +23,9 @@ export const getInitialPlayerProps = (): Player => {
         codegate: 1,
         sentry: 1,
       },
+      inventorySize: 4,
     },
+    inventory: [],
     history: {},
     config: {
       autonext: false,

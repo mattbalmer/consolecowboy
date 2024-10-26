@@ -13,12 +13,19 @@ import { HUD } from '@game/components/HUD';
 import { useGame } from '@game/hooks/use-game';
 import { useGameEffects } from '@game/hooks/use-game-effects';
 import { transitionsCapsule } from '@client/capsules/transitions';
+import { mergeInventory } from '@shared/utils/game/player';
 
 const savePlayer = (levelID: string, game: Game) => {
   const savedPlayer = playerCapsule.get('player');
   const previousHistoryForLevel = savedPlayer.history[levelID] ?? [0, 0];
+
+  const [inventory, excess] = mergeInventory(savedPlayer.inventory, game.player.inventory);
+
+  console.log('losing items', excess);
+
   const newPlayer: Player = {
     ...savedPlayer,
+    inventory,
     config: game.player.config,
     mental: game.player.mental,
     money: game.player.money,
