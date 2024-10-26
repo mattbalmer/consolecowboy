@@ -1,8 +1,10 @@
 import { Condition, Game, GameEffect, NoiseEvent } from '@shared/types/game';
 import { appendMessage } from '@shared/utils/game/cli';
 import { generate } from '@shared/utils/arrays';
-import { canExecute, executeContent } from '@shared/utils/game/servers';
+import { executeContent } from '@shared/utils/game/servers';
 import { GameError } from '@shared/errors/GameError';
+import { mergeInventory } from '@shared/utils/game/inventory';
+import { ItemID } from '@shared/types/game/items';
 
 export const GameEffects = {
   AddNoise: ({
@@ -145,11 +147,15 @@ export const GameEffects = {
     id: 'playerMoney.add',
     amount,
     trigger(game) {
+      const [inventory] = mergeInventory(game.player.inventory, [{
+        item: 'Money',
+        count: this.amount,
+      }]);
       return {
         ...game,
         player: {
           ...game.player,
-          money: game.player.money + this.amount
+          inventory,
         },
       };
     }

@@ -1,24 +1,22 @@
-import { ItemID } from '@shared/types/game/items';
-
 export const Items = {
-  [ItemID.MONEY]: {
-    id: ItemID.MONEY,
+  Money: {
+    id: 'Money',
     name: 'Money',
     stackSize: -1,
     format: (amount: number) => `$${amount}`,
   },
-  [ItemID.AI_CORE]: {
-    id: ItemID.AI_CORE,
+  AICore: {
+    id: 'AICore',
     name: 'AI Core',
     stackSize: 1,
   },
-  [ItemID.UPGRADE_MODULE]: {
-    id: ItemID.UPGRADE_MODULE,
+  UpgradeModule: {
+    id: 'UpgradeModule',
     name: 'Upgrade Module',
     stackSize: 10,
   },
 } as const satisfies {
-  [id in ItemID]: {
+  [id in string]: {
     id: id;
     name: string;
     stackSize: number;

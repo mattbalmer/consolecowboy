@@ -13,7 +13,6 @@ export const getInitialPlayerProps = (): Player => {
       max: 3,
       recovery: 1,
     },
-    money: 0,
     actions: 3,
     dicePerRound: 3,
     xp: 0,

@@ -13,7 +13,7 @@ import { HUD } from '@game/components/HUD';
 import { useGame } from '@game/hooks/use-game';
 import { useGameEffects } from '@game/hooks/use-game-effects';
 import { transitionsCapsule } from '@client/capsules/transitions';
-import { gamePlayerToSavedPlayer, mergeInventory } from '@shared/utils/game/player';
+import { gamePlayerToSavedPlayer } from '@shared/utils/game/player';
 
 const savePlayer = (levelID: string, game: Game) => {
   const savedPlayer = playerCapsule.get('player');

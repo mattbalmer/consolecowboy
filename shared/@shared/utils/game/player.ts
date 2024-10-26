@@ -3,47 +3,8 @@ import { getDice } from '@shared/utils/game/index';
 import { Scripts } from '@shared/constants/scripts';
 import { CORE_COMMANDS } from '@shared/constants/commands';
 import { Programs } from '@shared/constants/programs';
-import { Items } from '@shared/constants/items';
+import { getTotalCount, mergeInventory } from '@shared/utils/game/inventory';
 import { ItemID } from '@shared/types/game/items';
-
-export const mergeInventory = (a: Inventory, b: Inventory, maxSize?: number): [inventory: Inventory, excess: Inventory] => {
-  const inventory = a.slice(0);
-  const excess = [];
-
-  const hasSpace = (stack: Inventory[number]) => Items[stack.item].stackSize === -1 || stack.count < Items[stack.item].stackSize;
-
-  const getInventory = (item: ItemID) => maxSize === undefined ? inventory
-    : inventory.length < maxSize || inventory.some(stack => stack.item === item && hasSpace(stack)) ? inventory : excess;
-
-  b.forEach(({ item, count }) => {
-    while (count > 0) {
-      const inv = getInventory(item);
-      const i = inv.findLastIndex(e => e.item === item);
-
-      if (i === -1) {
-        inv.push({ item, count });
-        break;
-      }
-
-      let remaining = Items[item].stackSize === -1
-        ? count
-        : Math.min(Items[item].stackSize - inv[i].count, count);
-
-      if (remaining > 0) {
-        inv[i] = {
-          ...inv[i],
-          count: inv[i].count + remaining,
-        };
-      } else {
-        remaining = Math.min(count, Items[item].stackSize);
-        inv.push({ item, count: remaining });
-      }
-      count -= remaining;
-    }
-  });
-
-  return [inventory, excess];
-}
 
 export const savedPlayerToGamePlayer = (savedPlayer: Player): Game['player'] => {
   return {
@@ -54,7 +15,6 @@ export const savedPlayerToGamePlayer = (savedPlayer: Player): Game['player'] => 
       current: savedPlayer.ram.max,
       recovery: savedPlayer.ram.recovery,
     },
-    money: savedPlayer.money,
     actions: savedPlayer.actions,
     actionsPerTurn: savedPlayer.actions,
     stats: {
@@ -98,6 +58,9 @@ export const gamePlayerToSavedPlayer = (savedPlayer: Player, gamePlayer: Game['p
     inventory,
     config: gamePlayer.config,
     mental: gamePlayer.mental,
-    money: gamePlayer.money,
   };
+}
+
+export const itemCount = <P extends { inventory: Inventory }>(player: P, item: ItemID): number => {
+  return getTotalCount(player.inventory, item);
 }
