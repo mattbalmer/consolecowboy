@@ -101,10 +101,7 @@ export type Behavior <P = any> = {
   props: P,
   state?: any,
   shouldContinue?: (daemon: Daemon, args: BehaviorArgs) => boolean,
-  onExecute: (daemon: Daemon, args: BehaviorArgs) => {
-    daemon: Daemon,
-    game: Game,
-  },
+  onExecute: (daemon: Daemon, args: BehaviorArgs) => Game,
 }
 
 export type BehaviorPattern = [

@@ -11,12 +11,11 @@ import { GameEffects } from '@shared/constants/effects';
 import { appendMessage } from '@shared/utils/game/cli';
 import { executeContent } from '@shared/utils/game/servers';
 import { GameError } from '@shared/errors/GameError';
-import { ItemID } from '@shared/types/game/items';
 
 export const executeBehaviors = (daemon: Daemon, behaviors: Behavior[], args: BehaviorArgs): Game => {
   let game = args.game;
   behaviors.forEach(behavior => {
-    game = behavior.onExecute(daemon, { ...args, game }).game;
+    game = behavior.onExecute(daemon, { ...args, game });
   });
   return game;
 }
@@ -71,7 +70,7 @@ export const Behaviors = {
     state: {
       hasArrived: false,
     },
-    onExecute(this: Behavior, daemon, { game, derived, ...args }: BehaviorArgs): { daemon: Daemon, game: Game } {
+    onExecute(this: Behavior, daemon, { game, derived, ...args }: BehaviorArgs): Game {
       console.debug(`Daemon ${daemon.id} attempting to move using target selector ${this.props.selector.id}`);
       const targetNode = this.props.selector.getNode({ game, derived, ...args });
       if (targetNode) {
@@ -79,7 +78,7 @@ export const Behaviors = {
         const path = pathToNode(game, derived, daemon.node, targetNode);
         if (!path) {
           console.debug('no valid path found - doing nothing');
-          return { game, daemon };
+          return game;
         } else if (path.length > 1) {
           this.state.hasArrived = false;
           daemon.node = derived.nodeMap[coordToString(path[1])];
@@ -96,19 +95,19 @@ export const Behaviors = {
               value: `${daemon.model} ${this.state.hasArrived && this.props.announceArrival ? `arrived at` : `moved to`} ${daemon.node}`,
             });
           }
-          return { game, daemon };
+          return game;
         } else {
           console.debug('Already at target node', path);
           if (this.props.onArrive && !this.state.hasArrived) {
             this.state.hasArrived = true;
             game = executeBehaviors(daemon, this.props.onArrive, { game, derived, ...args });
           }
-          return { game, daemon };
+          return game;
         }
       } else {
         this.state.hasArrived = false;
         console.debug('No target node found - doing nothing');
-        return { game, daemon };
+        return game;
       }
     },
   }),
@@ -117,12 +116,12 @@ export const Behaviors = {
   }) => ({
     id: `AttackMental`,
     props,
-    onExecute(daemon, { game }: BehaviorArgs): { daemon: Daemon, game: Game } {
+    onExecute(daemon, { game }: BehaviorArgs): Game {
       game.stack = [
         ...game.stack,
         GameEffects.MentalDamage({ amount: this.props.amount }),
       ];
-      return { game, daemon };
+      return game;
     },
   }),
   SetStatus: (props: {
@@ -130,17 +129,18 @@ export const Behaviors = {
   }) => ({
     id: `SetStatus`,
     props,
-    onExecute(daemon, { game }: BehaviorArgs): { daemon: Daemon, game: Game } {
+    onExecute(daemon, { game }: BehaviorArgs): Game {
       const { status } = this.props;
       const oldStatus = daemon.status;
       daemon.status = status;
       if (daemon.onStatus) {
+        game.daemons[daemon.id] = daemon;
         game = daemon.onStatus(game, status, oldStatus);
       }
       if (status === 'TERMINATED') {
         delete game.daemons[daemon.id];
       }
-      return { game, daemon };
+      return game;
     },
   }),
   SetState: (stateSetter: (daemon: Daemon) => Record<string, unknown>) => ({
@@ -148,15 +148,16 @@ export const Behaviors = {
     props: {
       stateSetter,
     },
-    onExecute(daemon, { game }: BehaviorArgs): { daemon: Daemon, game: Game } {
-      daemon.state = stateSetter(daemon);
-      return { game, daemon };
+    onExecute(daemon, { game }: BehaviorArgs): Game {
+      daemon.state = this.props.stateSetter(daemon);
+      game.daemons[daemon.id] = daemon;
+      return game;
     },
   }),
   ExecuteAtSelf: (props: { benefactor: EntityURN }) => ({
     id: `ExecuteAtSelf`,
     props,
-    onExecute(daemon, { game }: BehaviorArgs): { daemon: Daemon, game: Game } {
+    onExecute(daemon, { game }: BehaviorArgs): Game {
       try {
         console.debug('execute at self', game);
         game = appendMessage(game, {
@@ -174,7 +175,7 @@ export const Behaviors = {
           throw error;
         }
       }
-      return { game, daemon };
+      return game;
     },
   }),
   // TransferItemTo: (props: { item: ItemID, amount: number, target: EntityURN }) => ({
@@ -206,7 +207,7 @@ export const Behaviors = {
   //         throw error;
   //       }
   //     }
-  //     return { game, daemon };
+  //     return game;
   //   },
   // }),
   Message: (getMessage: CLIMessage | ((daemon: Daemon) => CLIMessage)) => ({
@@ -214,9 +215,9 @@ export const Behaviors = {
     props: {
       getMessage: typeof getMessage === 'function' ? getMessage : () => getMessage,
     },
-    onExecute(daemon, { game }: BehaviorArgs): { daemon: Daemon, game: Game } {
+    onExecute(daemon, { game }: BehaviorArgs): Game {
       game = appendMessage(game, this.props.getMessage(daemon));
-      return { game, daemon };
+      return game;
     },
   }),
 } as const satisfies Record<string, (...args: unknown[]) => Behavior>;

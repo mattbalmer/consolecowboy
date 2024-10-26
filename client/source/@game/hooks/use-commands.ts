@@ -1,7 +1,7 @@
 import { Command, DebugCommand, Game } from '@shared/types/game';
 import { useCallback, useState } from 'react';
 import { CLIArgs } from '@shared/types/game/cli';
-import { appendMessage, parseArgs } from '@shared/utils/game/cli';
+import { appendMessage, appendMessages, parseArgs } from '@shared/utils/game/cli';
 import { LevelController } from '@game/level-controllers/base';
 import { GameDerived } from '@shared/types/game';
 import { executeCommand } from '@shared/constants/commands';
@@ -9,6 +9,7 @@ import { executeDebugCommand } from '@shared/constants/debug-commands';
 import { getGameDerived } from '@shared/utils/game';
 import { runDaemons } from '@shared/constants/daemons';
 import { getAutoDice } from '@shared/utils/game/dice';
+import { GameError } from '@shared/errors/GameError';
 
 export const useCommands = ({
   game,
@@ -149,33 +150,47 @@ export const useCommands = ({
       }
     }
 
-    let newGame = onCommand(game, command, commandArgs);
+    try {
+      let newGame = onCommand(game, command, commandArgs);
 
-    if (!newGame) {
-      setGame(game);
-      return;
-    }
+      if (!newGame) {
+        setGame(game);
+        return;
+      }
 
-    gameDerived = getGameDerived(newGame);
-    newGame = runDaemons({
-      game: newGame,
-      derived: gameDerived,
-      command,
-      args: commandArgs,
-    });
-
-    if (game.player.config.autonext && newGame?.player.actions < 1) {
-      newGame = onCommand(newGame, 'next', {_:[]} as CLIArgs);
       gameDerived = getGameDerived(newGame);
-
       newGame = runDaemons({
         game: newGame,
         derived: gameDerived,
         command,
         args: commandArgs,
       });
+
+      if (game.player.config.autonext && newGame?.player.actions < 1) {
+        newGame = onCommand(newGame, 'next', {_:[]} as CLIArgs);
+        gameDerived = getGameDerived(newGame);
+
+        newGame = runDaemons({
+          game: newGame,
+          derived: gameDerived,
+          command,
+          args: commandArgs,
+        });
+      }
+
+      setGame(newGame);
+    } catch (error) {
+      if (error instanceof GameError) {
+        console.error(error);
+        game = appendMessages(game, error.messages.map(e => ({
+          type: 'error',
+          value: e,
+        })));
+        setGame(game);
+      } else {
+        throw error;
+      }
     }
 
-    setGame(newGame);
   }, [game, gameDerived, onCommand, levelController])
 }

@@ -94,20 +94,14 @@ const Commands = {
     }
 
     if (!name) {
-      return appendMessage(game, {
-        type: 'error',
-        value: `No script name provided`
-      });
+      throw new GameError(`No script name provided`);
     }
 
     const i = game.player.scripts.findIndex(s => s.name.toLowerCase() === name);
     const script = game.player.scripts[i];
 
     if (i < 0) {
-      return appendMessage(game, {
-        type: 'error',
-        value: `Script not found: ${name}`
-      });
+      throw new GameError(`Script not found: ${name}`);
     }
 
     game = appendMessage(game, {
@@ -142,19 +136,13 @@ const Commands = {
     const targetNode = game.nodes[target];
 
     if (!target || !targetNode) {
-      return appendMessage(game, {
-        type: 'error',
-        value: `Target not valid: ${target}`
-      });
+      throw new GameError(`Target not valid: ${target}`);
     }
 
     const targetCoord = coordToString(targetNode);
 
     if (!target || !validMoveCoords.includes(targetCoord)) {
-      return appendMessage(game, {
-        type: 'error',
-        value: `Cannot move to ${target}`
-      });
+      throw new GameError(`Cannot move to ${target}`);
     }
 
     try {
@@ -418,31 +406,19 @@ const Commands = {
     const layer = parseInt(args.l) || 0;
 
     if (!hoveredNode.ice) {
-      return appendMessage(game, {
-        type: 'error',
-        value: `No ICE to break`,
-      });
+      throw new GameError(`No ICE to break`);
     }
 
     if (isNaN(layer) || layer < 0 || layer >= hoveredNode.ice.layers.length) {
-      return appendMessage(game, {
-        type: 'error',
-        value: `ICE has no layer '${layer}'`,
-      });
+      throw new GameError(`ICE has no layer '${layer}'`);
     }
 
     if (hoveredNode.ice.layers[layer].status !== 'ACTIVE') {
-      return appendMessage(game, {
-        type: 'error',
-        value: `Layer ${layer} is not active`,
-      });
+      throw new GameError(`Layer ${layer} is not active`);
     }
 
     if (game.player.ram.current < 2) {
-      return appendMessage(game, {
-        type: 'error',
-        value: `Not enough RAM to drill ICE`,
-      });
+      throw new GameError(`Not enough RAM to break ICE`);
     }
 
     try {
@@ -529,24 +505,15 @@ const Commands = {
     }
 
     if (!hoveredNode.ice) {
-      return appendMessage(game, {
-        type: 'error',
-        value: `No ICE to drill`,
-      });
+      throw new GameError(`No ICE to drill`);
     }
 
     if (hoveredNode.ice.status !== 'ACTIVE') {
-      return appendMessage(game, {
-        type: 'error',
-        value: `ICE is not active`,
-      });
+      throw new GameError(`ICE is not active`);
     }
 
     if (game.player.ram.current < 1) {
-      return appendMessage(game, {
-        type: 'error',
-        value: `Not enough RAM to drill ICE`,
-      });
+      throw new GameError(`Not enough RAM to drill ICE`);
     }
 
     try {
@@ -616,10 +583,7 @@ const Commands = {
     }
 
     if (!hoveredNode.content) {
-      return appendMessage(game, {
-        type: 'error',
-        value: `Nothing installed to run`,
-      });
+      throw new GameError(`Nothing installed to run`);
     }
 
     // or instead of auto, seeing the content is another progression system
@@ -777,10 +741,7 @@ export const executeCommand = (command: Command | ProgramKeyword, game: Game, ar
   command = commandAlias(command);
 
   if (!(command in game.player.deck)) {
-    return appendMessage(game, {
-      type: 'error',
-      value: `You don't have access to that command`
-    });
+    throw new GameError(`You don't have access to that command`);
   }
 
   if (command in Commands) {
@@ -792,8 +753,5 @@ export const executeCommand = (command: Command | ProgramKeyword, game: Game, ar
     return program.onExecute(game, args, derived);
   }
 
-  return appendMessage(game, {
-    type: 'error',
-    value: `Command not found: ${command}`
-  });
+  throw new GameError(`Command not found: ${command}`);
 }
