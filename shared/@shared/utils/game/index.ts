@@ -16,7 +16,8 @@ import { coordToString, stringToCoord } from '@shared/utils/game/grid';
 import { numberForStringID, stringIDForNumber } from '@shared/utils/strings';
 import { generate } from '@shared/utils/arrays';
 import { subBools } from '@shared/utils/booleans';
-import { DaemonIDTracker, Daemons } from '@shared/constants/daemons';
+import { Daemons } from '@shared/constants/daemons';
+import { DaemonIDTracker } from '@shared/utils/game/daemons';
 
 export const nodeSpecifierToID = (nodes: Game['nodes'], nodeString: NodeSpecifier): NodeID => {
   if (nodeString in nodes) {

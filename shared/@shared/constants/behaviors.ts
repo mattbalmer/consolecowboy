@@ -11,14 +11,7 @@ import { GameEffects } from '@shared/constants/effects';
 import { appendMessage } from '@shared/utils/game/cli';
 import { executeContent } from '@shared/utils/game/servers';
 import { GameError } from '@shared/errors/GameError';
-
-export const executeBehaviors = (daemon: Daemon, behaviors: Behavior[], args: BehaviorArgs): Game => {
-  let game = args.game;
-  behaviors.forEach(behavior => {
-    game = behavior.onExecute(daemon, { ...args, game });
-  });
-  return game;
-}
+import { executeBehaviors } from '@shared/utils/game/daemons';
 
 type TargetSelector = {
   id: string,

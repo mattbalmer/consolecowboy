@@ -7,9 +7,9 @@ import { GameDerived } from '@shared/types/game';
 import { executeCommand } from '@shared/constants/commands';
 import { executeDebugCommand } from '@shared/constants/debug-commands';
 import { getGameDerived } from '@shared/utils/game';
-import { runDaemons } from '@shared/constants/daemons';
 import { getAutoDice } from '@shared/utils/game/dice';
 import { GameError } from '@shared/errors/GameError';
+import { runDaemons } from '@shared/utils/game/daemons';
 
 export const useCommands = ({
   game,

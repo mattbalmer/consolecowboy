@@ -2,8 +2,8 @@ import { ComponentProps, useEffect, useState } from 'react';
 import { GameEffects } from '@shared/constants/effects';
 import { Game } from '@shared/types/game';
 import { SimpleDialog } from '@client/components/SimpleDialog';
-import { runDaemons } from '@shared/constants/daemons';
 import { getGameDerived } from '@shared/utils/game';
+import { runDaemons } from '@shared/utils/game/daemons';
 
 export const useGameEffects = ({
   game,

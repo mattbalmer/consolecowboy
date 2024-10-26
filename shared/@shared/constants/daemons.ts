@@ -1,39 +1,9 @@
-import { EntityURN, BehaviorArgs, BehaviorPattern, Daemon, DaemonID, Game, NodeID } from '@shared/types/game';
+import { EntityURN, BehaviorPattern, Daemon, DaemonID, NodeID } from '@shared/types/game';
 import { Triggers } from '@shared/constants/triggers';
-import { Behaviors, executeBehaviors } from '@shared/constants/behaviors';
+import { Behaviors } from '@shared/constants/behaviors';
 import { appendMessage } from '@shared/utils/game/cli';
 import { BehaviorPatterns } from '@shared/constants/behavior-patterns';
 import { canExecute } from '@shared/utils/game/servers';
-
-export const runDaemons = (args: BehaviorArgs): Game => {
-  let newGame = args.game;
-  Object.entries(newGame.daemons).forEach(([daemonID, daemon]) => {
-    daemon.behaviors.forEach(([triggerOrTriggers, behaviorOrBehaviors]) => {
-      const triggers = Array.isArray(triggerOrTriggers) ? triggerOrTriggers : [triggerOrTriggers];
-      const behaviors = Array.isArray(behaviorOrBehaviors) ? behaviorOrBehaviors : [behaviorOrBehaviors];
-
-      const shouldRun = triggers.every(trigger =>
-        trigger.shouldRun(daemon, { ...args, game: newGame })
-      );
-
-      console.debug('testing daemon behavior', triggers.map(trigger => `${trigger.id}:${trigger.shouldRun(daemon, { ...args, game: newGame })}`), behaviors.map(behavior => behavior.id));
-
-      if (shouldRun) {
-        newGame = executeBehaviors(daemon, behaviors, { ...args, game: newGame });
-      }
-    });
-  });
-  return newGame;
-}
-
-export class DaemonIDTracker {
-  byType = new Map<keyof typeof Daemons, number>();
-
-  next(type: keyof typeof Daemons): DaemonID {
-    this.byType.set(type, (this.byType.get(type) ?? 0) + 1);
-    return `${type}${this.byType.get(type)}` as DaemonID;
-  }
-}
 
 export const Daemons = {
   SuicideHunter: (props: {

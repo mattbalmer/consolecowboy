@@ -1,8 +1,8 @@
 import { CLIArgs } from '@shared/types/game/cli';
 import { ProgramKeywords } from '@shared/constants/programs';
 import { ItemID } from '@shared/types/game/items';
-import { DaemonIDTracker } from '@shared/constants/daemons';
 import { IDTracker } from '@shared/utils/game';
+import { DaemonIDTracker } from '@shared/utils/game/daemons';
 
 export type Coord = { x: number, y: number };
 export type CoordString = `${number},${number}`;
