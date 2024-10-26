@@ -1,0 +1,34 @@
+{
+  "nodes": {
+    "0,0": {
+      "isVisited": true,
+      "content": {
+        "type": "installation",
+        "status": "STANDBY",
+        "key": "ExternalConnection",
+        "args": [
+          false
+        ]
+      }
+    },
+    "1,0": {
+      "content": {
+        "type": "installation",
+        "status": "STANDBY",
+        "key": "Wallet",
+        "args": {
+          "amount": 1000
+        }
+      }
+    },
+    "2,0": {
+      "content": {
+        "type": "installation",
+        "status": "STANDBY",
+        "key": "ExternalConnection"
+      }
+    }
+  },
+  "start": "A",
+  "offset": [-1,-1]
+}

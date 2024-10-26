@@ -1,10 +1,9 @@
-import { Condition, Game, GameEffect, NoiseEvent } from '@shared/types/game';
+import { EntityURN, Condition, DaemonID, Game, GameEffect, NodeID, NoiseEvent } from '@shared/types/game';
 import { appendMessage } from '@shared/utils/game/cli';
 import { generate } from '@shared/utils/arrays';
 import { executeContent } from '@shared/utils/game/servers';
 import { GameError } from '@shared/errors/GameError';
 import { mergeInventory } from '@shared/utils/game/inventory';
-import { ItemID } from '@shared/types/game/items';
 
 export const GameEffects = {
   AddNoise: ({
@@ -29,12 +28,13 @@ export const GameEffects = {
       };
     }
   }),
-  Execute: ({ target }: { target: string }) => ({
+  Execute: ({ target, actor }: { target: NodeID, actor: EntityURN }) => ({
     id: 'execute',
     target,
+    actor,
     trigger(game) {
       try {
-        return executeContent(game.nodes[this.target].content, game);
+        return executeContent(game, target, actor);
       } catch (error) {
         if (error instanceof GameError) {
           return appendMessage(game, {
@@ -143,21 +143,62 @@ export const GameEffects = {
       });
     }
   }),
-  AddMoney: ({ amount }: { amount: number }) => ({
+  AddMoney: (props: { amount: number, to?: 'player' | `daemon:${DaemonID}` | `server:${NodeID}` }) => ({
     id: 'playerMoney.add',
-    amount,
+    amount: props.amount,
+    to: props.to ?? 'player',
     trigger(game) {
-      const [inventory] = mergeInventory(game.player.inventory, [{
-        item: 'Money',
-        count: this.amount,
-      }]);
-      return {
-        ...game,
-        player: {
-          ...game.player,
-          inventory,
-        },
-      };
+      if (this.to === 'player') {
+        const [inventory] = mergeInventory(game.player.inventory, [{
+          item: 'Money',
+          count: this.amount,
+        }]);
+        return {
+          ...game,
+          player: {
+            ...game.player,
+            inventory,
+          },
+        };
+      } else if (this.to.startsWith('daemon:')) {
+        const daemonID = this.to.split(':')[1];
+        const daemon = game.daemons.find(d => d.id === daemonID);
+        const [inventory] = mergeInventory(daemon.inventory || [], [{
+          item: 'Money',
+          count: this.amount,
+        }]);
+        daemon.inventory = inventory;
+        return {
+          ...game,
+          daemons: game.daemons.map(d => d.id === daemonID ? daemon : d),
+        };
+      } else if (this.to.startsWith('server:')) {
+        const nodeID = this.to.split(':')[1];
+        const content = game.nodes[nodeID].content;
+        if (!content) {
+          return appendMessage(game, {
+            type: 'error',
+            value: `Server at ${nodeID} does not have an inventory to add to.`,
+          });
+        }
+        const [inventory] = mergeInventory(content.inventory || [], [{
+          item: 'Money',
+          count: this.amount,
+        }]);
+        game.nodes[nodeID].content.inventory = inventory;
+        return {
+          ...game,
+          nodes: {
+            ...game.nodes,
+            [nodeID]: game.nodes[nodeID],
+          },
+        };
+      } else {
+        return appendMessage(game, {
+          type: 'error',
+          value: `Invalid target for money addition: ${this.to}`,
+        });
+      }
     }
   }),
   Delay: ({ amount }: { amount?: number }) => ({

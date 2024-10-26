@@ -139,7 +139,7 @@ export const Grid = ({
                 coord={coordStr}
                 selected={coordStr === hoveredNodeXY}
                 exist={coordStr in nodeMap}
-                canBeExecuted={canExecute(node?.content, game)}
+                canBeExecuted={canExecute(game, nodeID, 'player')}
                 isVisited={node?.isVisited}
                 hasContent={!!node?.content}
                 noise={derived.noise.nodes[nodeID]}
