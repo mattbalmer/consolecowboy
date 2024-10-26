@@ -8,7 +8,7 @@ import {
 } from '@shared/types/game';
 import { coordToString, pathToNode } from '@shared/utils/game/grid';
 import { GameEffects } from '@shared/constants/effects';
-import { appendMessage } from '@shared/utils/game/cli';
+import { appendMessage, appendMessages } from '@shared/utils/game/cli';
 import { executeContent } from '@shared/utils/game/servers';
 import { GameError } from '@shared/errors/GameError';
 import { executeBehaviors } from '@shared/utils/game/daemons';
@@ -160,10 +160,7 @@ export const Behaviors = {
         game = executeContent(game, daemon.node, `daemon:${daemon.id}`, this.props.benefactor);
       } catch (error) {
         if (error instanceof GameError) {
-          game = appendMessage(game, {
-            type: 'error',
-            value: error.message,
-          });
+          game = appendMessages(game, error.messages);
         } else {
           throw error;
         }

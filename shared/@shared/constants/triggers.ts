@@ -1,8 +1,6 @@
 import { BehaviorArgs, Command, COMMANDS, Daemon, FREE_COMMANDS, NodeID, Trigger } from '@shared/types/game';
 import { noiseAtNode } from '@shared/utils/game';
-
-const COMMANDS_WITH_ACTION_COST = Object.keys(COMMANDS)
-  .filter(command => !FREE_COMMANDS[command]) as Command[];
+import { COMMANDS_WITH_ACTION_COST } from '@shared/constants/commands';
 
 export const Triggers = {
   IsStatus: (status: Daemon['status'] | Daemon['status'][]) => ({

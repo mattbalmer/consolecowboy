@@ -1,7 +1,7 @@
 import {
   Command,
   COMMANDS,
-  CompassDir,
+  CompassDir, FREE_COMMANDS,
   Game,
   GameDerived,
   Inventory,
@@ -22,6 +22,9 @@ import { canExecute, executeContent } from '@shared/utils/game/servers';
 import { Items } from '@shared/constants/items';
 import { formatItemCount, mergeInventory } from '@shared/utils/game/inventory';
 import { ItemID } from '@shared/types/game/items';
+
+export const COMMANDS_WITH_ACTION_COST = Object.keys(COMMANDS)
+  .filter(command => !FREE_COMMANDS[command]) as Command[];
 
 const Commands = {
   m: game => game,

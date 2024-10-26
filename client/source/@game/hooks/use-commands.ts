@@ -182,10 +182,7 @@ export const useCommands = ({
     } catch (error) {
       if (error instanceof GameError) {
         console.error(error);
-        game = appendMessages(game, error.messages.map(e => ({
-          type: 'error',
-          value: e,
-        })));
+        game = appendMessages(game, error.messages);
         setGame(game);
       } else {
         throw error;

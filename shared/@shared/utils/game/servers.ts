@@ -19,6 +19,8 @@ export const executeContent = (game: Game, node: NodeID, actor: EntityURN, benef
     throw new GameError('Content cannot be executed');
   }
 
+  console.log('pragma> executeContent', actor, benefactor, node, game);
+
   game = content.onExecute(game, actor, node, benefactor) ?? game;
   content.executionCount++;
 

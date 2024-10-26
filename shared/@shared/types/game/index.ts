@@ -109,7 +109,7 @@ export type BehaviorPattern = [
   Behavior | Behavior[]
 ][];
 export type DaemonID = `${string}${number}`;
-export type Daemon = {
+export type Daemon <P = any, S = Record<string, unknown>> = {
   id: DaemonID,
   name: string,
   model: string,
@@ -119,9 +119,10 @@ export type Daemon = {
   onInit?(): void,
   onInit?(game: Game): Game,
   onStatus?: (game: Game, newStatus: Daemon['status'], oldStatus: Daemon['status']) => Game,
-  behaviors: BehaviorPattern,
-  props: any,
-  state?: Record<string, unknown>,
+  onGameUpdate?: (args: BehaviorArgs) => Game,
+  behaviors?: BehaviorPattern,
+  props: P,
+  state?: S,
   inventory: Inventory;
   stats: Partial<
     {
