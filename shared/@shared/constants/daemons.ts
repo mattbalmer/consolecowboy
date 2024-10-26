@@ -12,7 +12,6 @@ export const runDaemons = (args: BehaviorArgs): Game => {
       const triggers = Array.isArray(triggerOrTriggers) ? triggerOrTriggers : [triggerOrTriggers];
       const behaviors = Array.isArray(behaviorOrBehaviors) ? behaviorOrBehaviors : [behaviorOrBehaviors];
 
-
       const shouldRun = triggers.every(trigger =>
         trigger.shouldRun(daemon, { ...args, game: newGame })
       );
