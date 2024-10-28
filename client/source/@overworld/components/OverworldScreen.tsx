@@ -63,6 +63,7 @@ export const OverworldScreen = ({
         <Divider />
         <Button onClick={() => setShowConfirmReset(true)}>Reset Game</Button>
         <Button href={FEEDBACK_URL} target={'_blank'}>Give Feedback</Button>
+        <Button href={'/play/inventory'}>Inventory</Button>
       </FlexCol>
     </FlexRow>
     <SimpleDialog

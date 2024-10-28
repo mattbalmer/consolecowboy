@@ -49,4 +49,11 @@ export const formatItemCount = (item: ItemID, count: number) => {
   return format ? format(count) : `${count}`;
 }
 
-window['mergeInventory'] = mergeInventory;
+export const formatStackCount = (item: ItemID, count: number, showStackSizeIfFull: boolean = false) => {
+  const stackSize = Items[item].stackSize;
+  if (stackSize === -1 || (count === stackSize && !showStackSizeIfFull)) {
+    return formatItemCount(item, count);
+  } else {
+    return `${formatItemCount(item, count)} / ${formatItemCount(item, stackSize)}`;
+  }
+}
