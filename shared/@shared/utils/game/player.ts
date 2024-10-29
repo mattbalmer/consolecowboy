@@ -2,7 +2,7 @@ import { Game, Inventory, Player } from '@shared/types/game';
 import { getDice } from '@shared/utils/game/index';
 import { formatItemCount, getTotalCount, mergeInventory } from '@shared/utils/game/inventory';
 import { ItemID } from '@shared/types/game/items';
-import { hydrateDeck } from '@shared/utils/game/decks';
+import { dehydrateDeck, hydrateDeck } from '@shared/utils/game/decks';
 
 export const savedPlayerToGamePlayer = (savedPlayer: Player): Game['player'] => {
   return {
@@ -36,6 +36,7 @@ export const gamePlayerToSavedPlayer = (savedPlayer: Player, gamePlayer: Game['p
     inventory,
     config: gamePlayer.config,
     mental: gamePlayer.mental,
+    deck: dehydrateDeck(gamePlayer.deck),
   };
 }
 

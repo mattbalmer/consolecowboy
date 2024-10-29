@@ -25,7 +25,7 @@ export const Decks = {
         content: null,
       },
     },
-    scripts: {},
+    scripts: [],
     scriptCapacity: 4,
   } as SavedDeck<'OnoSendai'>),
 } as const satisfies Record<string, (...args: unknown[]) => SavedDeck>;

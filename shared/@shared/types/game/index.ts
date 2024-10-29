@@ -337,7 +337,7 @@ export type Deck <M extends string = string> = {
   value: number,
   // and firmware
   programs: Record<number, null | DeckSlot>,
-  scripts: Record<number, null | Script>,
+  scripts: Script[],
   scriptCapacity: number,
 }
 
@@ -354,6 +354,6 @@ export type SavedDeck <M extends string = string> = {
   value: number,
   // and firmware
   programs: Record<number, null | SavedDeckSlot>,
-  scripts: Record<number, null | SavedScript>,
+  scripts: SavedScript[],
   scriptCapacity: number,
 }

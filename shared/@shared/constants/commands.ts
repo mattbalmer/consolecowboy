@@ -21,6 +21,7 @@ import { Items } from '@shared/constants/items';
 import { formatItemCount } from '@shared/utils/game/inventory';
 import { ItemID } from '@shared/types/game/items';
 import { commandMap } from '@shared/utils/game/decks';
+import { removeRange } from '@shared/utils/arrays';
 
 const Commands = {
   m: game => game,
@@ -75,7 +76,7 @@ const Commands = {
     );
   },
   scripts: (game: Game) => {
-    const scripts = Object.values(game.player.deck.scripts)
+    const scripts = game.player.deck.scripts
       .map(s => s?.name)
       .filter(n => !!n);
     return appendMessage(game, {
@@ -98,12 +99,10 @@ const Commands = {
     }
 
     // todo: some scripts may require action, but not all?
+    const i = game.player.deck.scripts
+      .findIndex((script) => script.name.toLowerCase() === name)
 
-    const key = Object.entries(game.player.deck.scripts)
-      .find(([i, script]) => script.name.toLowerCase() === name)
-      [0];
-
-    const script = game.player.deck.scripts[key];
+    const script = game.player.deck.scripts[i];
 
     if (!script) {
       throw new GameError(`Script not found: ${name}`);
@@ -123,10 +122,7 @@ const Commands = {
         ...game.player,
         deck: {
           ...game.player.deck,
-          scripts: {
-            ...game.player.deck.scripts,
-            [key]: null,
-          }
+          scripts: removeRange(game.player.deck.scripts, i, 1),
         }
       },
     }

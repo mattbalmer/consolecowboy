@@ -67,11 +67,7 @@ export const hydrateDeck = (deck: Player['deck']): Game['player']['deck'] => {
         ([id, slot]) => [id, hydrateDeckSlot(slot)]
       )
     ),
-    scripts: Object.fromEntries(
-      Object.entries(deck.scripts).map<[string, Script]>(
-        ([id, script]) => [id, hydrateScript(script)]
-      )
-    ),
+    scripts: deck.scripts.map(script => hydrateScript(script)),
   }
 }
 
@@ -82,18 +78,16 @@ export const dehydrateDeck = (deck: Game['player']['deck']): Player['deck'] => {
       Object.entries(deck.programs).map<[string, SavedDeckSlot]>(
         ([id, slot]) => [id, slot ? {
           type: slot.type,
-          content: slot.content.id,
+          content: slot.content?.id ?? null,
           isRemoveable: slot.isRemoveable ?? true,
         } : null]
       )
     ),
-    scripts: Object.fromEntries(
-      Object.entries(deck.scripts).map<[string, SavedScript]>(
-        ([id, script]) => [id, script ? {
-          id: script.id,
-          props: script.props,
-        } : null]
-      )
+    scripts: deck.scripts.map(
+      script => script ? {
+        id: script.id,
+        props: script.props,
+      } : null
     ),
   }
 }
