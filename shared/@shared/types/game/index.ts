@@ -288,9 +288,6 @@ export type Game = {
 export type NodeMap = Record<CoordString, NodeID>;
 
 export const CORE_COMMANDS = {
-  // 'm': 'move',
-  // 'mv': 'move',
-  // 'x': 'execute',
   'scripts': true,
   'run': true,
   'next': true,
@@ -299,8 +296,6 @@ export const CORE_COMMANDS = {
   'info': true,
   'execute': true,
   'retreat': true,
-  // 'drill': true,
-  // 'break': true,
   'config': true,
   'deck': true,
   'inv': true,
