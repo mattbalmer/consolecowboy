@@ -117,6 +117,7 @@ export type Daemon <P = any, S = Record<string, unknown>> = {
   node: NodeID,
   status: 'ACTIVE' | 'STANDBY' | 'DEACTIVATED' | 'TERMINATED',
   conditions: Condition[],
+  createdAtAction: number,
   onInit?(): void,
   onInit?(game: Game): Game,
   onStatus?: (game: Game, newStatus: Daemon['status'], oldStatus: Daemon['status']) => Game,
@@ -268,6 +269,8 @@ export type Game = {
   },
   stack: GameEffect[],
   round: number,
+  currentAction: number,
+  actionsToIncrement: number, // maybe use game effect stack, idk
   history: {
     nodes: NodeID[],
     terminal: CLIMessage[],

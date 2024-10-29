@@ -56,6 +56,7 @@ export const Programs = {
         power,
         noise: 1,
         into: 'player',
+        createdAtAction: game.currentAction,
       });
 
       daemon.onInit?.();
@@ -64,6 +65,8 @@ export const Programs = {
         ...game.daemons,
         [daemon.id]: daemon,
       };
+
+      game.actionsToIncrement += 1;
 
       return appendMessages(game, [{
         type: 'output',

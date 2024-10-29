@@ -69,6 +69,8 @@ export const createGame = (partial: Pick<Game, 'nodes' | 'player' | 'daemons' | 
     ...partial,
     mode: 'PLAY',
     round: 0,
+    currentAction: 0,
+    actionsToIncrement: 0,
     edges,
     noise: Object.keys(partial.nodes).reduce<Record<NodeID, []>>((a, n) => ({
       ...a,
@@ -182,6 +184,7 @@ export const gameFromLevel = (level: Level, player: Game['player']): Game => {
       id: daemonIDTracker.next(levelDaemon.model),
       node: nodeSpecifierToID(nodes, levelDaemon.node),
       status: levelDaemon.status,
+      createdAtAction: 0,
       ...levelDaemon.args,
     } as any);
     daemon.onInit?.();

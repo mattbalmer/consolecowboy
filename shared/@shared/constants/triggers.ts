@@ -20,7 +20,7 @@ export const Triggers = {
   PlayerAction: () => ({
     id: `PlayerAction`,
     shouldRun(daemon, { command, game }): boolean {
-      return command === 'next' || !(command in FREE_COMMANDS);
+      return command === 'next' || (command && !(command in FREE_COMMANDS));
     },
   }),
   Custom: (callback: (daemon: Daemon, args: BehaviorArgs) => boolean) => ({

@@ -118,6 +118,7 @@ const Commands = {
 
     return {
       ...game,
+      actionsToIncrement: game.actionsToIncrement + 1,
       player: {
         ...game.player,
         deck: {
@@ -176,6 +177,7 @@ const Commands = {
     game.nodes[target].isVisited = true;
     game = {
       ...game,
+      actionsToIncrement: game.actionsToIncrement + 1,
       player: {
         ...game.player,
         node: target,
@@ -262,6 +264,7 @@ const Commands = {
 
     game.nodes[target].isVisited = true;
     game = {
+      actionsToIncrement: game.actionsToIncrement + 1,
       ...game,
       player: {
         ...game.player,
@@ -344,6 +347,7 @@ const Commands = {
 
     game = {
       ...game,
+      actionsToIncrement: game.actionsToIncrement + 1,
       player: {
         ...game.player,
         node: target,
@@ -403,6 +407,7 @@ const Commands = {
     return {
       ...game,
       round: game.round + 1,
+      actionsToIncrement: game.actionsToIncrement + 1,
       stack: [
         ...game.stack,
         GameEffects.AddNoise({
@@ -481,6 +486,7 @@ const Commands = {
 
     return {
       ...game,
+      actionsToIncrement: game.actionsToIncrement + 1,
       player: {
         ...game.player,
         ram: {
@@ -573,6 +579,7 @@ const Commands = {
     game = hoveredNode.ice.complete(game);
     return {
       ...game,
+      actionsToIncrement: game.actionsToIncrement + 1,
       player: {
         ...game.player,
         ram: {
@@ -681,6 +688,7 @@ const Commands = {
 
     return {
       ...game,
+      actionsToIncrement: game.actionsToIncrement + 1,
       stack: [
         ...game.stack,
         GameEffects.AddNoise({

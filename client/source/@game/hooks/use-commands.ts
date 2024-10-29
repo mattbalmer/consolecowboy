@@ -54,6 +54,8 @@ export const useCommands = ({
         args: commandArgs,
       });
 
+      game.currentAction += game.actionsToIncrement;
+      game.actionsToIncrement = 0;
       setGame(game);
       return;
     }
@@ -84,6 +86,8 @@ export const useCommands = ({
           commandArgs = controllerOutput.args ?? commandArgs;
           gameDerived = getGameDerived(game);
         } else {
+          controllerOutput.game.currentAction += controllerOutput.game.actionsToIncrement;
+          controllerOutput.game.actionsToIncrement = 0;
           setGame(controllerOutput.game);
           return;
         }
@@ -114,6 +118,8 @@ export const useCommands = ({
         });
       }
 
+      newGame.currentAction += newGame.actionsToIncrement;
+      newGame.actionsToIncrement = 0;
       setGame(newGame);
     } catch (error) {
       if (error instanceof GameError) {

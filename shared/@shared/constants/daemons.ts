@@ -12,6 +12,7 @@ export const Daemons = {
     id: DaemonID,
     node: NodeID,
     status?: Daemon['status'],
+    createdAtAction: number,
   }) => ({
     id: props.id,
     model: `SuicideHunter`,
@@ -19,6 +20,7 @@ export const Daemons = {
     conditions: [],
     status: props.status ?? 'STANDBY',
     node: props.node,
+    createdAtAction: props.createdAtAction,
     stats: {
       inventorySize: 0,
     },
@@ -82,6 +84,7 @@ export const Daemons = {
     into: EntityURN,
     power?: number,
     noise?: number,
+    createdAtAction: number,
   }) => ({
     id: props.id,
     model: `SimpleSiphoner`,
@@ -89,6 +92,7 @@ export const Daemons = {
     conditions: [],
     status: props.status ?? 'ACTIVE',
     node: props.node,
+    createdAtAction: props.createdAtAction,
     stats: {
       inventorySize: 0,
     },
@@ -124,7 +128,10 @@ export const Daemons = {
       turnsActive: number,
     }>, { game, command }: BehaviorArgs) {
       console.log('onGameUpdate', game, command, this);
-      if (!(command in FREE_COMMANDS) && this.status === 'ACTIVE') {
+      if (game.currentAction === this.createdAtAction) {
+        return game;
+      }
+      if (command && !(command in FREE_COMMANDS) && this.status === 'ACTIVE') {
         const installation = (game.nodes[this.node].content) as unknown as ReturnType<typeof Installations['Wallet']> | undefined;
         console.log('onGameUpdate:installation', installation);
 
