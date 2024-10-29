@@ -777,8 +777,8 @@ export const CORE_COMMANDS = [
   'run',
   //
   'retreat',
-  'break',
-  'drill',
+  // 'break',
+  // 'drill',
   'execute',
 ] as const satisfies CoreCommand[];
 

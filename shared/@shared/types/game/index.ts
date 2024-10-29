@@ -171,7 +171,7 @@ export type Program = {
   name: string,
   description: string,
   tags: string[],
-  stats: Record<StatString, number>,
+  stats: Partial<Player['stats']>,
   features: string[],
 } & ({
   commands: string[],
@@ -199,6 +199,11 @@ export type Player = {
   xp: number,
   stats: {
     icebreaker: {
+      barrier: number,
+      sentry: number,
+      codegate: number,
+    },
+    icedrilling: {
       barrier: number,
       sentry: number,
       codegate: number,

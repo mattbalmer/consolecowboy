@@ -14,11 +14,11 @@ export const Decks = {
       },
       1: {
         type: 'program',
-        content: 'siphon1',
+        content: 'icedrill1',
       },
       3: {
         type: 'program',
-        content: null,
+        content: 'siphon1',
       },
       4: {
         type: 'firmware',

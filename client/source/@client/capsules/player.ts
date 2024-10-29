@@ -23,6 +23,11 @@ export const getInitialPlayerProps = (): Player => {
         codegate: 1,
         sentry: 1,
       },
+      icedrilling: {
+        barrier: 1,
+        codegate: 1,
+        sentry: 1,
+      },
       recon: {
         info: 1,
       },

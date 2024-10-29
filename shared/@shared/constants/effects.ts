@@ -46,6 +46,27 @@ export const GameEffects = {
       }
     }
   }),
+  // DrillICE: (props: {
+  //   node: NodeID,
+  //   actor: EntityURN,
+  //   layers?: number,
+  // }) => ({
+  //   id: 'ice.drill',
+  //   props,
+  //   trigger(game) {
+  //     try {
+  //       return executeContent(game, target, actor);
+  //     } catch (error) {
+  //       if (error instanceof GameError) {
+  //         return appendMessage(game, {
+  //           type: 'error',
+  //           value: error.message,
+  //         });
+  //       }
+  //       return game;
+  //     }
+  //   }
+  // }),
   ModifyServerContent: ({ target, props }: { target: string, props: Record<string, unknown> }) => ({
     id: 'modify.server-content',
     target,
