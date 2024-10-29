@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useMemo } from 'react';
 import { Inventory } from '@shared/types/game';
 import { Box, Divider, Typography } from '@mui/material';
 import { FlexCol } from '@client/components/FlexCol';
@@ -6,7 +7,6 @@ import { FlexRow } from '@client/components/FlexRow';
 import { Items } from '@shared/constants/items';
 import { formatStackCount } from '@shared/utils/game/inventory';
 import { generate } from '@shared/utils/arrays';
-import { useMemo } from 'react';
 
 export const InventoryStack = ({ stack }: {
   stack: Inventory[number],

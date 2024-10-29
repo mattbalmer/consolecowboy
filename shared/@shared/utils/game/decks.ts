@@ -5,7 +5,8 @@ import {
   Firmware,
   Game,
   Player,
-  Program, ProgramKeyword,
+  Program,
+  ProgramKeyword,
   SavedDeckSlot,
   SavedScript,
   Script

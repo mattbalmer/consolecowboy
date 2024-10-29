@@ -1,10 +1,10 @@
 import { FlexCol } from '@client/components/FlexCol';
 import * as React from 'react';
+import { useMemo } from 'react';
 import { CoordString, Dir, EdgeString, Game, GameDerived } from '@game/types';
 import { Box, Typography } from '@mui/material';
 import { coordToString } from '@game/utils/grid';
 import { FlexRow } from '@client/components/FlexRow';
-import { useMemo } from 'react';
 import { canExecute } from '@shared/utils/game/servers';
 
 const Spacer = () => {

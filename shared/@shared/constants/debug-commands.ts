@@ -1,8 +1,4 @@
-import {
-  DEBUG_COMMANDS, DebugCommand,
-  Game,
-  GameDerived,
-} from '@shared/types/game';
+import { DEBUG_COMMANDS, DebugCommand, Game, GameDerived, } from '@shared/types/game';
 import { appendMessage, appendMessages } from '@shared/utils/game/cli';
 import { CLIArgs } from '@shared/types/game/cli';
 

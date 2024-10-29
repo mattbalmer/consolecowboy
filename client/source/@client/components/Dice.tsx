@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { LuDice1, LuDice2, LuDice3, LuDice4, LuDice5, LuDice6 } from 'react-icons/lu';
-import { FaDiceOne, FaDiceTwo, FaDiceThree, FaDiceFour, FaDiceFive, FaDiceSix } from 'react-icons/fa';
 import { useMemo } from 'react';
+import { LuDice1, LuDice2, LuDice3, LuDice4, LuDice5, LuDice6 } from 'react-icons/lu';
+import { FaDiceFive, FaDiceFour, FaDiceOne, FaDiceSix, FaDiceThree, FaDiceTwo } from 'react-icons/fa';
 
 const AvailableDiceIcons = [
   LuDice1, LuDice2, LuDice3, LuDice4, LuDice5, LuDice6

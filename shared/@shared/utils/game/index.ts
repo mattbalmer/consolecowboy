@@ -1,6 +1,8 @@
 import { Level } from '@shared/types/game/level';
 import {
-  CoordString, Daemon, DaemonID,
+  CoordString,
+  Daemon,
+  DaemonID,
   Game,
   GameDerived,
   GameDie,

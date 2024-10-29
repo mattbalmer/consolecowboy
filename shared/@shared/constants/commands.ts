@@ -1,26 +1,25 @@
 import {
   Command,
   COMMANDS,
-  CompassDir, FREE_COMMANDS,
+  CompassDir,
+  FREE_COMMANDS,
   Game,
   GameDerived,
-  Inventory,
   Program,
   ProgramKeyword
 } from '@shared/types/game';
 import { appendMessage, appendMessages } from '@shared/utils/game/cli';
 import { CLIArgs } from '@shared/types/game/cli';
-import { removeRange } from '@shared/utils/arrays';
 import { coordToString, getAdjacentCoords } from '@shared/utils/game/grid';
 import { GameError } from '@shared/errors/GameError';
 import { GameEffects } from '@shared/constants/effects';
 import { pick } from '@shared/utils/objects';
 import { getDice } from '@shared/utils/game';
 import { consumeDice } from '@shared/utils/game/dice';
-import { ProgramKeywords, Programs } from '@shared/constants/programs';
+import { ProgramKeywords } from '@shared/constants/programs';
 import { canExecute, executeContent } from '@shared/utils/game/servers';
 import { Items } from '@shared/constants/items';
-import { formatItemCount, mergeInventory } from '@shared/utils/game/inventory';
+import { formatItemCount } from '@shared/utils/game/inventory';
 import { ItemID } from '@shared/types/game/items';
 import { commandsForDeck } from '@shared/utils/game/decks';
 

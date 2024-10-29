@@ -1,9 +1,9 @@
 import * as React from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { FlexCol } from '@client/components/FlexCol';
 import { GameScreen } from '@game/components/GameScreen';
 import { NavBar } from '@client/components/NavBar';
 import { useParams } from 'react-router-dom';
-import { useEffect, useMemo, useState } from 'react';
 import { Game } from '@shared/types/game';
 import { Level } from '@shared/types/game/level';
 import { Typography } from '@mui/material';

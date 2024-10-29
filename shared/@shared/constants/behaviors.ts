@@ -1,11 +1,4 @@
-import {
-  EntityURN,
-  Behavior,
-  BehaviorArgs,
-  CLIMessage,
-  Daemon,
-  Game, NodeID,
-} from '@shared/types/game';
+import { Behavior, BehaviorArgs, CLIMessage, Daemon, EntityURN, Game, NodeID, } from '@shared/types/game';
 import { coordToString, pathToNode } from '@shared/utils/game/grid';
 import { GameEffects } from '@shared/constants/effects';
 import { appendMessage, appendMessages } from '@shared/utils/game/cli';

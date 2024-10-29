@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { useEffect, useState } from 'react';
 import { FlexCol } from '@client/components/FlexCol';
 import { NavBar } from '@client/components/NavBar';
-import { useEffect, useState } from 'react';
 import { List, ListItemButton, ListItemText, Typography } from '@mui/material';
 
 export const CreateListPage = () => {

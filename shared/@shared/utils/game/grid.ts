@@ -1,5 +1,5 @@
 import { Coord, CoordString, Dir, Game, GameDerived, NodeID, NodeMap } from '@shared/types/game';
-import { insertByFirstAsc, insertIntoCopy } from '@shared/utils/arrays';
+import { insertByFirstAsc } from '@shared/utils/arrays';
 
 export const coordToString = ({ x, y }: Coord): CoordString => `${x},${y}`;
 export const stringToCoord = (str: CoordString): Coord => {

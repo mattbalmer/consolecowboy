@@ -1,4 +1,4 @@
-import { EntityURN, Condition, DaemonID, Game, GameEffect, NodeID, NoiseEvent } from '@shared/types/game';
+import { Condition, DaemonID, EntityURN, Game, GameEffect, NodeID, NoiseEvent } from '@shared/types/game';
 import { appendMessage } from '@shared/utils/game/cli';
 import { generate } from '@shared/utils/arrays';
 import { executeContent } from '@shared/utils/game/servers';

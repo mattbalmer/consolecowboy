@@ -1,7 +1,7 @@
 import * as React from 'react';
+import { ComponentProps, useState } from 'react';
 import { FlexCol } from '@client/components/FlexCol';
 import { FlexRow } from '@client/components/FlexRow';
-import { ComponentProps, useState } from 'react';
 import { Game } from '@game/types';
 import { Grid } from '@game/components/Grid';
 import { Typography } from '@mui/material';

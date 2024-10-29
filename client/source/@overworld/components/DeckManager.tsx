@@ -1,10 +1,10 @@
 import * as React from 'react';
-import { Deck, DeckSlot, Player, Script } from '@shared/types/game';
+import { useMemo } from 'react';
+import { Deck, DeckSlot, Script } from '@shared/types/game';
 import { Box, Divider, Typography } from '@mui/material';
 import { FlexCol } from '@client/components/FlexCol';
 import { FlexRow } from '@client/components/FlexRow';
 import { generate } from '@shared/utils/arrays';
-import { useMemo } from 'react';
 
 export const ProgramGridItem = ({ i, slot }: {
   i: number,

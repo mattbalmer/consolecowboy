@@ -1,10 +1,10 @@
 import * as React from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { Box, Divider, TextField, Typography } from '@mui/material';
 import { FlexRow } from '@client/components/FlexRow';
 import { FlexCol } from '@client/components/FlexCol';
 import { Autocomplete } from '@mui/lab';
 import { CLIMessage, Command, COMMANDS, Game } from '@game/types';
-import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 const CLIHistoryEntry = ({
   line,

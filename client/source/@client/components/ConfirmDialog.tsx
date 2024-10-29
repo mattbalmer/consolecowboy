@@ -1,11 +1,4 @@
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle
-} from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import * as React from 'react';
 import { ButtonProps } from '@mui/material/Button/Button';
 

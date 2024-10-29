@@ -1,11 +1,11 @@
 import * as React from 'react';
+import { useMemo } from 'react';
 import { FlexCol } from '@client/components/FlexCol';
 import { Box, Button, Divider, Typography } from '@mui/material';
 import { useOverworld } from '@overworld/hooks/use-overworld';
 import { SimpleDialog } from '@client/components/SimpleDialog';
 import { FlexRow } from '@client/components/FlexRow';
 import { DeckManager } from '@overworld/components/DeckManager';
-import { useMemo } from 'react';
 import { hydrateDeck } from '@shared/utils/game/decks';
 
 export const DeckScreen = ({

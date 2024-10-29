@@ -1,6 +1,6 @@
 import { useCapsuleField } from '@client/hooks/use-capsule';
 import { playerCapsule } from '@client/capsules/player';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useOverworldController } from '@overworld/overworld-controller';
 import { transitionsCapsule } from '@client/capsules/transitions';
 

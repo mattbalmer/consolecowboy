@@ -1,4 +1,4 @@
-import { EntityURN, Game, NodeContent, NodeID } from '@shared/types/game';
+import { EntityURN, Game, NodeID } from '@shared/types/game';
 import { GameError } from '@shared/errors/GameError';
 
 export const canExecute = (game: Game, node: NodeID, actor: EntityURN, benefactor?: EntityURN): boolean => {

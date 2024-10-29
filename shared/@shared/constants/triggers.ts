@@ -1,4 +1,4 @@
-import { BehaviorArgs, Command, COMMANDS, Daemon, FREE_COMMANDS, NodeID, Trigger } from '@shared/types/game';
+import { BehaviorArgs, Daemon, NodeID, Trigger } from '@shared/types/game';
 import { noiseAtNode } from '@shared/utils/game';
 import { COMMANDS_WITH_ACTION_COST } from '@shared/constants/commands';
 

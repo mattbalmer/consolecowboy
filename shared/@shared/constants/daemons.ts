@@ -1,4 +1,4 @@
-import { EntityURN, BehaviorPattern, Daemon, DaemonID, NodeID, BehaviorArgs } from '@shared/types/game';
+import { BehaviorArgs, BehaviorPattern, Daemon, DaemonID, EntityURN, NodeID } from '@shared/types/game';
 import { Triggers } from '@shared/constants/triggers';
 import { Behaviors } from '@shared/constants/behaviors';
 import { appendMessage } from '@shared/utils/game/cli';

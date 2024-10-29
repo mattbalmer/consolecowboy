@@ -1,9 +1,8 @@
-import { Command, DebugCommand, Game } from '@shared/types/game';
+import { Command, DebugCommand, Game, GameDerived } from '@shared/types/game';
 import { useCallback, useState } from 'react';
 import { CLIArgs } from '@shared/types/game/cli';
 import { appendMessage, appendMessages, parseArgs } from '@shared/utils/game/cli';
 import { LevelController } from '@game/level-controllers/base';
-import { GameDerived } from '@shared/types/game';
 import { executeCommand } from '@shared/constants/commands';
 import { executeDebugCommand } from '@shared/constants/debug-commands';
 import { getGameDerived } from '@shared/utils/game';
