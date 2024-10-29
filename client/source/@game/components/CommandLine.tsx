@@ -4,7 +4,7 @@ import { Box, Divider, TextField, Typography } from '@mui/material';
 import { FlexRow } from '@client/components/FlexRow';
 import { FlexCol } from '@client/components/FlexCol';
 import { Autocomplete } from '@mui/lab';
-import { CLIMessage, CoreCommand, COMMAND_ALIASES, Game } from '@game/types';
+import { CLIMessage, CoreCommand, CORE_COMMANDS, Game } from '@game/types';
 
 const CLIHistoryEntry = ({
   line,
@@ -168,7 +168,7 @@ export const CommandLine = ({
               setInput((newInputValue || '').toLowerCase());
             }
           }}
-          options={Object.keys(COMMAND_ALIASES)}
+          options={Object.keys(CORE_COMMANDS)}
         />
       </FlexRow>
     </FlexCol>

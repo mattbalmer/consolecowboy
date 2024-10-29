@@ -76,7 +76,7 @@ export const GameScreen = ({
         });
       } else {
         const savedPlayer = playerCapsule.get('player');
-        savedPlayer.bodyHP -= 1;
+        savedPlayer.bodyHP -= 1; // todo: this is triggering twice for some reason
         savedPlayer.mental = 10;
         playerCapsule.set('player', savedPlayer);
 

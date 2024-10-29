@@ -1,12 +1,11 @@
 import {
   CoreCommand,
-  COMMAND_ALIASES,
+  CORE_COMMANDS,
   CompassDir,
-  FREE_COMMANDS,
   Game,
   GameDerived,
   Command,
-  DEBUG_COMMANDS, DebugCommand
+  DEBUG_COMMANDS, DebugCommand, COMMAND_ALIASES
 } from '@shared/types/game';
 import { appendMessage, appendMessages } from '@shared/utils/game/cli';
 import { CLIArgs } from '@shared/types/game/cli';
@@ -24,9 +23,6 @@ import { commandMap } from '@shared/utils/game/decks';
 import { removeRange } from '@shared/utils/arrays';
 
 const Commands = {
-  m: game => game,
-  mv: game => game,
-  x: game => game,
   info: (game, args) => {
     const content = game.nodes[game.player.node].content;
 
@@ -425,195 +421,6 @@ const Commands = {
       },
     };
   },
-  break: (game, args: CLIArgs<{ l: string }>, { hoveredNode }) => {
-    if (args.help) {
-      return appendMessages(game, [{
-        type: 'output',
-        value: `Usage: break [-l <layer>] [-d <dice>]`
-      }, {
-        type: 'output',
-        value: `Breaks a layer of ICE on the current node. If no <layer> is given, breaks the first layer`
-      }]);
-    }
-
-    const layer = parseInt(args.l) || 0;
-
-    if (!hoveredNode.ice) {
-      throw new GameError(`No ICE to break`);
-    }
-
-    if (isNaN(layer) || layer < 0 || layer >= hoveredNode.ice.layers.length) {
-      throw new GameError(`ICE has no layer '${layer}'`);
-    }
-
-    if (hoveredNode.ice.layers[layer].status !== 'ACTIVE') {
-      throw new GameError(`Layer ${layer} is not active`);
-    }
-
-    if (game.player.actions < 1) {
-      throw new GameError(`No actions left`);
-    }
-
-    if (game.player.ram.current < 2) {
-      throw new GameError(`Not enough RAM to break ICE`);
-    }
-
-    try {
-      game = consumeDice(game, args);
-    } catch (error) {
-      if (error instanceof GameError) {
-        return appendMessage(game, {
-          type: error.type,
-          value: error.message,
-        });
-      } else {
-        throw error;
-      }
-    }
-
-    game = hoveredNode.ice.break(game, layer);
-
-    // @ts-ignore
-    const didBreakLayer = hoveredNode.ice.layers[layer].status === 'BROKEN';
-    const isICEBroken = hoveredNode.ice.status === 'BROKEN';
-
-    const diceUsed = args.d?.[0];
-    const noiseGeneratedFromExcess = diceUsed - hoveredNode.ice.strength;
-
-    return {
-      ...game,
-      actionsToIncrement: game.actionsToIncrement + 1,
-      player: {
-        ...game.player,
-        ram: {
-          ...game.player.ram,
-          current: Math.max(0, game.player.ram.current - 2),
-        }
-      },
-      history: {
-        ...game.history,
-        terminal: [
-          ...game.history.terminal,
-          {
-            type: 'output',
-            value: didBreakLayer
-              ? isICEBroken ? `(${game.player.node}) broke Lvl${hoveredNode.ice.strength} ${hoveredNode.ice.id}` : `(${game.player.node}) broke layer ${layer} of Lvl${hoveredNode.ice.strength} ${hoveredNode.ice.id}`
-              : `Failed to break layer ${layer} of Lvl${hoveredNode.ice.strength} ${hoveredNode.ice.id}`,
-          },
-        ],
-      },
-      stack: [
-        ...game.stack,
-        GameEffects.AddNoise({
-          node: game.player.node,
-          source: 'program',
-          actor: 'player',
-          amount: 1,
-          round: game.round,
-          duration: 2,
-        }),
-        didBreakLayer ? GameEffects.AddNoise({
-          node: game.player.node,
-          source: 'ice',
-          actor: 'network',
-          amount: 1,
-          round: game.round,
-          duration: 2,
-        }) : null,
-        isICEBroken ? GameEffects.AddNoise({
-          node: game.player.node,
-          source: 'ice',
-          actor: 'network',
-          amount: noiseGeneratedFromExcess,
-          round: game.round,
-          duration: 3,
-        }) : null,
-      ],
-    };
-  },
-  drill: (game, args, { hoveredNode }) => {
-    if (args.help) {
-      return appendMessages(game, [{
-        type: 'output',
-        value: `Usage: drill [-d <dice>]`
-      }, {
-        type: 'output',
-        value: `Drills through the ICE on the current node. Suffer any effects from still active layers.`
-      }]);
-    }
-
-    if (!hoveredNode.ice) {
-      throw new GameError(`No ICE to drill`);
-    }
-
-    if (hoveredNode.ice.status !== 'ACTIVE') {
-      throw new GameError(`ICE is not active`);
-    }
-
-    if (game.player.actions < 1) {
-      throw new GameError(`No actions left`);
-    }
-
-    if (game.player.ram.current < 1) {
-      throw new GameError(`Not enough RAM to drill ICE`);
-    }
-
-    try {
-      game = consumeDice(game, args);
-    } catch (error) {
-      if (error instanceof GameError) {
-        return appendMessage(game, {
-          type: error.type,
-          value: error.message,
-        });
-      } else {
-        throw error;
-      }
-    }
-
-    // complete all layers of ice
-    game = hoveredNode.ice.complete(game);
-    return {
-      ...game,
-      actionsToIncrement: game.actionsToIncrement + 1,
-      player: {
-        ...game.player,
-        ram: {
-          ...game.player.ram,
-          current: Math.max(0, game.player.ram.current - 1),
-        }
-      },
-      history: {
-        ...game.history,
-        terminal: [
-          ...game.history.terminal,
-          {
-            type: 'output',
-            value: `(${game.player.node}) drilled through Lvl${hoveredNode.ice.strength} ${hoveredNode.ice.id}`,
-          },
-        ],
-      },
-      stack: [
-        ...game.stack,
-        GameEffects.AddNoise({
-          node: game.player.node,
-          source: 'program',
-          actor: 'player',
-          amount: 1,
-          round: game.round,
-          duration: 2,
-        }),
-        GameEffects.AddNoise({
-          node: game.player.node,
-          source: 'ice',
-          actor: 'network',
-          amount: 1,
-          round: game.round,
-          duration: 2,
-        }),
-      ],
-    };
-  },
   execute: (game, args, { hoveredNode }) => {
     if (args.help) {
       return appendMessages(game, [{
@@ -763,31 +570,28 @@ const Commands = {
     };
   },
 } as const satisfies Record<CoreCommand, (game: Game, args: CLIArgs<any, any>, derived?: GameDerived) => Game>;
-
-export const CORE_COMMANDS = [
-  'info',
-  'config',
-  'move',
-  'nav',
-  'next',
-  'deck',
-  'inv',
-  //
-  'scripts',
-  'run',
-  //
-  'retreat',
-  // 'break',
-  // 'drill',
-  'execute',
-] as const satisfies CoreCommand[];
+//
+// export const CORE_COMMANDS = [
+//   'info',
+//   'config',
+//   'move',
+//   'nav',
+//   'next',
+//   'deck',
+//   'inv',
+//   //
+//   'scripts',
+//   'run',
+//   //
+//   'retreat',
+//   // 'break',
+//   // 'drill',
+//   'execute',
+// ] as const satisfies CoreCommand[];
 
 export const commandAlias = (command: Command): Command => {
   if (typeof COMMAND_ALIASES[command] === 'string') {
-    return COMMAND_ALIASES[command] as CoreCommand;
-  }
-  if (typeof DEBUG_COMMANDS[command] === 'string') {
-    return DEBUG_COMMANDS[command] as DebugCommand;
+    return COMMAND_ALIASES[command] as Command;
   }
   return command;
 }
@@ -806,7 +610,7 @@ export const executeCommand = (commandOrAlias: Command, game: Game, args: CLIArg
   }
 }
 
-export const executeCoreCommand = (command: CoreCommand, game: Game, args: CLIArgs, derived: GameDerived): Game => {
+export const executeCoreCommand = (command: CoreCommand, game: Game, args: CLIArgs<any, any>, derived: GameDerived): Game => {
   if (command in Commands) {
     return Commands[command](game, args, derived);
   }

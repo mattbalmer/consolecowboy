@@ -1,5 +1,5 @@
 import { LevelController } from '@game/level-controllers/base';
-import { CoreCommand, Game } from '@game/types';
+import { Command, Game } from '@game/types';
 import { GameEffects } from '@shared/constants/effects';
 import { CLIArgs } from '@shared/types/game/cli';
 import { appendMessage } from '@shared/utils/game/cli';
@@ -50,7 +50,7 @@ export default class extends LevelController {
   };
 
 
-  onCommand(game: Game, command: CoreCommand, args: CLIArgs) {
+  onCommand(game: Game, command: Command, args: CLIArgs) {
     if (command === 'drill') {
       return {
         shouldContinue: false,

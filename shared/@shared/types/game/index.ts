@@ -91,7 +91,7 @@ export type Inventory = readonly {
   count: number,
 }[];
 
-export type BehaviorArgs = { game: Game, derived: GameDerived, command?: Command, args?: CLIArgs };
+export type BehaviorArgs <A extends CLIArgs<any, any> = CLIArgs> = { game: Game, derived: GameDerived, command?: Command, args?: A };
 
 export type Trigger = {
   id: string,
@@ -174,8 +174,8 @@ export type Program = {
   stats: Partial<Player['stats']>,
   features: string[],
 } & ({
-  commands: string[],
-  onExecute: (args: BehaviorArgs) => Game,
+  commands: ProgramKeyword[],
+  onExecute: (args: BehaviorArgs<CLIArgs<any, any>>) => Game,
 } | {
   commands?: never,
   onExecute?: never,
@@ -287,10 +287,10 @@ export type Game = {
 
 export type NodeMap = Record<CoordString, NodeID>;
 
-export const COMMAND_ALIASES = {
-  'm': 'move',
-  'mv': 'move',
-  'x': 'execute',
+export const CORE_COMMANDS = {
+  // 'm': 'move',
+  // 'mv': 'move',
+  // 'x': 'execute',
   'scripts': true,
   'run': true,
   'next': true,
@@ -299,12 +299,17 @@ export const COMMAND_ALIASES = {
   'info': true,
   'execute': true,
   'retreat': true,
-  'drill': true,
-  'break': true,
+  // 'drill': true,
+  // 'break': true,
   'config': true,
   'deck': true,
   'inv': true,
-};
+} as const;
+export const COMMAND_ALIASES = {
+  'm': 'move',
+  'mv': 'move',
+  'x': 'execute',
+} as const satisfies Record<string, Command>;
 export const DEBUG_COMMANDS = {
   'noise': true,
 };
@@ -316,7 +321,7 @@ export const FREE_COMMANDS = {
   inv: true,
 } as const satisfies Partial<Record<CoreCommand, boolean>>;
 
-export type CoreCommand = keyof typeof COMMAND_ALIASES;
+export type CoreCommand = keyof typeof CORE_COMMANDS;
 export type DebugCommand = keyof typeof DEBUG_COMMANDS;
 export type Command = CoreCommand | DebugCommand | ProgramKeyword;
 

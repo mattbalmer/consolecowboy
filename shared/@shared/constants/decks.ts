@@ -18,11 +18,11 @@ export const Decks = {
       },
       3: {
         type: 'program',
-        content: 'siphon1',
+        content: 'hammer1',
       },
       4: {
-        type: 'firmware',
-        content: null,
+        type: 'program',
+        content: null, //`siphon1`,
       },
     },
     scripts: [],

@@ -1,14 +1,16 @@
-import { CoreCommand, Daemon, Game, Program } from '@shared/types/game';
+import { BehaviorArgs, CORE_COMMANDS, CoreCommand, Daemon, Game, Program } from '@shared/types/game';
 import { appendMessages } from '@shared/utils/game/cli';
 import { Daemons } from '@shared/constants/daemons';
-import { CORE_COMMANDS, executeCoreCommand } from '@shared/constants/commands';
-import { GameError } from '@shared/errors/GameError';
+import { executeCoreCommand } from '@shared/constants/commands';
 import { ensure } from '@shared/utils/game/game';
 import { consumeDice } from '@shared/utils/game/dice';
 import { GameEffects } from '@shared/constants/effects';
+import { CLIArgs } from '@shared/types/game/cli';
 
 export const ProgramKeywords = {
   siphon: 'siphon',
+  drill: 'drill',
+  break: 'break',
 } as const;
 export type ProgramKeyword = keyof typeof ProgramKeywords;
 
@@ -21,7 +23,7 @@ export const Programs = {
     tags: [],
     features: [],
     stats: {},
-    commands: CORE_COMMANDS,
+    commands: Object.keys(CORE_COMMANDS) as ProgramKeyword[],
     onExecute: ({ game, command, args, derived }) => {
       return executeCoreCommand(command as CoreCommand, game, args, derived);
     }
@@ -41,7 +43,7 @@ export const Programs = {
       },
     },
     commands: [
-      'drill'
+      ProgramKeywords.drill,
     ],
     onExecute: ({ game, command, args, derived }) => {
       if (args.help) {
@@ -105,6 +107,116 @@ export const Programs = {
             round: game.round,
             duration: 2,
           }),
+        ],
+      };
+    }
+  }),
+  hammer1: () => ({
+    id: 'hammer1',
+    model: 'hammer',
+    name: 'Hammer 1',
+    description: 'Allows the user to break basic Barrier ICE',
+    tags: [],
+    features: [],
+    stats: {
+      icedrilling: {
+        barrier: 1,
+        sentry: 0,
+        codegate: 0,
+      },
+    },
+    commands: [
+      ProgramKeywords.break,
+    ],
+    onExecute: ({ game, command, args, derived }: BehaviorArgs<CLIArgs<{
+      l: string,
+    }>>) => {
+      if (args.help) {
+        return appendMessages(game, [{
+          type: 'output',
+          value: `Usage: break [-l <layer>] [-d <dice>]`
+        }, {
+          type: 'output',
+          value: `Breaks a layer of ICE on the current node. If no <layer> is given, breaks the first layer`
+        }]);
+      }
+
+      const { hoveredNode } = derived;
+      const layer = parseInt(args.l) || 0;
+      const RAM_COST = 2;
+
+      ensure(hoveredNode?.ice, `No ICE to break`);
+      ensure(hoveredNode.ice.status === 'ACTIVE', `ICE is not active`);
+      ensure(
+        !isNaN(layer) && layer >= 0 && layer < hoveredNode.ice.layers.length,
+        `ICE has no layer '${layer}'`
+      );
+      ensure(
+        hoveredNode.ice.layers[layer].status === 'ACTIVE',
+          `Layer ${layer} is not active`
+      );
+      ensure(game.player.actions > 0, `No actions left`);
+      ensure(game.player.ram.current >= RAM_COST, `Not enough RAM to drill ICE`);
+
+      game = consumeDice(game, args);
+
+      game = hoveredNode.ice.break(game, layer);
+
+      // @ts-ignore
+      const didBreakLayer = hoveredNode.ice.layers[layer].status === 'BROKEN';
+      const isICEBroken = hoveredNode.ice.status === 'BROKEN';
+
+      const diceUsed = args.d?.[0];
+      const noiseGeneratedFromExcess = diceUsed - hoveredNode.ice.strength;
+
+      return {
+        ...game,
+        actionsToIncrement: game.actionsToIncrement + 1,
+        player: {
+          ...game.player,
+          ram: {
+            ...game.player.ram,
+            current: Math.max(0, game.player.ram.current - 2),
+          }
+        },
+        history: {
+          ...game.history,
+          terminal: [
+            ...game.history.terminal,
+            {
+              type: 'output',
+              value: didBreakLayer
+                ? isICEBroken ? `(${game.player.node}) broke Lvl${hoveredNode.ice.strength} ${hoveredNode.ice.id}` : `(${game.player.node}) broke layer ${layer} of Lvl${hoveredNode.ice.strength} ${hoveredNode.ice.id}`
+                : `Failed to break layer ${layer} of Lvl${hoveredNode.ice.strength} ${hoveredNode.ice.id}`,
+            },
+          ],
+        },
+        stack: [
+          ...game.stack,
+          GameEffects.AddNoise({
+            node: game.player.node,
+            source: 'program',
+            actor: 'player',
+            amount: 1,
+            round: game.round,
+            duration: 2,
+          }),
+          didBreakLayer ? GameEffects.AddNoise({
+            node: game.player.node,
+            source: 'ice',
+            actor: 'network',
+            amount: 1,
+            round: game.round,
+            duration: 2,
+          }) : null,
+          isICEBroken ? GameEffects.AddNoise({
+            node: game.player.node,
+            source: 'ice',
+            actor: 'network',
+            amount: noiseGeneratedFromExcess,
+            round: game.round,
+            duration: 3,
+          }) : null,
         ],
       };
     }
