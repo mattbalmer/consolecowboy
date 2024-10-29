@@ -10,14 +10,14 @@ export const Decks = {
     programs: {
       0: {
         type: 'program',
-        content: 'siphon1',
-      },
-      1: null,
-      3: null,
-      4: {
-        type: 'firmware',
         content: 'core1',
       },
+      1: {
+        type: 'program',
+        content: 'siphon1',
+      },
+      3: null,
+      4: null,
     },
     scripts: {},
     programCapacity: 4,

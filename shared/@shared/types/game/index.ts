@@ -1,8 +1,8 @@
 import { CLIArgs } from '@shared/types/game/cli';
-import { ProgramKeywords } from '@shared/constants/programs';
 import { ItemID } from '@shared/types/game/items';
 import { IDTracker } from '@shared/utils/game';
 import { DaemonIDTracker } from '@shared/utils/game/daemons';
+import { ProgramKeyword } from '@shared/constants/programs';
 
 export type Coord = { x: number, y: number };
 export type CoordString = `${number},${number}`;
@@ -162,33 +162,25 @@ export type Condition = {
   onEnd: (game: Game) => Game,
 }
 
-export type ProgramKeyword = keyof typeof ProgramKeywords;
 export type SN <K extends string> = `${K}${number}`;
-export type ProgramID <K extends ProgramKeyword = ProgramKeyword> = `${K}${number}`;
-export type FirmwareID <K extends ProgramKeyword = ProgramKeyword> = `${K}${number}`;
 
-export type Program <K extends ProgramKeyword = ProgramKeyword> = {
-  id: ProgramID<K>,
-  model: K,
+export type Program = {
+  id: string,
+  model: string,
   name: string,
   description: string,
   tags: string[],
   stats: Record<StatString, number>,
   features: string[],
-  keyword: K,
-  onExecute: (game: Game, args: CLIArgs, derived: GameDerived) => Game,
-}
+} & ({
+  commands: string[],
+  onExecute: (args: BehaviorArgs) => Game,
+} | {
+  commands?: never,
+  onExecute?: never,
+})
 
 export type StatString = string;
-export type Firmware<M extends string = string> = {
-  id: SN<M>,
-  model: M,
-  name: string,
-  description: string,
-  tags: string[],
-  stats: Record<StatString, number>,
-  features: string[],
-};
 
 /**
  * Represents the player out-of-game, for saving purposes. The player on Game['player'] is the in-game player, with
@@ -287,7 +279,7 @@ export type Game = {
 
 export type NodeMap = Record<CoordString, NodeID>;
 
-export const COMMANDS = {
+export const COMMAND_ALIASES = {
   'm': 'move',
   'mv': 'move',
   'x': 'execute',
@@ -314,10 +306,11 @@ export const FREE_COMMANDS = {
   deck: true,
   config: true,
   inv: true,
-} as const satisfies Partial<Record<Command, boolean>>;
+} as const satisfies Partial<Record<CoreCommand, boolean>>;
 
-export type Command = keyof typeof COMMANDS;
+export type CoreCommand = keyof typeof COMMAND_ALIASES;
 export type DebugCommand = keyof typeof DEBUG_COMMANDS;
+export type Command = CoreCommand | DebugCommand | ProgramKeyword;
 
 export type GameEffect<ID extends string = string> = {
   id: ID,
@@ -329,7 +322,7 @@ export type EntityURN = 'player' | `daemon:${DaemonID}` | `server:${NodeID}`;
 export type DeckSlotType = 'program' | 'firmware';
 export type DeckSlot <T extends DeckSlotType = DeckSlotType> = {
   type: T,
-  content: null | (T extends 'program' ? Program : Firmware),
+  content: null | Program,
   isRemoveable?: boolean
 }
 
@@ -348,7 +341,7 @@ export type Deck <M extends string = string> = {
 
 export type SavedDeckSlot <T extends DeckSlotType = DeckSlotType> = {
   type: T,
-  content: null | (T extends 'program' ? ProgramID : string),
+  content: null | string,
   isRemoveable?: boolean
 }
 export type SavedDeck <M extends string = string> = {

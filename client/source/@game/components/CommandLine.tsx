@@ -4,7 +4,7 @@ import { Box, Divider, TextField, Typography } from '@mui/material';
 import { FlexRow } from '@client/components/FlexRow';
 import { FlexCol } from '@client/components/FlexCol';
 import { Autocomplete } from '@mui/lab';
-import { CLIMessage, Command, COMMANDS, Game } from '@game/types';
+import { CLIMessage, CoreCommand, COMMAND_ALIASES, Game } from '@game/types';
 
 const CLIHistoryEntry = ({
   line,
@@ -35,7 +35,7 @@ export const CommandLine = ({
   game,
   bindArrowKeys,
 }: {
-  onCommand: (command: Command, ...args: any[]) => void,
+  onCommand: (command: CoreCommand, ...args: any[]) => void,
   game: Game,
   bindArrowKeys: boolean,
 }) => {
@@ -54,7 +54,7 @@ export const CommandLine = ({
     }
     const inputs = input.match(/(".*?"|[^"\s]+)+(?=\s*|\s*$)/g);
     const command = inputs[0];
-    onCommand(command as Command, ...inputs.slice(1));
+    onCommand(command as CoreCommand, ...inputs.slice(1));
 
     // if (inputs[0] in COMMANDS) {
     //   const command = COMMANDS[inputs[0]] === true ? inputs[0] : COMMANDS[inputs[0]];
@@ -168,7 +168,7 @@ export const CommandLine = ({
               setInput((newInputValue || '').toLowerCase());
             }
           }}
-          options={Object.keys(COMMANDS)}
+          options={Object.keys(COMMAND_ALIASES)}
         />
       </FlexRow>
     </FlexCol>

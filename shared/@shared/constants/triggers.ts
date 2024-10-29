@@ -1,6 +1,5 @@
-import { BehaviorArgs, Daemon, NodeID, Trigger } from '@shared/types/game';
+import { BehaviorArgs, Daemon, FREE_COMMANDS, NodeID, Trigger } from '@shared/types/game';
 import { noiseAtNode } from '@shared/utils/game';
-import { COMMANDS_WITH_ACTION_COST } from '@shared/constants/commands';
 
 export const Triggers = {
   IsStatus: (status: Daemon['status'] | Daemon['status'][]) => ({
@@ -21,7 +20,7 @@ export const Triggers = {
   PlayerAction: () => ({
     id: `PlayerAction`,
     shouldRun(daemon, { command, game }): boolean {
-      return command === 'next' || COMMANDS_WITH_ACTION_COST.includes(command);
+      return command === 'next' || !(command in FREE_COMMANDS);
     },
   }),
   Custom: (callback: (daemon: Daemon, args: BehaviorArgs) => boolean) => ({

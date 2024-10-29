@@ -1,10 +1,9 @@
-import { BehaviorArgs, BehaviorPattern, Daemon, DaemonID, EntityURN, NodeID } from '@shared/types/game';
+import { BehaviorArgs, BehaviorPattern, Daemon, DaemonID, EntityURN, FREE_COMMANDS, NodeID } from '@shared/types/game';
 import { Triggers } from '@shared/constants/triggers';
 import { Behaviors } from '@shared/constants/behaviors';
 import { appendMessage } from '@shared/utils/game/cli';
 import { BehaviorPatterns } from '@shared/constants/behavior-patterns';
 import { executeContent } from '@shared/utils/game/servers';
-import { COMMANDS_WITH_ACTION_COST } from '@shared/constants/commands';
 import { Installations } from '@shared/constants/installations';
 import { terminateDaemon } from '@shared/utils/game/daemons';
 
@@ -125,7 +124,7 @@ export const Daemons = {
       turnsActive: number,
     }>, { game, command }: BehaviorArgs) {
       console.log('onGameUpdate', game, command, this);
-      if (COMMANDS_WITH_ACTION_COST.includes(command) && this.status === 'ACTIVE') {
+      if (!(command in FREE_COMMANDS) && this.status === 'ACTIVE') {
         const installation = (game.nodes[this.node].content) as unknown as ReturnType<typeof Installations['Wallet']> | undefined;
         console.log('onGameUpdate:installation', installation);
 

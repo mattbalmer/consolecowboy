@@ -1,4 +1,4 @@
-import { Command, DebugCommand, Game, GameDerived } from '@shared/types/game';
+import { CoreCommand, DebugCommand, Game, GameDerived } from '@shared/types/game';
 import { useCallback, useState } from 'react';
 import { CLIArgs } from '@shared/types/game/cli';
 import { appendMessage, appendMessages, parseArgs } from '@shared/utils/game/cli';
@@ -26,66 +26,7 @@ export const useCommands = ({
 
   // to fix: immutable
 
-  const onCommand = useCallback((game: Game, command: Command, commandArgs: CLIArgs): Game => {
-    if (command === 'next') {
-      return executeCommand('next', game, commandArgs, gameDerived)
-    }
-
-    if (command === 'config') {
-      return executeCommand('config', game, commandArgs, gameDerived)
-    }
-
-    if (command === 'info') {
-      return executeCommand('info', game, commandArgs, gameDerived)
-    }
-
-    if (command === 'inv') {
-      return executeCommand('inv', game, commandArgs, gameDerived)
-    }
-
-    if (game.player.actions <= 0) {
-      return appendMessage(game, {
-        type: 'output',
-        value: `No actions left`
-      });
-    }
-
-    if (command === 'retreat') {
-      return executeCommand('retreat', game, commandArgs, gameDerived)
-    }
-
-    if (command === 'break') {
-      return executeCommand('break', game, commandArgs, gameDerived)
-    }
-
-    if (command === 'drill') {
-      return executeCommand('drill', game, commandArgs, gameDerived)
-    }
-
-    if (command === 'move') {
-      return executeCommand('move', game, commandArgs, gameDerived)
-    }
-
-    if (command === 'nav') {
-      return executeCommand('nav', game, commandArgs, gameDerived)
-    }
-
-    // if ice active, disable other commands
-    if (hoveredNode?.ice && hoveredNode.ice.status === 'ACTIVE') {
-      return appendMessage(game, {
-        type: 'output',
-        value: `ICE is active - cannot execute`
-      });
-    }
-
-    if (command === 'execute') {
-      return executeCommand('execute', game, commandArgs, gameDerived);
-    }
-
-    return executeCommand(command, game, commandArgs, gameDerived);
-  }, [game, gameDerived]);
-
-  return useCallback((command: Command, ...rawArgs: string[]) => {
+  return useCallback((command: CoreCommand, ...rawArgs: string[]) => {
     console.debug('oNCommand', command);
     // @ts-ignore
     if (window['DEBUG_COMMANDS_ENABLED'] && command === 'dbg') {
@@ -150,14 +91,9 @@ export const useCommands = ({
     }
 
     try {
-      let newGame = onCommand(game, command, commandArgs);
-
-      if (!newGame) {
-        setGame(game);
-        return;
-      }
-
+      let newGame = executeCommand(command, game, commandArgs, gameDerived);
       gameDerived = getGameDerived(newGame);
+
       newGame = runDaemons({
         game: newGame,
         derived: gameDerived,
@@ -166,7 +102,7 @@ export const useCommands = ({
       });
 
       if (game.player.config.autonext && newGame?.player.actions < 1) {
-        newGame = onCommand(newGame, 'next', {_:[]} as CLIArgs);
+        newGame = executeCommand('next', newGame, {_:[]} as CLIArgs, gameDerived);
         gameDerived = getGameDerived(newGame);
 
         newGame = runDaemons({
@@ -188,5 +124,5 @@ export const useCommands = ({
       }
     }
 
-  }, [game, gameDerived, onCommand, levelController])
+  }, [game, gameDerived, levelController])
 }

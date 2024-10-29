@@ -36,16 +36,7 @@ const DebugCommands = {
   },
 } as const satisfies Record<DebugCommand, (game: Game, args: CLIArgs<any, any>, derived?: GameDerived) => Game>;
 
-const debugCommandAlias = (command: DebugCommand): DebugCommand => {
-  if (typeof DEBUG_COMMANDS[command] === 'string') {
-    return DEBUG_COMMANDS[command] as DebugCommand;
-  }
-  return command;
-}
-
 export const executeDebugCommand = (command: DebugCommand, game: Game, args: CLIArgs, derived: GameDerived): Game => {
-  command = debugCommandAlias(command);
-
   if (command in DebugCommands) {
     // @ts-ignore
     return DebugCommands[command](game, args, derived);

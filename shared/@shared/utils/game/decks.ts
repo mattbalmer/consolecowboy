@@ -1,20 +1,6 @@
-import {
-  Command,
-  Deck,
-  DeckSlot,
-  Firmware,
-  Game,
-  Player,
-  Program,
-  ProgramKeyword,
-  SavedDeckSlot,
-  SavedScript,
-  Script
-} from '@shared/types/game';
-import { Firmwares } from '@shared/constants/firmware';
+import { Command, Deck, DeckSlot, Game, Player, Program, SavedDeckSlot, SavedScript, Script } from '@shared/types/game';
 import { Programs } from '@shared/constants/programs';
 import { Scripts } from '@shared/constants/scripts';
-import { CORE_COMMANDS } from '@shared/constants/commands';
 import { GameError } from '@shared/errors/GameError';
 
 export const addScript = (deck: Deck, script: Script): Deck => {
@@ -33,15 +19,15 @@ export const addScript = (deck: Deck, script: Script): Deck => {
   return deck;
 }
 
-export const addProgram = (deck: Deck, program: Program | Firmware): Deck => {
+export const addProgram = (deck: Deck, program: Program): Deck => {
   const programs = Object.entries(deck.programs);
   const key = programs
     .find(([id, slot]) => slot === null || slot.content === null)?.[0] || null;
   if (!key) {
     if (programs.length < deck.programCapacity) {
       deck.programs[programs.length] = {
-        type: 'program', // todo: firmware
-        content: program as Program,
+        type: 'program',
+        content: program,
       };
       return deck;
     } else {
@@ -63,7 +49,7 @@ export const hydrateDeckSlot = (slot: SavedDeckSlot): DeckSlot => {
   };
 
   if (slot.type === 'firmware') {
-    deckSlot.content = slot.content && Firmwares[slot.content]();
+    deckSlot.content = slot.content && Programs[slot.content]();
   } else if (slot.type === 'program') {
     deckSlot.content = slot.content && Programs[slot.content]();
   } else {
@@ -124,13 +110,16 @@ export const dehydrateDeck = (deck: Game['player']['deck']): Player['deck'] => {
   }
 }
 
-export const commandsForDeck = (deck: Deck): (Command | ProgramKeyword)[] => {
+export const commandMap = (deck: Deck): Record<Command, Program> => {
   return Object.values(deck.programs)
     .filter(slot => Boolean(slot && slot.content))
-    .map(slot => {
-      return slot.type === 'program' ? [
-        (slot.content as Program).keyword
-      ] : (slot.content as Firmware<'core'>).id === 'core1' ? CORE_COMMANDS : [];
-    })
-    .flat();
+    .reduce((map, slot) => {
+      const commands = slot.type === 'program'
+        ? slot.content.commands
+        : [];
+      commands.forEach(command => {
+        map[command] = slot.content as Program;
+      });
+      return map;
+    }, {} as Record<Command, Program>);
 }

@@ -1,23 +1,39 @@
-import { Daemon, Game, Program } from '@shared/types/game';
+import { CoreCommand, Daemon, Game, Program } from '@shared/types/game';
 import { appendMessages } from '@shared/utils/game/cli';
-import { CLIArgs } from '@shared/types/game/cli';
 import { Daemons } from '@shared/constants/daemons';
+import { CORE_COMMANDS, executeCoreCommand } from '@shared/constants/commands';
 
 export const ProgramKeywords = {
   siphon: 'siphon',
 } as const;
+export type ProgramKeyword = keyof typeof ProgramKeywords;
 
 export const Programs = {
+  core1: () => ({
+    id: 'core1',
+    model: 'core',
+    name: 'Core Commands',
+    description: 'Contains basic commands for interacting with the matrix.',
+    tags: [],
+    features: [],
+    stats: {},
+    commands: CORE_COMMANDS,
+    onExecute: ({ game, command, args, derived }) => {
+      return executeCoreCommand(command as CoreCommand, game, args, derived);
+    }
+  }),
   siphon1: () => ({
-    keyword: ProgramKeywords.siphon,
     id: 'siphon1',
     model: 'siphon',
+    commands: [
+      ProgramKeywords.siphon,
+    ],
     name: 'Siphon Program',
     description: 'Siphon $50 from a wallet each turn.',
     tags: [],
     features: [],
     stats: {},
-    onExecute(game: Game, args: CLIArgs): Game {
+    onExecute({ game, command}): Game {
       const power = 50;
       // Create SiphonDaemon at player's location, which will interact with Wallet at the location each turn for $50 per turn.
 

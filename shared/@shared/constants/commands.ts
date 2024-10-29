@@ -1,12 +1,12 @@
 import {
-  Command,
-  COMMANDS,
+  CoreCommand,
+  COMMAND_ALIASES,
   CompassDir,
   FREE_COMMANDS,
   Game,
   GameDerived,
-  Program,
-  ProgramKeyword
+  Command,
+  DEBUG_COMMANDS, DebugCommand
 } from '@shared/types/game';
 import { appendMessage, appendMessages } from '@shared/utils/game/cli';
 import { CLIArgs } from '@shared/types/game/cli';
@@ -16,15 +16,11 @@ import { GameEffects } from '@shared/constants/effects';
 import { pick } from '@shared/utils/objects';
 import { getDice } from '@shared/utils/game';
 import { consumeDice } from '@shared/utils/game/dice';
-import { ProgramKeywords } from '@shared/constants/programs';
 import { canExecute, executeContent } from '@shared/utils/game/servers';
 import { Items } from '@shared/constants/items';
 import { formatItemCount } from '@shared/utils/game/inventory';
 import { ItemID } from '@shared/types/game/items';
-import { commandsForDeck } from '@shared/utils/game/decks';
-
-export const COMMANDS_WITH_ACTION_COST = Object.keys(COMMANDS)
-  .filter(command => !FREE_COMMANDS[command]) as Command[];
+import { commandMap } from '@shared/utils/game/decks';
 
 const Commands = {
   m: game => game,
@@ -103,6 +99,8 @@ const Commands = {
       throw new GameError(`No script name provided`);
     }
 
+    // todo: some scripts may require action, but not all?
+
     const key = Object.entries(game.player.deck.scripts)
       .find(([i, script]) => script.name.toLowerCase() === name)
       [0];
@@ -144,6 +142,10 @@ const Commands = {
         type: 'output',
         value: `<node> Must be the ID of an adjacent Node with a valid connection`
       });
+    }
+
+    if (game.player.actions < 1) {
+      throw new GameError(`No actions left`);
     }
 
     const target = args._[0]?.toUpperCase();
@@ -222,6 +224,10 @@ const Commands = {
         type: 'output',
         value: `<direction> Must be a cardinal direction (n, e, s, w)`
       });
+    }
+
+    if (game.player.actions < 1) {
+      throw new GameError(`No actions left`);
     }
 
     const [ dir ] = args._;
@@ -305,6 +311,10 @@ const Commands = {
         type: 'output',
         value: `Moves to the player's previous node`
       });
+    }
+
+    if (game.player.actions < 1) {
+      throw new GameError(`No actions left`);
     }
 
     const target = game.history.nodes[game.history.nodes.length - 1];
@@ -441,6 +451,10 @@ const Commands = {
       throw new GameError(`Layer ${layer} is not active`);
     }
 
+    if (game.player.actions < 1) {
+      throw new GameError(`No actions left`);
+    }
+
     if (game.player.ram.current < 2) {
       throw new GameError(`Not enough RAM to break ICE`);
     }
@@ -536,6 +550,10 @@ const Commands = {
       throw new GameError(`ICE is not active`);
     }
 
+    if (game.player.actions < 1) {
+      throw new GameError(`No actions left`);
+    }
+
     if (game.player.ram.current < 1) {
       throw new GameError(`Not enough RAM to drill ICE`);
     }
@@ -608,6 +626,14 @@ const Commands = {
 
     if (!hoveredNode.content) {
       throw new GameError(`Nothing installed to run`);
+    }
+
+    if (hoveredNode?.ice && hoveredNode.ice.status === 'ACTIVE') {
+      throw new GameError(`ICE is active - cannot execute`);
+    }
+
+    if (game.player.actions < 1) {
+      throw new GameError(`No actions left`);
     }
 
     // or instead of auto, seeing the content is another progression system
@@ -734,7 +760,7 @@ const Commands = {
       },
     };
   },
-} as const satisfies Record<Command, (game: Game, args: CLIArgs<any, any>, derived?: GameDerived) => Game>;
+} as const satisfies Record<CoreCommand, (game: Game, args: CLIArgs<any, any>, derived?: GameDerived) => Game>;
 
 export const CORE_COMMANDS = [
   'info',
@@ -752,37 +778,39 @@ export const CORE_COMMANDS = [
   'break',
   'drill',
   'execute',
-] as const satisfies Command[];
+] as const satisfies CoreCommand[];
 
-export const commandAlias = (command: Command | ProgramKeyword): Command | ProgramKeyword => {
-  if (typeof COMMANDS[command] === 'string') {
-    return COMMANDS[command] as Command;
+export const commandAlias = (command: Command): Command => {
+  if (typeof COMMAND_ALIASES[command] === 'string') {
+    return COMMAND_ALIASES[command] as CoreCommand;
+  }
+  if (typeof DEBUG_COMMANDS[command] === 'string') {
+    return DEBUG_COMMANDS[command] as DebugCommand;
   }
   return command;
 }
 
-export const executeCommand = (command: Command | ProgramKeyword, game: Game, args: CLIArgs, derived: GameDerived): Game => {
-  command = commandAlias(command);
+export const executeCommand = (commandOrAlias: Command, game: Game, args: CLIArgs, derived: GameDerived): Game => {
+  const command = commandAlias(
+    commandOrAlias as CoreCommand
+  );
+  const commandToProgram = commandMap(game.player.deck);
+  const program = commandToProgram[command];
 
-  const possibleCommands = commandsForDeck(game.player.deck);
-
-  if (!possibleCommands.includes(command)) {
-    throw new GameError(`You don't have access to that command`);
+  if (program) {
+    return program.onExecute({ game, args, derived, command });
+  } else {
+    throw new GameError(`Command not found: ${command}`);
   }
+}
 
+export const executeCoreCommand = (command: CoreCommand, game: Game, args: CLIArgs, derived: GameDerived): Game => {
   if (command in Commands) {
     return Commands[command](game, args, derived);
   }
 
-  if (command in ProgramKeywords) {
-    const program = Object.values(game.player.deck.programs)
-      .find(slot => (slot.content as Program).keyword === command)
-      .content as Program;
-    if (!program) {
-      throw new Error(`Program not found for command: ${command}`);
-    }
-    return program.onExecute(game, args, derived);
-  }
-
-  throw new GameError(`Command not found: ${command}`);
+  return appendMessage(game, {
+    type: 'error',
+    value: `Command not found: ${command}`
+  });
 }
