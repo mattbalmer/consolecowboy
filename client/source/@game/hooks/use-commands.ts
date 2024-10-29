@@ -91,6 +91,7 @@ export const useCommands = ({
     }
 
     try {
+      // now the siphon daemon is running on the same command it was instantiated with.
       let newGame = executeCommand(command, game, commandArgs, gameDerived);
       gameDerived = getGameDerived(newGame);
 

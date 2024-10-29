@@ -46,11 +46,9 @@ const Commands = {
     }
   },
   deck: game => appendMessages(game,
-    Object.keys(game.player.deck).map(k => ({
+    Object.entries(commandMap(game.player.deck)).map(([k, program]) => ({
       type: 'output',
-      value: game.player.deck[k] === 'command'
-        ? k
-        : `${k.toLowerCase()}: ${game.player.deck[k].id}`
+      value: `${k.toLowerCase()}: ${program.id}`
     })),
   ),
   inv: game => {

@@ -19,23 +19,19 @@ export const addScript = (deck: Deck, script: Script): Deck => {
   return deck;
 }
 
-export const addProgram = (deck: Deck, program: Program): Deck => {
+export const addModule = (deck: Deck, type: 'program' | 'firmware', program: Program): Deck => {
   const programs = Object.entries(deck.programs);
   const key = programs
-    .find(([id, slot]) => slot === null || slot.content === null)?.[0] || null;
-  if (!key) {
-    if (programs.length < deck.programCapacity) {
-      deck.programs[programs.length] = {
-        type: 'program',
-        content: program,
-      };
-      return deck;
-    } else {
-      throw new GameError(`Deck's program storage is full`);
-    }
+    .find(([id, slot]) =>
+      slot.type === type && slot.content === null
+    )?.[0] || null;
+
+  if (key) {
+    deck.programs[key].content = program;
+    return deck;
+  } else {
+    throw new GameError(`Deck's program storage is full`);
   }
-  deck.programs[key] = program;
-  return deck;
 }
 
 export const hydrateDeckSlot = (slot: SavedDeckSlot): DeckSlot => {
@@ -45,16 +41,8 @@ export const hydrateDeckSlot = (slot: SavedDeckSlot): DeckSlot => {
 
   const deckSlot: DeckSlot = {
     type: slot.type,
-    content: null,
+    content: slot.content ? Programs[slot.content]() : null,
   };
-
-  if (slot.type === 'firmware') {
-    deckSlot.content = slot.content && Programs[slot.content]();
-  } else if (slot.type === 'program') {
-    deckSlot.content = slot.content && Programs[slot.content]();
-  } else {
-    throw `Cannot hydrate deck with slot type ${slot.type}: ${slot.content}`;
-  }
 
   if (slot.isRemoveable === false) {
     deckSlot.isRemoveable = slot.isRemoveable;

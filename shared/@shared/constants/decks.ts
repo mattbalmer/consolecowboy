@@ -16,11 +16,16 @@ export const Decks = {
         type: 'program',
         content: 'siphon1',
       },
-      3: null,
-      4: null,
+      3: {
+        type: 'program',
+        content: null,
+      },
+      4: {
+        type: 'firmware',
+        content: null,
+      },
     },
     scripts: {},
-    programCapacity: 4,
     scriptCapacity: 4,
   } as SavedDeck<'OnoSendai'>),
 } as const satisfies Record<string, (...args: unknown[]) => SavedDeck>;

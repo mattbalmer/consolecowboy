@@ -60,7 +60,7 @@ export const DeckManager = ({
   const renderedPrograms = useMemo<(DeckSlot | null)[]>(
     () => {
       const programs = Object.values(deck.programs);
-      const size = deck.programCapacity;
+      const size = programs.length;
 
       return [
         ...size === -1 ? programs : programs.slice(0, size),
@@ -69,7 +69,7 @@ export const DeckManager = ({
             : [],
       ];
     },
-    [deck.programs, deck.programCapacity]
+    [deck.programs]
   );
   const renderedScripts = useMemo<(Script | null)[]>(
     () => {
