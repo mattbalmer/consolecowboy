@@ -1,10 +1,8 @@
-import { Command, Game, Inventory, Player, Program, ProgramKeyword } from '@shared/types/game';
+import { Game, Inventory, Player } from '@shared/types/game';
 import { getDice } from '@shared/utils/game/index';
-import { Scripts } from '@shared/constants/scripts';
-import { CORE_COMMANDS } from '@shared/constants/commands';
-import { Programs } from '@shared/constants/programs';
 import { formatItemCount, getTotalCount, mergeInventory } from '@shared/utils/game/inventory';
 import { ItemID } from '@shared/types/game/items';
+import { hydrateDeck } from '@shared/utils/game/decks';
 
 export const savedPlayerToGamePlayer = (savedPlayer: Player): Game['player'] => {
   return {
@@ -23,28 +21,8 @@ export const savedPlayerToGamePlayer = (savedPlayer: Player): Game['player'] => 
     conditions: [],
     dice: getDice(savedPlayer.dicePerRound),
     config: savedPlayer.config,
-    scripts: savedPlayer.scripts.map(({ id, props }) =>
-      Scripts[id](props)
-    ),
     inventory: [], // todo: allow player to specify some items to take with them into levels
-    deck: Array.from(new Set([
-      ...CORE_COMMANDS.map(e => `command:${e}`),
-      ...savedPlayer.deck,
-    ])).map(e => {
-      const [type, id] = e.split(':');
-      if (type === 'command') {
-        return [id, 'command'] as [Command, 'command'];
-      }
-      if (type === 'program') {
-        const program = Programs[id]() as Program;
-        return [program.keyword, program] as [ProgramKeyword, Program];
-      }
-    }).reduce<
-      Partial<Record<Command | ProgramKeyword, 'command' | Program>>
-    >((map, [key, value]) => {
-      map[key] = value;
-      return map;
-    }, {}),
+    deck: hydrateDeck(savedPlayer.deck),
   };
 }
 

@@ -3,17 +3,10 @@ import { FlexCol } from '@client/components/FlexCol';
 import { Box, Button, Divider, Typography } from '@mui/material';
 import { useOverworld } from '@overworld/hooks/use-overworld';
 import { SimpleDialog } from '@client/components/SimpleDialog';
-import { InventoryManager } from '@overworld/components/InventoryManager';
 import { FlexRow } from '@client/components/FlexRow';
-import { Inventory, Player } from '@shared/types/game';
 import { DeckManager } from '@overworld/components/DeckManager';
 import { useMemo } from 'react';
-import { CORE_COMMANDS } from '@shared/constants/commands';
-
-const sizeToDisplay = (deck: Player['deck']): number => {
-  const PER_ROW = 10;
-  return (Math.ceil(deck.length / PER_ROW) + 1) * PER_ROW;
-}
+import { hydrateDeck } from '@shared/utils/game/decks';
 
 export const DeckScreen = ({
 }: {
@@ -21,12 +14,9 @@ export const DeckScreen = ({
   const {
     player, setPlayer,
     dialog, setDialog,
-  } = useOverworld();
+  } = useOverworld('deck');
 
-  const deck = useMemo<Player['deck']>(() => [
-    ...player.deck,
-    ...(CORE_COMMANDS.map(c => `command:${c}`) as Player['deck'])
-  ], [player.deck]);
+  const deck = useMemo(() => hydrateDeck(player.deck), [player.deck]);
 
   return <FlexCol sx={{ flexGrow: 1, p: 2 }}>
     <Typography variant={'h5'} sx={{ mb: 2 }}>Overworld &gt; Inventory</Typography>
@@ -40,7 +30,6 @@ export const DeckScreen = ({
     <Box>
       <DeckManager
         deck={deck}
-        size={sizeToDisplay(deck)}
       />
     </Box>
     <SimpleDialog

@@ -1,5 +1,6 @@
 import { Capsule } from '@yootil/capsule';
 import { Player } from '@shared/types/game';
+import { Decks } from '@shared/constants/decks';
 
 class PlayerCapsule extends Capsule<{
   player: Player,
@@ -33,10 +34,7 @@ export const getInitialPlayerProps = (): Player => {
       autonext: false,
       autodice: 'lowest',
     },
-    scripts: [],
-    deck: [
-      'program:siphon1'
-    ],
+    deck: Decks.OnoSendai(),
   };
 }
 

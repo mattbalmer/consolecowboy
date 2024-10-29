@@ -18,7 +18,7 @@ export const InventoryScreen = ({
   const {
     player, setPlayer,
     dialog, setDialog,
-  } = useOverworld();
+  } = useOverworld('inventory');
 
   return <FlexCol sx={{ flexGrow: 1, p: 2 }}>
     <Typography variant={'h5'} sx={{ mb: 2 }}>Overworld &gt; Inventory</Typography>

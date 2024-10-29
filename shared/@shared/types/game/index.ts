@@ -72,6 +72,7 @@ export type Script <P = any> = {
   onExecute: (game: Game, args: CLIArgs) => Game,
   onInfo?: (game: Game, args: CLIArgs) => Game,
 }
+export type SavedScript = Pick<Script, 'id' | 'props'>;
 
 export type GameDerived = {
   hoveredNode: GameNode,
@@ -162,13 +163,32 @@ export type Condition = {
 }
 
 export type ProgramKeyword = keyof typeof ProgramKeywords;
+export type SN <K extends string> = `${K}${number}`;
 export type ProgramID <K extends ProgramKeyword = ProgramKeyword> = `${K}${number}`;
+export type FirmwareID <K extends ProgramKeyword = ProgramKeyword> = `${K}${number}`;
 
 export type Program <K extends ProgramKeyword = ProgramKeyword> = {
   id: ProgramID<K>,
+  model: K,
+  name: string,
+  description: string,
+  tags: string[],
+  stats: Record<StatString, number>,
+  features: string[],
   keyword: K,
   onExecute: (game: Game, args: CLIArgs, derived: GameDerived) => Game,
 }
+
+export type StatString = string;
+export type Firmware<M extends string = string> = {
+  id: SN<M>,
+  model: M,
+  name: string,
+  description: string,
+  tags: string[],
+  stats: Record<StatString, number>,
+  features: string[],
+};
 
 /**
  * Represents the player out-of-game, for saving purposes. The player on Game['player'] is the in-game player, with
@@ -203,8 +223,7 @@ export type Player = {
     autonext: boolean,
     autodice: 'lowest' | 'highest' | null,
   },
-  scripts: Pick<Script, 'id' | 'props'>[],
-  deck: (`command:${Command}` | `program:${ProgramID}`)[],
+  deck: SavedDeck,
   inventory: Inventory,
 }
 
@@ -250,8 +269,9 @@ export type Game = {
     conditions: Condition[],
     dice: GameDie[], // make this a map, but somehow track max available for the round too
     config: Player['config'],
-    scripts: Script[],
-    deck: Partial<Record<Command | ProgramKeyword, 'command' | Program>>,
+    // scripts: Script[],
+    // deck: Partial<Record<Command | ProgramKeyword, 'command' | Program>>,
+    deck: Deck,
     inventory: Inventory,
   },
   stack: GameEffect[],
@@ -305,3 +325,41 @@ export type GameEffect<ID extends string = string> = {
 }
 
 export type EntityURN = 'player' | `daemon:${DaemonID}` | `server:${NodeID}`;
+
+export type DeckSlotType = 'program' | 'firmware';
+export type DeckSlot <T extends DeckSlotType = DeckSlotType> = {
+  type: T,
+  content: null | (T extends 'program' ? Program : Firmware),
+  isRemoveable?: boolean
+}
+
+export type Deck <M extends string = string> = {
+  id: SN<M>,
+  model: M,
+  name: string,
+  description: string,
+  value: number,
+  // and firmware
+  programs: Record<number, null | DeckSlot>,
+  scripts: Record<number, null | Script>,
+  programCapacity: number,
+  scriptCapacity: number,
+}
+
+export type SavedDeckSlot <T extends DeckSlotType = DeckSlotType> = {
+  type: T,
+  content: null | (T extends 'program' ? ProgramID : string),
+  isRemoveable?: boolean
+}
+export type SavedDeck <M extends string = string> = {
+  id: SN<M>,
+  model: M,
+  name: string,
+  description: string,
+  value: number,
+  // and firmware
+  programs: Record<number, null | SavedDeckSlot>,
+  scripts: Record<number, null | SavedScript>,
+  programCapacity: number,
+  scriptCapacity: number,
+}

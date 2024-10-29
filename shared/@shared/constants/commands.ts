@@ -22,6 +22,7 @@ import { canExecute, executeContent } from '@shared/utils/game/servers';
 import { Items } from '@shared/constants/items';
 import { formatItemCount, mergeInventory } from '@shared/utils/game/inventory';
 import { ItemID } from '@shared/types/game/items';
+import { commandsForDeck } from '@shared/utils/game/decks';
 
 export const COMMANDS_WITH_ACTION_COST = Object.keys(COMMANDS)
   .filter(command => !FREE_COMMANDS[command]) as Command[];
@@ -81,9 +82,12 @@ const Commands = {
     );
   },
   scripts: (game: Game) => {
+    const scripts = Object.values(game.player.deck.scripts)
+      .map(s => s?.name)
+      .filter(n => !!n);
     return appendMessage(game, {
       type: 'output',
-      value: `Available scripts: ${game.player.scripts.map(s => s.name).join(', ')}`
+      value: `Available scripts: ${scripts.join(', ')}`
     });
   },
   run: (game: Game, args: CLIArgs) => {
@@ -100,10 +104,13 @@ const Commands = {
       throw new GameError(`No script name provided`);
     }
 
-    const i = game.player.scripts.findIndex(s => s.name.toLowerCase() === name);
-    const script = game.player.scripts[i];
+    const key = Object.entries(game.player.deck.scripts)
+      .find(([i, script]) => script.name.toLowerCase() === name)
+      [0];
 
-    if (i < 0) {
+    const script = game.player.deck.scripts[key];
+
+    if (!script) {
       throw new GameError(`Script not found: ${name}`);
     }
 
@@ -118,7 +125,13 @@ const Commands = {
       ...game,
       player: {
         ...game.player,
-        scripts: removeRange(game.player.scripts, i, 1),
+        deck: {
+          ...game.player.deck,
+          scripts: {
+            ...game.player.deck.scripts,
+            [key]: null,
+          }
+        }
       },
     }
   },
@@ -752,7 +765,9 @@ export const commandAlias = (command: Command | ProgramKeyword): Command | Progr
 export const executeCommand = (command: Command | ProgramKeyword, game: Game, args: CLIArgs, derived: GameDerived): Game => {
   command = commandAlias(command);
 
-  if (!(command in game.player.deck)) {
+  const possibleCommands = commandsForDeck(game.player.deck);
+
+  if (!possibleCommands.includes(command)) {
     throw new GameError(`You don't have access to that command`);
   }
 
@@ -761,7 +776,12 @@ export const executeCommand = (command: Command | ProgramKeyword, game: Game, ar
   }
 
   if (command in ProgramKeywords) {
-    const program = game.player.deck[command] as Program;
+    const program = Object.values(game.player.deck.programs)
+      .find(slot => (slot.content as Program).keyword === command)
+      .content as Program;
+    if (!program) {
+      throw new Error(`Program not found for command: ${command}`);
+    }
     return program.onExecute(game, args, derived);
   }
 

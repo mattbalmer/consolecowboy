@@ -6,7 +6,7 @@ import { transitionsCapsule } from '@client/capsules/transitions';
 
 export type OverworldState = ReturnType<typeof useOverworld>;
 
-export const useOverworld = () => {
+export const useOverworld = (page: 'overworld' | 'inventory' | 'deck') => {
   const [player, setPlayer] = useCapsuleField(playerCapsule, 'player');
   const [extraction, setExtraction] = useCapsuleField(transitionsCapsule, 'extraction');
   const [dialog, setDialog] = useState<{
@@ -28,7 +28,9 @@ export const useOverworld = () => {
     misc, setMisc,
   };
 
-  const controller = useOverworldController(state);
+  if (page === 'overworld') {
+    const controller = useOverworldController(state);
+  }
 
   return state;
 }

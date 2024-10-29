@@ -11,6 +11,12 @@ export const Programs = {
   siphon1: () => ({
     keyword: ProgramKeywords.siphon,
     id: 'siphon1',
+    model: 'siphon',
+    name: 'Siphon Program',
+    description: 'Siphon $50 from a wallet each turn.',
+    tags: [],
+    features: [],
+    stats: {},
     onExecute(game: Game, args: CLIArgs): Game {
       const power = 50;
       // Create SiphonDaemon at player's location, which will interact with Wallet at the location each turn for $50 per turn.

@@ -4,6 +4,7 @@ import { appendMessage } from '@shared/utils/game/cli';
 import { Scripts } from '@shared/constants/scripts';
 import { GameError } from '@shared/errors/GameError';
 import { nodeSpecifierToID } from '@shared/utils/game';
+import { addScript } from '@shared/utils/game/decks';
 
 export const Installations = {
   Wallet: ({ amount }: { amount: number }) => ({
@@ -58,14 +59,14 @@ export const Installations = {
     scriptID,
     scriptProps: props,
     onExecute(game) {
+      const script = Scripts[this.scriptID](this.scriptProps);
+      game.player.deck = addScript(game.player.deck, script);
+
       return {
         ...game,
         player: {
           ...game.player,
-          scripts: [
-            ...game.player.scripts,
-            Scripts[this.scriptID](this.scriptProps),
-          ]
+          deck: game.player.deck,
         }
       }
     },

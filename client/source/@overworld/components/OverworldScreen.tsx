@@ -21,7 +21,7 @@ export const OverworldScreen = ({
   const {
     player, setPlayer,
     dialog, setDialog,
-  } = useOverworld();
+  } = useOverworld('overworld');
 
   const handleReset = () => {
     setShowConfirmReset(false);

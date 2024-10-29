@@ -1,14 +1,40 @@
 import * as React from 'react';
-import { Player } from '@shared/types/game';
+import { Deck, DeckSlot, Player, Script } from '@shared/types/game';
 import { Box, Divider, Typography } from '@mui/material';
 import { FlexCol } from '@client/components/FlexCol';
 import { FlexRow } from '@client/components/FlexRow';
 import { generate } from '@shared/utils/arrays';
 import { useMemo } from 'react';
-import { formatStackCount } from '@shared/utils/game/inventory';
 
-export const DeckStack = ({ stack }: {
-  stack: Player['deck'][number],
+export const ProgramGridItem = ({ i, slot }: {
+  i: number,
+  slot?: DeckSlot,
+}) => {
+  const program = slot?.content;
+  const isRemoveable = slot?.isRemoveable ?? true;
+
+  return <FlexCol sx={{
+    borderRadius: 5,
+    border: `1px solid ${isRemoveable ? `#ccc` : `#999` }`,
+    p: 1,
+    justifyContent: 'space-between',
+    width: 60,
+    height: 60,
+  }}>
+    {slot ?
+      <>
+        <Typography variant={'body2'} sx={{ fontWeight: 'bold' }}>{i} - {program?.id ?? '--'}</Typography>
+        <Typography variant={'caption'} sx={{
+          alignSelf: 'flex-end',
+        }}>{slot.type ?? ''}{isRemoveable ? '' : ' (x)'}</Typography>
+      </>
+    : null}
+  </FlexCol>
+}
+
+export const ScriptGridItem = ({ i, script }: {
+  i: number,
+  script?: Script,
 }) => {
   return <FlexCol sx={{
     borderRadius: 5,
@@ -18,12 +44,9 @@ export const DeckStack = ({ stack }: {
     width: 60,
     height: 60,
   }}>
-    {stack ?
+    {script ?
       <>
-        <Typography variant={'body2'} sx={{ fontWeight: 'bold' }}>{stack.split(':')[1]}</Typography>
-        <Typography variant={'caption'} sx={{
-          alignSelf: 'flex-end',
-        }}>{stack.split(':')[0]}</Typography>
+        <Typography variant={'body2'} sx={{ fontWeight: 'bold' }}>{i} - {script.name}</Typography>
       </>
     : null}
   </FlexCol>
@@ -31,28 +54,58 @@ export const DeckStack = ({ stack }: {
 
 export const DeckManager = ({
   deck,
-  size = -1,
 }: {
-  deck: Player['deck'],
-  size?: number,
+  deck: Deck,
 }) => {
-  const rendered = useMemo<(Player['deck'][number] | null)[]>(
-    () => [
-      ...size === -1 ? deck : deck.slice(0, size),
-      ...size === -1 ? [] :
-        size - deck.length > 0 ? generate(size - deck.length, null)
-          : [],
-    ],
-    [deck, size]
+  const renderedPrograms = useMemo<(DeckSlot | null)[]>(
+    () => {
+      const programs = Object.values(deck.programs);
+      const size = deck.programCapacity;
+
+      return [
+        ...size === -1 ? programs : programs.slice(0, size),
+        ...size === -1 ? [] :
+          size - programs.length > 0 ? generate(size - programs.length, null)
+            : [],
+      ];
+    },
+    [deck.programs, deck.programCapacity]
+  );
+  const renderedScripts = useMemo<(Script | null)[]>(
+    () => {
+      const scripts = Object.values(deck.scripts);
+      const size = deck.scriptCapacity;
+
+      return [
+        ...size === -1 ? scripts : scripts.slice(0, size),
+        ...size === -1 ? [] :
+          size - scripts.length > 0 ? generate(size - scripts.length, null)
+            : [],
+      ];
+    },
+    [deck.scripts, deck.scriptCapacity]
   );
 
   return <FlexCol>
-    <Typography variant={'subtitle1'}>Inventory</Typography>
+    <FlexCol>
+      <Typography variant={'h6'}>{deck.name}</Typography>
+      <Typography variant={'body2'}>{deck.description}</Typography>
+    </FlexCol>
+    <Typography variant={'subtitle1'} sx={{ mt: 4 }}>Programs</Typography>
     <Divider />
     <FlexRow sx={{ flexWrap: 'wrap' }}>
-      {rendered.map((stack, i) => {
+      {renderedPrograms.map((slot, i) => {
         return <Box key={i} sx={{ m: 1 }}>
-          <DeckStack stack={stack} />
+          <ProgramGridItem i={i} slot={slot} />
+        </Box>
+      })}
+    </FlexRow>
+    <Typography variant={'subtitle1'} sx={{ mt: 4 }}>Scripts</Typography>
+    <Divider />
+    <FlexRow sx={{ flexWrap: 'wrap' }}>
+      {renderedScripts.map((script, i) => {
+        return <Box key={i} sx={{ m: 1 }}>
+          <ScriptGridItem i={i} script={script} />
         </Box>
       })}
     </FlexRow>
