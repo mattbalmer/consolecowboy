@@ -31,7 +31,7 @@ export const getInitialPlayerProps = (): Player => {
       recon: {
         info: 1,
       },
-      inventorySize: 4,
+      inventorySize: 4, // todo: differentiate stash inventory vs in-game inventory, which is based on deck
     },
     inventory: [],
     history: {},
@@ -39,6 +39,7 @@ export const getInitialPlayerProps = (): Player => {
       autonext: false,
       autodice: 'lowest',
     },
+    implants: ['JackOnoSendai1'],
     deck: Decks.OnoSendai(),
   };
 }

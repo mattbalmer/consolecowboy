@@ -181,7 +181,16 @@ export type Program = {
   onExecute?: never,
 })
 
-export type StatString = string;
+export type Implant = {
+  id: string,
+  model: string,
+  name: string,
+  description: string,
+  value: number,
+  tags: string[],
+  stats: Partial<Player['stats']>,
+  features: string[],
+}
 
 /**
  * Represents the player out-of-game, for saving purposes. The player on Game['player'] is the in-game player, with
@@ -223,6 +232,7 @@ export type Player = {
   },
   deck: SavedDeck,
   inventory: Inventory,
+  implants: string[], // IDs
 }
 
 export type GameDie = {
@@ -263,14 +273,13 @@ export type Game = {
     },
     actions: number,
     actionsPerTurn: number,
-    stats: Player['stats'],
+    stats: Player['stats'], // todo: remove and make derived from implants + deck programs
     conditions: Condition[],
     dice: GameDie[], // make this a map, but somehow track max available for the round too
     config: Player['config'],
-    // scripts: Script[],
-    // deck: Partial<Record<Command | ProgramKeyword, 'command' | Program>>,
     deck: Deck,
     inventory: Inventory,
+    implants: Implant[],
   },
   stack: GameEffect[],
   round: number,

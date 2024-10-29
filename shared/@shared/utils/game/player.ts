@@ -3,6 +3,7 @@ import { getDice } from '@shared/utils/game/index';
 import { formatItemCount, getTotalCount, mergeInventory } from '@shared/utils/game/inventory';
 import { ItemID } from '@shared/types/game/items';
 import { dehydrateDeck, hydrateDeck } from '@shared/utils/game/decks';
+import { Implants } from '@shared/constants/implants';
 
 export const savedPlayerToGamePlayer = (savedPlayer: Player): Game['player'] => {
   return {
@@ -23,6 +24,9 @@ export const savedPlayerToGamePlayer = (savedPlayer: Player): Game['player'] => 
     config: savedPlayer.config,
     inventory: [], // todo: allow player to specify some items to take with them into levels
     deck: hydrateDeck(savedPlayer.deck),
+    implants: savedPlayer.implants.map(id =>
+      Implants[id]?.()
+    ),
   };
 }
 
@@ -37,6 +41,7 @@ export const gamePlayerToSavedPlayer = (savedPlayer: Player, gamePlayer: Game['p
     config: gamePlayer.config,
     mental: gamePlayer.mental,
     deck: dehydrateDeck(gamePlayer.deck),
+    implants: gamePlayer.implants.map(implant => implant.id),
   };
 }
 

@@ -7,6 +7,7 @@ import { CreatePage } from '@client/components/pages/CreatePage';
 import { CreateListPage } from '@client/components/pages/CreateListPage';
 import { InventoryPage } from '@client/components/pages/InventoryPage';
 import { DeckPage } from '@client/components/pages/DeckPage';
+import { ImplantsPage } from '@client/components/pages/ImplantsPage';
 
 const darkTheme = createTheme({
   palette: {
@@ -29,6 +30,7 @@ export const AppComponent = () => {
         <Route index element={<Navigate to='/play' />} />
         <Route path={'play/inventory'} element={<InventoryPage />} />
         <Route path={'play/deck'} element={<DeckPage />} />
+        <Route path={'play/implants'} element={<ImplantsPage />} />
         <Route path={'play/:id'} element={<GamePage />} />
         <Route path={'play'} element={<OverworldPage />} />
         <Route path={'create/:id'} element={<CreatePage />} />
