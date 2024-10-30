@@ -7,6 +7,8 @@ const LEVELS_DIR = path.resolve('data/levels');
 const resolveLevelFile = (level: string | number): string => path.join(LEVELS_DIR, `${level}.level.json`);
 
 route.get('/', (req, res) => {
+  const zone = req.query.zone; // TODO: implement zone filtering
+
   // list all files in levels dir
   // todo: sort based on id number
   const levels = fs.readdirSync(LEVELS_DIR)

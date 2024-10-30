@@ -236,6 +236,7 @@ export type Player = {
   deck: SavedDeck,
   inventory: Inventory,
   implants: string[], // IDs
+  lastZone: Zone['id'],
 }
 
 export type GameDie = {

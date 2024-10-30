@@ -1,7 +1,7 @@
 import { Zone } from '@shared/types/game';
 import { generate } from '@shared/utils/arrays';
 
-export const Zones = {
+export const Zones: Record<string, Zone> = {
   chiba: {
     id: 'chiba',
     name: 'Chiba',
@@ -11,4 +11,7 @@ export const Zones = {
     adjacent: [],
     canVisit: () => true,
   },
-} as const satisfies Record<string, Zone>
+};
+export type ZoneID = keyof typeof Zones;
+
+export const DEFAULT_ZONE = 'chiba' as ZoneID;

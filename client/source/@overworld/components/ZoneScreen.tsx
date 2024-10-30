@@ -11,17 +11,34 @@ import { FEEDBACK_URL } from '@client/constants/feedback';
 import { transitionsCapsule } from '@client/capsules/transitions';
 import { itemCountFormatted } from '@shared/utils/game/player';
 import { Items } from '@shared/constants/items';
+import { Zone } from '@shared/types/game';
+import { useMemo } from 'react';
+import { ZoneID, Zones } from '@shared/constants/zones';
+import { ZonesList } from '@overworld/components/ZonesList';
 
-export const OverworldScreen = ({
+export const ZoneScreen = ({
+  zone,
   levels,
 }: {
+  zone: Zone,
   levels: string[],
 }) => {
   const [showConfirmReset, setShowConfirmReset] = React.useState<boolean>(false);
   const {
     player, setPlayer,
     dialog, setDialog,
-  } = useOverworld('overworld');
+  } = useOverworld('overworld', zone.id);
+
+  const adjacent = useMemo(() => {
+    return (zone.adjacent as ZoneID[]).map(adjacent => {
+      const zone = Zones[adjacent];
+      return {
+        id: adjacent as ZoneID,
+        name: zone?.name,
+        canVisit: zone?.canVisit(player),
+      }
+    });
+  }, [zone.adjacent]);
 
   const handleReset = () => {
     setShowConfirmReset(false);
@@ -31,16 +48,27 @@ export const OverworldScreen = ({
   };
 
   return <FlexCol sx={{ flexGrow: 1, p: 2 }}>
-    <Typography variant={'h5'} sx={{ mb: 2 }}>Overworld</Typography>
+    <Typography variant={'h5'} sx={{ mb: 2 }}>Overworld &gt; {zone.name}</Typography>
     <FlexRow>
-      <FlexCol sx={{ pr: 4, mr: 4 }}>
-        <Typography variant={'subtitle1'}>Levels</Typography>
-        <Divider />
-        <LevelsList
-          levels={levels}
-          history={player.history}
-        />
-      </FlexCol>
+      {adjacent.length > 0 &&
+        <FlexCol sx={{ pr: 4, mr: 4 }}>
+          <Typography variant={'subtitle1'}>Travel to</Typography>
+          <Divider />
+          <ZonesList
+            zones={adjacent}
+          />
+        </FlexCol>
+      }
+      {levels.length > 0 &&
+        <FlexCol sx={{ pr: 4, mr: 4 }}>
+          <Typography variant={'subtitle1'}>Levels</Typography>
+          <Divider />
+          <LevelsList
+            levels={levels}
+            history={player.history}
+          />
+        </FlexCol>
+      }
       <FlexCol sx={{ pr: 4, mr: 4 }}>
         <Typography variant={'subtitle1'}>Player</Typography>
         <Divider sx={{ mb: 2 }} />

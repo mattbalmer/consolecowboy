@@ -4,10 +4,13 @@ import { NavBar } from '@client/components/NavBar';
 import { Box, Button, Divider, List, ListItemButton, ListItemText, Typography } from '@mui/material';
 import { vendorsCapsule } from '@client/capsules/vendors';
 import { FlexRow } from '@client/components/FlexRow';
+import { playerCapsule } from '@client/capsules/player';
+import { DEFAULT_ZONE } from '@shared/constants/zones';
 
 export const VendorsListPage = () => {
   // @ts-ignore
   const vendors: string[] = Array.from(vendorsCapsule.keys);
+  const lastZone = playerCapsule.get('player')?.lastZone ?? DEFAULT_ZONE;
 
   return <FlexCol sx={{ flexGrow: 1, height: '100vh', background: '#111' }}>
     <NavBar />
@@ -18,7 +21,7 @@ export const VendorsListPage = () => {
           <FlexCol sx={{ flexGrow: 0 }}>
             <Typography variant={'subtitle1'}>Actions</Typography>
             <Divider />
-            <Button href={'/play'}>Back to Overworld</Button>
+            <Button href={`/play/zone/${lastZone}`}>Back to Overworld</Button>
           </FlexCol>
         </FlexRow>
         <Box>

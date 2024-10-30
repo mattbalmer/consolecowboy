@@ -85,7 +85,7 @@ export const TradeScreen = ({
       <FlexCol sx={{ flexGrow: 0 }}>
         <Typography variant={'subtitle1'}>Actions</Typography>
         <Divider />
-        <Button href={'/play'}>Back to Overworld</Button>
+        <Button href={`/play/zone/${player.lastZone}`}>Back to Overworld</Button>
       </FlexCol>
     </FlexRow>
     <Box>
