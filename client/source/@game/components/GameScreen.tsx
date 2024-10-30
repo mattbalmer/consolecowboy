@@ -24,7 +24,7 @@ const savePlayer = (levelID: string, game: Game, options?: {
 
   const previousHistoryForLevel = player.history[levelID];
 
-  if (previousHistoryForLevel[0] > 0) {
+  if (previousHistoryForLevel[1] > 0) {
     return;
   }
 
