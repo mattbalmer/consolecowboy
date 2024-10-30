@@ -15,7 +15,7 @@ export const LevelsList = ({
         const hasCompleted = history.hasOwnProperty(level) && history[level][1] > 0;
         return <ListItemButton key={level} component='a' href={`/play/${level}`} disabled={hasCompleted}>
           <ListItemText
-            primary={`Level ${level}` + (hasCompleted ? ' (completed)' : '')}
+            primary={`Level ${level}`}
           />
         </ListItemButton>
       })}

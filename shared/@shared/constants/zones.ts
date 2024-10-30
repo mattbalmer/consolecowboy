@@ -6,10 +6,19 @@ export const Zones: Record<string, Zone> = {
     id: 'chiba',
     name: 'Chiba',
     description: 'A gloomy district of Tokyo',
-    levels: generate(10, i => `${i}`),
-    vendors: ['Johnny'],
-    adjacent: [],
+    levels: generate(10, i => `${i + 1}`),
+    vendors: [],
+    adjacent: ['shinjuku'],
     canVisit: () => true,
+  },
+  shinjuku: {
+    id: 'shinjuku',
+    name: 'Shinjuku',
+    description: 'A bustling district of Tokyo',
+    levels: generate(10, i => `${i + 11}`),
+    vendors: ['Johnny'],
+    adjacent: ['chiba'],
+    canVisit: (player) => player.history['10']?.[1] > 0,
   },
 };
 export type ZoneID = keyof typeof Zones;
