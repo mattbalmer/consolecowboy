@@ -20,6 +20,7 @@ export const getOverworldControllerFor = (page: OverworldPage, zoneID?: Zone['id
 
 export const useOverworldController = (page: OverworldPage, zoneID: Zone['id'], state: OverworldState) => {
   const useController = getOverworldControllerFor(page, zoneID);
+  console.log('overworld controller', page, zoneID, useController);
   if (useController) {
     return useController(state);
   }

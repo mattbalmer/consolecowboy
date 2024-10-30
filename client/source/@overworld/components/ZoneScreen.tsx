@@ -30,7 +30,7 @@ export const ZoneScreen = ({
   const {
     player, setPlayer,
     dialog, setDialog,
-  } = useOverworld('overworld', zone.id);
+  } = useOverworld('zone', zone.id);
 
   const adjacent = useMemo(() => {
     return (zone.adjacent as ZoneID[]).map(adjacentID => {

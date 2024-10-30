@@ -30,9 +30,7 @@ export const useOverworld = (page: OverworldPage, zone?: Zone['id']) => {
     misc, setMisc,
   };
 
-  if (page === 'overworld') {
-    const controller = useOverworldController(page, zone, state);
-  }
+  const controller = useOverworldController(page, zone, state);
 
   return state;
 }
