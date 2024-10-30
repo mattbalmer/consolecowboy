@@ -15,8 +15,13 @@ export const TradeableStackForDialog = ({
   const amountNeeded = amountNeededRaw ?? tradeable.count;
   const hasAmountNeeded = amountNeeded >= amountNeeded;
 
-  const amountAvailableFormatted = tradeable.type === 'item' ? formatItemCount(id, tradeable.count) : `${tradeable.count}`;
-  const amountNeededFormatted = tradeable.type === 'item' ? formatItemCount(id, amountNeeded) : `${amountNeeded}`;
+  const amountAvailableFormatted = tradeable.type === 'item'
+    ? formatItemCount(id, tradeable.count)
+    : `${tradeable.count}`;
+
+  const amountNeededFormatted = tradeable.type === 'item'
+    ? formatItemCount(id, amountNeeded)
+    : `${amountNeeded}`;
 
   return <FlexCol sx={{
     borderRadius: 5,
@@ -30,10 +35,11 @@ export const TradeableStackForDialog = ({
     <Typography variant={'caption'} sx={{
       alignSelf: 'flex-end',
     }}>{
-      amountNeededRaw !== undefined
-        ? amountAvailableFormatted
-        : tradeable.count === -1 ? <>&infin;</>
-          : `${amountAvailableFormatted} / ${amountNeededFormatted}`
+      amountNeededRaw === undefined
+        ? (tradeable.count === -1 ? <>&infin;</> : amountAvailableFormatted)
+        : <>
+          {tradeable.count === -1 ? <>&infin;</> : amountAvailableFormatted} / {amountNeeded === -1 ? <>&infin;</> : amountNeededFormatted}
+        </>
     }</Typography>
   </FlexCol>
 }

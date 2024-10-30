@@ -48,6 +48,8 @@ export const TradeDialog = ({
   onCancel: () => void,
 }) => {
   const [amount, setAmount] = useState<number>(1);
+  // const buying =
+
   const canTrade = useMemo(() => {
     return selling.every(sell => {
       const available = playerInventory.find(t => t.urn === sell.urn)?.count ?? 0;
