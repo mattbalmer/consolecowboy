@@ -7,10 +7,12 @@ class TransitionsCapsule extends Capsule<{
     success: boolean,
     game: Game,
   },
+  hasShownReplayDialog?: boolean,
 }>{}
 
 export const getInitialTransitionsProps = (): typeof TransitionsCapsule.prototype.typeref => {
   return {
+    hasShownReplayDialog: false,
   };
 }
 

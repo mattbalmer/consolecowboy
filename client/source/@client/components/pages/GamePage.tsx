@@ -4,7 +4,7 @@ import { FlexCol } from '@client/components/FlexCol';
 import { GameScreen } from '@game/components/GameScreen';
 import { NavBar } from '@client/components/NavBar';
 import { useParams } from 'react-router-dom';
-import { Game, Player } from '@shared/types/game';
+import { Game } from '@shared/types/game';
 import { Level } from '@shared/types/game/level';
 import { Typography } from '@mui/material';
 import { playerCapsule } from '@client/capsules/player';

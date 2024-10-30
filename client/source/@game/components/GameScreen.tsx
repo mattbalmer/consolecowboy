@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ComponentProps, useState } from 'react';
+import { ComponentProps, useEffect, useState } from 'react';
 import { FlexCol } from '@client/components/FlexCol';
 import { FlexRow } from '@client/components/FlexRow';
 import { Game } from '@game/types';
@@ -14,6 +14,7 @@ import { useGame } from '@game/hooks/use-game';
 import { useGameEffects } from '@game/hooks/use-game-effects';
 import { transitionsCapsule } from '@client/capsules/transitions';
 import { gamePlayerToSavedPlayer } from '@shared/utils/game/player';
+import { appendMessages } from '@shared/utils/game/cli';
 
 const savePlayer = (levelID: string, game: Game, options?: {
   unlock?: (string | number)[],
@@ -22,6 +23,10 @@ const savePlayer = (levelID: string, game: Game, options?: {
   const player = gamePlayerToSavedPlayer(savedPlayer, game.player);
 
   const previousHistoryForLevel = player.history[levelID];
+
+  if (previousHistoryForLevel[0] > 0) {
+    return;
+  }
 
   const history = {
     ...player.history,
@@ -98,6 +103,20 @@ export const GameScreen = ({
       }
     },
   });
+
+  useEffect(() => {
+    const previousHistoryForLevel = playerCapsule.get('player').history[levelID];
+    // const hasShownReplayDialog = transitionsCapsule.get('hasShownReplayDialog');
+    if (previousHistoryForLevel[1] > 0) {
+      setGame(appendMessages(game, [{
+        type: 'command',
+        value: `replay`,
+      }, {
+        type: 'output',
+        value: `You can replay levels, but wont gain anything for doing so. Enjoy the puzzles, but rewards come from future levels!`,
+      }]));
+    }
+  }, []);
 
   return <>
     <FlexCol data-game sx={{ flexGrow: 1 }}>

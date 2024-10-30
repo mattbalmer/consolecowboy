@@ -16,7 +16,7 @@ export default class extends LevelController {
   hasShownExit = false;
 
   onChange({ game, setGame }) {
-    if (game.history.terminal.length === 0 && game.stack.length === 0 && !this.hasShownIntro) {
+    if (!this.hasShownIntro) {
       this.hasShownIntro = true;
       const commandLine = (document.querySelector('#command-line') as HTMLElement);
       const showInputDialog = () => {
