@@ -1,10 +1,10 @@
 import { useCapsuleField } from '@client/hooks/use-capsule';
 import { playerCapsule } from '@client/capsules/player';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { transitionsCapsule } from '@client/capsules/transitions';
 import { Zone } from '@shared/types/game';
 import { OverworldPage } from '@overworld/types';
-import { useOverworldController } from '@overworld/controllers';
+import { getOverworldControllerFor } from '@overworld/controllers';
 
 export type OverworldState = ReturnType<typeof useOverworld>;
 
@@ -30,7 +30,13 @@ export const useOverworld = (page: OverworldPage, zone?: Zone['id']) => {
     misc, setMisc,
   };
 
-  const controller = useOverworldController(page, zone, state);
+  const controller = useMemo(() => getOverworldControllerFor(page, zone), [page, zone]);
+
+  useEffect(() => {
+    if (controller) {
+      controller.onChange(state);
+    }
+  }, [controller, state]);
 
   return state;
 }
