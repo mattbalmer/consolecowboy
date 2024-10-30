@@ -48,7 +48,7 @@ export const InventoryManager = ({
   );
 
   return <FlexCol>
-    <Typography variant={'subtitle1'}>Inventory</Typography>
+    <Typography variant={'subtitle1'}>Hard Drive (&infin; GB)</Typography>
     <Divider />
     <FlexRow sx={{ flexWrap: 'wrap' }}>
       {rendered.map((stack, i) => {

@@ -21,7 +21,7 @@ export const InventoryScreen = ({
   } = useOverworld('inventory');
 
   return <FlexCol sx={{ flexGrow: 1, p: 2 }}>
-    <Typography variant={'h5'} sx={{ mb: 2 }}>Overworld &gt; Inventory</Typography>
+    <Typography variant={'h5'} sx={{ mb: 2 }}>Overworld &gt; Hard Drive</Typography>
     <FlexRow sx={{ mb: 2 }}>
       <FlexCol sx={{ flexGrow: 0 }}>
         <Typography variant={'subtitle1'}>Actions</Typography>
