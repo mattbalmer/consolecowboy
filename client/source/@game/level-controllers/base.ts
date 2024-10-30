@@ -1,8 +1,10 @@
 import { CoreCommand, Game } from '@shared/types/game';
 import { CLIArgs } from '@shared/types/game/cli';
+import { useState } from 'react';
 
 type OnChangeArgs = {
   game: Game;
+  setGame: ReturnType<typeof useState<Game>>[1]
 }
 
 export abstract class LevelController {
@@ -21,7 +23,9 @@ export abstract class LevelController {
 
   onBind?(): void;
 
-  abstract onChange({ game }: OnChangeArgs): OnChangeArgs;
+  abstract onChange({ game, setGame }: OnChangeArgs): {
+    game: Game,
+  };
   abstract onCommand(game: Game, command: CoreCommand, args: CLIArgs): {
     game?: Game,
     command?: CoreCommand,

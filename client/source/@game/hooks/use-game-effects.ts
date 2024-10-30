@@ -55,6 +55,7 @@ export const useGameEffects = ({
           body: (effect as ReturnType<typeof GameEffects.SimpleDialog>).body,
           acknowledge: (effect as ReturnType<typeof GameEffects.SimpleDialog>).acknowledge,
         };
+        const onClose = (effect as ReturnType<typeof GameEffects.SimpleDialog>).onClose;
         setDialog({
           ...dialogSettings,
           onClose: () => {
@@ -76,6 +77,7 @@ export const useGameEffects = ({
               };
             });
             setDialog(null);
+            onClose?.();
           },
         });
       } else {

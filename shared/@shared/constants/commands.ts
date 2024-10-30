@@ -1,12 +1,4 @@
-import {
-  CoreCommand,
-  CORE_COMMANDS,
-  CompassDir,
-  Game,
-  GameDerived,
-  Command,
-  DEBUG_COMMANDS, DebugCommand, COMMAND_ALIASES
-} from '@shared/types/game';
+import { Command, COMMAND_ALIASES, CompassDir, CoreCommand, Game, GameDerived } from '@shared/types/game';
 import { appendMessage, appendMessages } from '@shared/utils/game/cli';
 import { CLIArgs } from '@shared/types/game/cli';
 import { coordToString, getAdjacentCoords } from '@shared/utils/game/grid';
@@ -21,10 +13,22 @@ import { formatItemCount } from '@shared/utils/game/inventory';
 import { ItemID } from '@shared/types/game/items';
 import { commandMap } from '@shared/utils/game/decks';
 import { removeRange } from '@shared/utils/arrays';
+import { ensure } from '@shared/utils/game/game';
 
 const Commands = {
   info: (game, args) => {
-    const content = game.nodes[game.player.node].content;
+    const node = game.nodes[game.player.node];
+
+    ensure(node, `Invalid node`);
+
+    if (node.ice?.status === 'ACTIVE') {
+      return appendMessage(game, {
+        type: 'output',
+        value: `ICE active - cannot get server info`
+      });
+    }
+
+    const content = node.content;
 
     if (!content) {
       return appendMessage(game, {
@@ -449,31 +453,22 @@ const Commands = {
     const node = game.nodes[game.player.node];
 
     // TODO: change that servers can only be executed once - for example, wallet could have a max per turn siphon amount, and a daemon could repeat each turn.
-    try {
-      if (node.content.type === 'trap' && canExecute(game, game.player.node, 'player')) {
-        game = appendMessage(game, {
-          type: 'output',
-          value: `(${game.player.node}) Trap activated - ${node.content.id}`,
-        });
-        game = executeContent(game, game.player.node, 'player');
-      }
+    ensure(canExecute(game, game.player.node, 'player'), `Server cannot be executed`);
 
-      if (node.content.type === 'installation' && canExecute(game, game.player.node, 'player')) {
-        game = appendMessage(game, {
-          type: 'output',
-          value: `(${game.player.node}) Server content executed - ${node.content.id}`,
-        });
-        game = executeContent(game, game.player.node, 'player');
-      }
-    } catch (error) {
-      if (error instanceof GameError) {
-        return appendMessage(game, {
-          type: error.type,
-          value: error.message,
-        });
-      } else {
-        throw error;
-      }
+    if (node.content.type === 'trap') {
+      game = appendMessage(game, {
+        type: 'output',
+        value: `(${game.player.node}) Trap activated - ${node.content.id}`,
+      });
+      game = executeContent(game, game.player.node, 'player');
+    }
+
+    if (node.content.type === 'installation') {
+      game = appendMessage(game, {
+        type: 'output',
+        value: `(${game.player.node}) Server content executed - ${node.content.id}`,
+      });
+      game = executeContent(game, game.player.node, 'player');
     }
 
     try {

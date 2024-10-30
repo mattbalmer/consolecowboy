@@ -278,15 +278,17 @@ export const GameEffects = {
       };
     },
   }),
-  SimpleDialog: ({ title, body, acknowledge }: {
+  SimpleDialog: ({ title, body, acknowledge, onClose }: {
     title: string,
     body: string,
     acknowledge?: string,
+    onClose?: () => void,
   }) => ({
     id: 'dialog.simple',
     title,
     body,
     acknowledge,
+    onClose,
     trigger(game) {
       return game;
     }

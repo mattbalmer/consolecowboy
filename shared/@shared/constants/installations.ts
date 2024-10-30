@@ -12,7 +12,7 @@ export const Installations = {
     executionCount: 0,
     amount,
     props: {
-      drainPerExecute: 50,
+      drainPerExecute: 100,
     },
     onInfo(game, args) {
       return appendMessage(game, {
@@ -94,6 +94,12 @@ export const Installations = {
     id: 'connection.external',
     executionCount: 0,
     isConnected,
+    onInfo(game) {
+      return appendMessage(game, {
+        type: 'output',
+        value: `External connection. Status: ${this.isConnected ? 'OPEN' : 'CLOSED'}`,
+      });
+    },
     canExecute() {
       return this.executionCount < 1 && this.isConnected;
     },

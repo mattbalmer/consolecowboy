@@ -73,6 +73,7 @@ export const useGame = ({
       setGame((prev) => {
         return levelController.onChange({
           game: prev,
+          setGame,
         }).game;
       });
     }
