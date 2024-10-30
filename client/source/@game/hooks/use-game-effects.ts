@@ -4,6 +4,9 @@ import { Game } from '@shared/types/game';
 import { SimpleDialog } from '@client/components/SimpleDialog';
 import { getGameDerived } from '@shared/utils/game';
 import { runDaemons } from '@shared/utils/game/daemons';
+import { playerCapsule } from '@client/capsules/player';
+import { DEFAULT_ZONE } from '@shared/constants/zones';
+import { overworldURL } from '@client/utils/navigation';
 
 export const useGameEffects = ({
   game,
@@ -102,7 +105,7 @@ export const useGameEffects = ({
           body: 'You have successfully connected to the external server, go back to the overworld.',
           acknowledge: 'Okay',
           onClose: () => {
-            window.location.href = '/play';
+            window.location.href = overworldURL();
             setDialog(null);
           },
         });
@@ -117,7 +120,7 @@ export const useGameEffects = ({
           body: `You've run out of mental energy - emergency eject from the net.`,
           acknowledge: 'Okay',
           onClose: () => {
-            window.location.href = '/play';
+            window.location.href = overworldURL();
             setDialog(null);
           },
         });
