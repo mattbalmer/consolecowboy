@@ -392,6 +392,7 @@ export type Vendor = {
   id: string,
   name: string,
   canVisit: (player: Player) => boolean,
+  inventory: Tradeable[],
   selling: Tradeable[],
   buying: Tradeable[],
 }

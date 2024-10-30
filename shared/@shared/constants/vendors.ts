@@ -6,17 +6,23 @@ export const Vendors = {
     id: 'Johnny',
     name: 'Johnny',
     canVisit: () => true,
+    inventory: [{
+      type: 'program',
+      urn: `program:siphon1`,
+      count: 1,
+      price: getTradeablePrice(`program:siphon1`),
+    }],
     buying: [{
       type: 'item',
       urn: `item:UpgradeModule`,
-      count: -1,
-      price: getTradeablePrice(`item:UpgradeModule`, -1),
+      count: 10,
+      price: getTradeablePrice(`item:UpgradeModule`),
     }],
     selling: [{
       type: 'program',
       urn: `program:siphon1`,
-      count: 1,
-      price: getTradeablePrice(`program:siphon1`, 1),
+      count: -1,
+      price: getTradeablePrice(`program:siphon1`),
     }],
   }),
 } as const satisfies Record<string, (...args: unknown[]) => Vendor>
