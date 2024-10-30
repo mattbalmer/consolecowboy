@@ -3,6 +3,8 @@ import { ItemID } from '@shared/types/game/items';
 import { IDTracker } from '@shared/utils/game';
 import { DaemonIDTracker } from '@shared/utils/game/daemons';
 import { ProgramKeyword } from '@shared/constants/programs';
+import { LevelID } from '@shared/types/game/level';
+import { VendorID } from '@shared/constants/vendors';
 
 export type Coord = { x: number, y: number };
 export type CoordString = `${number},${number}`;
@@ -384,9 +386,20 @@ export type Tradeable <T extends TradeableType = TradeableType> = {
 export type TradeableURN <
   T extends Tradeable['type'] = Tradeable['type']
 > = `${T}:${string}`;
+
 export type Vendor = {
   id: string,
   name: string,
   selling: Tradeable[],
   buying: Tradeable[],
+}
+
+export type Zone = {
+  id: string,
+  name: string,
+  description: string,
+  levels: LevelID[],
+  vendors: VendorID[],
+  adjacent: string[],
+  canVisit: (player: Player) => boolean,
 }

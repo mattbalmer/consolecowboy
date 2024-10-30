@@ -8,7 +8,7 @@ import { FlexRow } from '@client/components/FlexRow';
 import { Tradeable, Vendor } from '@shared/types/game';
 import { useCapsuleField } from '@client/hooks/use-capsule';
 import { vendorsCapsule } from '@client/capsules/vendors';
-import { Vendors } from '@shared/constants/vendors';
+import { VendorID } from '@shared/constants/vendors';
 import { TradeManager } from '@overworld/components/TradeManager';
 import { getTradeablePrice } from '@shared/utils/game/tradeables';
 
@@ -21,7 +21,7 @@ export const TradeScreen = ({
     player, setPlayer,
     dialog, setDialog,
   } = useOverworld('vendor');
-  const [vendor, setVendor] = useCapsuleField(vendorsCapsule, vendorInitial.id as keyof typeof Vendors);
+  const [vendor, setVendor] = useCapsuleField(vendorsCapsule, vendorInitial.id as VendorID);
   const playerSelling = useMemo(() => {
     const selling: Tradeable[] = [];
 

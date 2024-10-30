@@ -19,3 +19,4 @@ export const Vendors = {
     }],
   }),
 } as const satisfies Record<string, (...args: unknown[]) => Vendor>
+export type VendorID = keyof typeof Vendors;

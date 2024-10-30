@@ -1,9 +1,9 @@
 import { Capsule } from '@yootil/capsule';
 import { Vendor } from '@shared/types/game';
-import { Vendors } from '@shared/constants/vendors';
+import { VendorID, Vendors } from '@shared/constants/vendors';
 
 class VendorsCapsule extends Capsule<
-  Record<keyof typeof Vendors, Vendor>
+  Record<VendorID, Vendor>
 >{
   getAll() {
     // @ts-ignore
@@ -27,7 +27,7 @@ export const getVendorsInitial = () => {
   return Object.keys(Vendors).reduce((result, key) => {
     result[key] = Vendors[key]();
     return result;
-  }, {} as Record<keyof typeof Vendors, Vendor>);
+  }, {} as Record<VendorID, Vendor>);
 }
 
 export const vendorsCapsule = new VendorsCapsule('consolecowboy-vendors', getVendorsInitial());

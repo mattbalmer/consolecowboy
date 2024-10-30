@@ -4,6 +4,8 @@ import { Installations } from '@shared/constants/installations';
 import { Traps } from '@shared/constants/traps';
 import { Daemons } from '@shared/constants/daemons';
 
+export type LevelID = string;
+
 // TODO idealistic
 // export type LevelICE<K extends keyof typeof ICE> = {
 //   key: K,

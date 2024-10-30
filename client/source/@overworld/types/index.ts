@@ -1,0 +1,1 @@
+export type OverworldPage = 'overworld' | 'inventory' | 'deck' | 'implants' | 'vendor' | 'zone';

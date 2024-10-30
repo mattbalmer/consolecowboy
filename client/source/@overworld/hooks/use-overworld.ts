@@ -1,12 +1,14 @@
 import { useCapsuleField } from '@client/hooks/use-capsule';
 import { playerCapsule } from '@client/capsules/player';
 import { useState } from 'react';
-import { useOverworldController } from '@overworld/overworld-controller';
 import { transitionsCapsule } from '@client/capsules/transitions';
+import { Zone } from '@shared/types/game';
+import { OverworldPage } from '@overworld/types';
+import { useOverworldController } from '@overworld/controllers';
 
 export type OverworldState = ReturnType<typeof useOverworld>;
 
-export const useOverworld = (page: 'overworld' | 'inventory' | 'deck' | 'implants' | 'vendor') => {
+export const useOverworld = (page: OverworldPage, zone?: Zone['id']) => {
   const [player, setPlayer] = useCapsuleField(playerCapsule, 'player');
   const [extraction, setExtraction] = useCapsuleField(transitionsCapsule, 'extraction');
   const [dialog, setDialog] = useState<{
@@ -29,7 +31,7 @@ export const useOverworld = (page: 'overworld' | 'inventory' | 'deck' | 'implant
   };
 
   if (page === 'overworld') {
-    const controller = useOverworldController(state);
+    const controller = useOverworldController(page, zone, state);
   }
 
   return state;

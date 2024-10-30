@@ -2,7 +2,7 @@ import type { OverworldState } from '@overworld/hooks/use-overworld';
 import { useEffect } from 'react';
 import { FEEDBACK_URL } from '@client/constants/feedback';
 
-export const useOverworldController = (state: OverworldState) => {
+export default (state: OverworldState) => {
   useEffect(() => {
     const numLevelsPlayed = Object.entries(state.player.history)
       .filter((
@@ -71,6 +71,4 @@ export const useOverworldController = (state: OverworldState) => {
     }
 
   }, [state.player.history, state.extraction]);
-
-  return {};
 }
