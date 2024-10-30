@@ -66,6 +66,7 @@ export const OverworldScreen = ({
         <Button href={'/play/inventory'}>Hard Drive</Button>
         <Button href={'/play/deck'}>Deck</Button>
         <Button href={'/play/implants'}>Implants</Button>
+        <Button href={'/play/vendors'}>Vendors</Button>
       </FlexCol>
     </FlexRow>
     <SimpleDialog

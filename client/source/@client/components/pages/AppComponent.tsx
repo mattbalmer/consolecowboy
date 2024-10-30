@@ -9,6 +9,7 @@ import { InventoryPage } from '@client/components/pages/InventoryPage';
 import { DeckPage } from '@client/components/pages/DeckPage';
 import { ImplantsPage } from '@client/components/pages/ImplantsPage';
 import { VendorPage } from '@client/components/pages/VendorPage';
+import { VendorsListPage } from '@client/components/pages/VendorsListPage';
 
 const darkTheme = createTheme({
   palette: {
@@ -29,6 +30,7 @@ export const AppComponent = () => {
     <Routes>
       <Route path={'/'} element={<AppLayout />}>
         <Route index element={<Navigate to='/play' />} />
+        <Route path={'play/vendors'} element={<VendorsListPage />} />
         <Route path={'play/vendor/:id'} element={<VendorPage />} />
         <Route path={'play/inventory'} element={<InventoryPage />} />
         <Route path={'play/deck'} element={<DeckPage />} />
