@@ -34,7 +34,9 @@ export const getInitialPlayerProps = (): Player => {
       inventorySize: 4, // todo: differentiate stash inventory vs in-game inventory, which is based on deck
     },
     inventory: [],
-    history: {},
+    history: {
+      1: [0,0],
+    },
     config: {
       autonext: false,
       autodice: 'lowest',
@@ -45,6 +47,6 @@ export const getInitialPlayerProps = (): Player => {
   };
 }
 
-export const playerCapsule = new PlayerCapsule('consolecowboy', {
+export const playerCapsule = new PlayerCapsule('consolecowboy.player', {
   player: getInitialPlayerProps(),
 });

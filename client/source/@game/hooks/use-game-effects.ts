@@ -4,8 +4,6 @@ import { Game } from '@shared/types/game';
 import { SimpleDialog } from '@client/components/SimpleDialog';
 import { getGameDerived } from '@shared/utils/game';
 import { runDaemons } from '@shared/utils/game/daemons';
-import { playerCapsule } from '@client/capsules/player';
-import { DEFAULT_ZONE } from '@shared/constants/zones';
 import { overworldURL } from '@client/utils/navigation';
 
 export const useGameEffects = ({

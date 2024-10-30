@@ -15,21 +15,29 @@ import { useGameEffects } from '@game/hooks/use-game-effects';
 import { transitionsCapsule } from '@client/capsules/transitions';
 import { gamePlayerToSavedPlayer } from '@shared/utils/game/player';
 
-const savePlayer = (levelID: string, game: Game) => {
+const savePlayer = (levelID: string, game: Game, options?: {
+  unlock?: (string | number)[],
+}) => {
   const savedPlayer = playerCapsule.get('player');
   const player = gamePlayerToSavedPlayer(savedPlayer, game.player);
 
-  const previousHistoryForLevel = player.history[levelID] ?? [0, 0];
+  const previousHistoryForLevel = player.history[levelID];
+
+  const history = {
+    ...player.history,
+    ...(options?.unlock ? options.unlock.reduce((acc, levelID) => {
+      acc[levelID] = [0, 0];
+      return acc;
+    }, {}) : undefined),
+    [levelID]: [
+      previousHistoryForLevel[0],
+      previousHistoryForLevel[1] + 1,
+    ],
+  };
 
   playerCapsule.set('player', {
     ...player,
-    history: {
-      ...player.history,
-      [levelID]: [
-        previousHistoryForLevel[0],
-        previousHistoryForLevel[1] + 1,
-      ],
-    },
+    history,
   });
 }
 
@@ -68,7 +76,9 @@ export const GameScreen = ({
     setDialog,
     onExtract: (success: boolean) => {
       if (success) {
-        savePlayer(levelID, game);
+        savePlayer(levelID, game, {
+          unlock: [Number(levelID) + 1],
+        });
         transitionsCapsule.set('extraction', {
           levelID,
           success: true,

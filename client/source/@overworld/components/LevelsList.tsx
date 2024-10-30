@@ -12,8 +12,9 @@ export const LevelsList = ({
   return <>
     <List>
       {levels.map(level => {
+        const isAvailable = history.hasOwnProperty(level);
         const hasCompleted = history.hasOwnProperty(level) && history[level][1] > 0;
-        return <ListItemButton key={level} component='a' href={`/play/${level}`} disabled={hasCompleted}>
+        return <ListItemButton key={level} component='a' href={`/play/${level}`} disabled={!isAvailable || hasCompleted}>
           <ListItemText
             primary={`Level ${level}`}
           />

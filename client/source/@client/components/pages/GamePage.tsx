@@ -4,17 +4,21 @@ import { FlexCol } from '@client/components/FlexCol';
 import { GameScreen } from '@game/components/GameScreen';
 import { NavBar } from '@client/components/NavBar';
 import { useParams } from 'react-router-dom';
-import { Game } from '@shared/types/game';
+import { Game, Player } from '@shared/types/game';
 import { Level } from '@shared/types/game/level';
 import { Typography } from '@mui/material';
 import { playerCapsule } from '@client/capsules/player';
 import { savedPlayerToGamePlayer } from '@shared/utils/game/player';
+import { overworldURL } from '@client/utils/navigation';
 
 const usePlayer = (levelID: string): Game['player'] => {
   return useMemo<Game['player']>(() => {
     // Player to Game['player']
     const savedPlayer = playerCapsule.get('player');
-    const previousHistoryForLevel = savedPlayer.history[levelID] ?? [0, 0];
+    const previousHistoryForLevel = savedPlayer.history[levelID];
+    if (!previousHistoryForLevel) {
+      throw new Error(`Hasn't unlocked level ${levelID}`);
+    }
     playerCapsule.set('player', {
       ...savedPlayer,
       history: {
@@ -35,7 +39,17 @@ export const GamePage = () => {
 
   const [level, setLevel] = useState<Level>(null);
 
-  const player = usePlayer(id);
+  let player: Game['player'];
+  try {
+    player = usePlayer(id);
+  } catch (e) {
+    if (e.message === `Hasn't unlocked level ${id}`) {
+      // Redirect to home
+      window.location.href = overworldURL();
+    } else {
+      throw e;
+    }
+  }
 
   useEffect(() => {
     fetch(`/api/levels/${id}`)
