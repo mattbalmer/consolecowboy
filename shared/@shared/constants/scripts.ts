@@ -8,6 +8,7 @@ export const Scripts = {
     id: 'Reallocate',
     props,
     name: `Reallocate${props.ram}`,
+    value: 1000 * props.ram,
     onExecute(game: Game): Game {
       return {
         ...game,

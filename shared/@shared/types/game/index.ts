@@ -172,6 +172,7 @@ export type Program = {
   description: string,
   tags: string[],
   stats: Partial<Player['stats']>,
+  value: number,
   features: string[],
 } & ({
   commands: ProgramKeyword[],
@@ -370,4 +371,22 @@ export type SavedDeck <M extends string = string> = {
   programs: Record<number, null | SavedDeckSlot>,
   scripts: SavedScript[],
   scriptCapacity: number,
+}
+
+export type TradeableType = 'program' | 'implant' | 'script' | 'item' | 'deck';
+export type Tradeable <T extends TradeableType = TradeableType> = {
+  type: T,
+  urn: TradeableURN,
+  count: number,
+  price: Record<TradeableURN, number>,
+  args?: T extends 'script' ? Pick<Script, 'props'>['props'] : never,
+}
+export type TradeableURN <
+  T extends Tradeable['type'] = Tradeable['type']
+> = `${T}:${string}`;
+export type Vendor = {
+  id: string,
+  name: string,
+  selling: Tradeable[],
+  buying: Tradeable[],
 }

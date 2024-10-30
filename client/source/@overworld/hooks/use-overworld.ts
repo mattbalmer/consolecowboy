@@ -6,7 +6,7 @@ import { transitionsCapsule } from '@client/capsules/transitions';
 
 export type OverworldState = ReturnType<typeof useOverworld>;
 
-export const useOverworld = (page: 'overworld' | 'inventory' | 'deck' | 'implants') => {
+export const useOverworld = (page: 'overworld' | 'inventory' | 'deck' | 'implants' | 'vendor') => {
   const [player, setPlayer] = useCapsuleField(playerCapsule, 'player');
   const [extraction, setExtraction] = useCapsuleField(transitionsCapsule, 'extraction');
   const [dialog, setDialog] = useState<{

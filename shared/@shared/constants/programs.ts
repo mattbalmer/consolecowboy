@@ -23,6 +23,7 @@ export const Programs = {
     tags: [],
     features: [],
     stats: {},
+    value: 0,
     commands: Object.keys(CORE_COMMANDS) as ProgramKeyword[],
     onExecute: ({ game, command, args, derived }) => {
       return executeCoreCommand(command as CoreCommand, game, args, derived);
@@ -42,6 +43,7 @@ export const Programs = {
         codegate: 3,
       },
     },
+    value: 1e2,
     commands: [
       ProgramKeywords.drill,
     ],
@@ -118,6 +120,7 @@ export const Programs = {
     description: 'Allows the user to break basic Barrier ICE',
     tags: [],
     features: [],
+    value: 1e2,
     stats: {
       icedrilling: {
         barrier: 1,
@@ -231,6 +234,7 @@ export const Programs = {
     description: 'Siphon $50 from a wallet each turn.',
     tags: [],
     features: [],
+    value: 1e3,
     stats: {},
     onExecute({ game, command}): Game {
       const power = 50;

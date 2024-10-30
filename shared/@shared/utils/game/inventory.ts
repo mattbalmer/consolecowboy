@@ -49,11 +49,13 @@ export const formatItemCount = (item: ItemID, count: number) => {
   return format ? format(count) : `${count}`;
 }
 
-export const formatStackCount = (item: ItemID, count: number, showStackSizeIfFull: boolean = false) => {
+export const formatStackCount = (item: ItemID, count: number, showStackSize: 'if-not-full' | 'always' | 'never' = 'if-not-full') => {
   const stackSize = Items[item].stackSize;
-  if (stackSize === -1 || (count === stackSize && !showStackSizeIfFull)) {
-    return formatItemCount(item, count);
-  } else {
+  const neverShow = stackSize === -1 || showStackSize === 'never';
+  const shouldShowStackSize = (showStackSize === 'always' || (count !== stackSize && showStackSize == 'if-not-full')) && !neverShow;
+  if (shouldShowStackSize) {
     return `${formatItemCount(item, count)} / ${formatItemCount(item, stackSize)}`;
+  } else {
+    return formatItemCount(item, count);
   }
 }
