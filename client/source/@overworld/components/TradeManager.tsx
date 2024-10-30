@@ -24,6 +24,7 @@ export const TradeableStack = ({ tradeable }: {
     <Typography variant={'caption'} sx={{
       alignSelf: 'flex-end',
     }}>{
+      tradeable.count === -1 ? <>&infin;</> :
       tradeable.type === 'item' ? formatStackCount(id, tradeable.count, 'never') : tradeable.count
     }</Typography>
   </FlexCol>

@@ -10,7 +10,7 @@ import { useCapsuleField } from '@client/hooks/use-capsule';
 import { vendorsCapsule } from '@client/capsules/vendors';
 import { Vendors } from '@shared/constants/vendors';
 import { TradeManager } from '@overworld/components/TradeManager';
-import { getTradeableValue } from '@shared/utils/game/tradeables';
+import { getTradeablePrice } from '@shared/utils/game/tradeables';
 
 export const TradeScreen = ({
   vendor: vendorInitial,
@@ -30,9 +30,7 @@ export const TradeScreen = ({
         urn: `item:${stack.item}`,
         type: 'item',
         count: stack.count,
-        price: {
-          'item:money': getTradeableValue(`item:${stack.item}`, stack.count),
-        },
+        price: getTradeablePrice(`item:${stack.item}`, stack.count),
       });
     });
 
@@ -41,9 +39,7 @@ export const TradeScreen = ({
         urn: `implant:${implant}`,
         type: 'implant',
         count: 1,
-        price: {
-          'item:money': getTradeableValue(`implant:${implant}`),
-        },
+        price: getTradeablePrice(`implant:${implant}`),
       });
     });
 
@@ -51,9 +47,7 @@ export const TradeScreen = ({
       urn: `deck:${player.deck.id}`,
       type: 'deck',
       count: 1,
-      price: {
-        'item:money': getTradeableValue(`deck:${player.deck.id}`),
-      },
+      price: getTradeablePrice(`deck:${player.deck.id}`),
     });
 
     Object.values(player.deck.programs).filter(program => !!program?.content).forEach((program, i) => {
@@ -61,9 +55,7 @@ export const TradeScreen = ({
         urn: `program:${program.content}`,
         type: 'program',
         count: 1,
-        price: {
-          'item:money': getTradeableValue(`program:${program.content}`),
-        },
+        price: getTradeablePrice(`program:${program.content}`),
       });
     });
 
@@ -72,9 +64,7 @@ export const TradeScreen = ({
         urn: `script:${script.id}`,
         type: 'script',
         count: 1,
-        price: {
-          'item:money': getTradeableValue(`script:${script.id}`, 1, script.props),
-        },
+        price: getTradeablePrice(`script:${script.id}`, 1, script.props),
         args: script.props,
       });
     });
