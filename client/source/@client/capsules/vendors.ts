@@ -5,11 +5,23 @@ import { VendorID, Vendors } from '@shared/constants/vendors';
 class VendorsCapsule extends Capsule<
   Record<VendorID, Vendor>
 >{
+  getVendor(vendorID: VendorID): Vendor {
+    return {
+      ...this.get(vendorID),
+      canVisit: Vendors[vendorID]().canVisit,
+    };
+  }
+
+  setVendor(vendor: Vendor) {
+    const { canVisit, ...rest } = vendor;
+    this.set(vendor.id as VendorID, rest);
+  }
+
   getAll() {
     // @ts-ignore
     const keys: Set<keyof typeof this.typeref> = super.keys;
     return Array.from(keys).reduce((result, key) => {
-      result[key] = this.get(key);
+      result[key] = this.getVendor(key);
       return result;
     }, {} as typeof this.typeref);
   }
@@ -18,14 +30,15 @@ class VendorsCapsule extends Capsule<
     // @ts-ignore
     const keys: Set<keyof typeof this.typeref> = super.keys;
     Array.from(keys).forEach(key => {
-      this.set(key, Vendors[key]());
+      this.setVendor(Vendors[key]());
     });
   }
 }
 
-export const getVendorsInitial = () => {
+const getVendorsInitial = () => {
   return Object.keys(Vendors).reduce((result, key) => {
-    result[key] = Vendors[key]();
+    const { canVisit, ...vendor } = Vendors[key]();
+    result[vendor.id as VendorID] = vendor;
     return result;
   }, {} as Record<VendorID, Vendor>);
 }

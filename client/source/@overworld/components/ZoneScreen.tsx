@@ -15,6 +15,9 @@ import { Zone } from '@shared/types/game';
 import { useMemo } from 'react';
 import { ZoneID, Zones } from '@shared/constants/zones';
 import { ZonesList } from '@overworld/components/ZonesList';
+import { VendorID } from '@shared/constants/vendors';
+import { vendorsCapsule } from '@client/capsules/vendors';
+import { VendorsList } from '@overworld/components/VendorsList';
 
 export const ZoneScreen = ({
   zone,
@@ -30,20 +33,32 @@ export const ZoneScreen = ({
   } = useOverworld('overworld', zone.id);
 
   const adjacent = useMemo(() => {
-    return (zone.adjacent as ZoneID[]).map(adjacent => {
-      const zone = Zones[adjacent];
+    return (zone.adjacent as ZoneID[]).map(adjacentID => {
+      const adjacent = Zones[adjacentID];
       return {
-        id: adjacent as ZoneID,
-        name: zone?.name,
-        canVisit: zone?.canVisit(player),
+        id: adjacentID as ZoneID,
+        name: adjacent?.name,
+        canVisit: adjacent?.canVisit(player),
       }
     });
   }, [zone.adjacent]);
+
+  const vendors = useMemo(() => {
+    return (zone.vendors as VendorID[]).map(vendorID => {
+      const vendor = vendorsCapsule.getVendor(vendorID);
+      return {
+        id: vendorID,
+        name: vendor?.name,
+        canVisit: vendor?.canVisit(player),
+      }
+    });
+  }, [zone.vendors]);
 
   const handleReset = () => {
     setShowConfirmReset(false);
     playerCapsule.flush();
     transitionsCapsule.flush();
+    vendorsCapsule.flush();
     window.location.reload();
   };
 
@@ -56,6 +71,15 @@ export const ZoneScreen = ({
           <Divider />
           <ZonesList
             zones={adjacent}
+          />
+        </FlexCol>
+      }
+      {vendors.length > 0 &&
+        <FlexCol sx={{ pr: 4, mr: 4 }}>
+          <Typography variant={'subtitle1'}>Vendors</Typography>
+          <Divider />
+          <VendorsList
+            vendors={vendors}
           />
         </FlexCol>
       }
@@ -94,7 +118,6 @@ export const ZoneScreen = ({
         <Button href={'/play/inventory'}>Hard Drive</Button>
         <Button href={'/play/deck'}>Deck</Button>
         <Button href={'/play/implants'}>Implants</Button>
-        <Button href={'/play/vendors'}>Vendors</Button>
       </FlexCol>
     </FlexRow>
     <SimpleDialog

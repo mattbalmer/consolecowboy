@@ -391,6 +391,7 @@ export type TradeableURN <
 export type Vendor = {
   id: string,
   name: string,
+  canVisit: (player: Player) => boolean,
   selling: Tradeable[],
   buying: Tradeable[],
 }

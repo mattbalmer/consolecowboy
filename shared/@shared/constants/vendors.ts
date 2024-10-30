@@ -5,6 +5,7 @@ export const Vendors = {
   Johnny: () => ({
     id: 'Johnny',
     name: 'Johnny',
+    canVisit: () => true,
     buying: [{
       type: 'item',
       urn: `item:UpgradeModule`,
