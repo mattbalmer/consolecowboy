@@ -75,4 +75,4 @@ A list of items that the Player, a Daemon, or Installation may contain. Daemons 
 
 ### Implants
 
-Augment the Player's Stats, and sometimes the commands, programs, or scripts a player has access to. Can never allow new commands, programs, or scripts to be used, only modify behavior of existing ones. EG. may boost stats or give perks to info reveal (ie "allows player to better analyze the data received" or something like this)
+Augment the Player's Stats, and sometimes the commands, programs, or scripts a player has access to. Can never allow new commands, programs, or scripts to be used, only modify behavior of existing ones. EG. may boost stats or give perks to info reveal (ie "allows player to better analyze the data received" or something like this). On the other hand, maybe some advanced Black ICE or AI kind of commands could be granted by implants. Like Loa interactions.
