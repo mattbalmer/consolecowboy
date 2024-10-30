@@ -4,7 +4,6 @@ import { OverworldPage } from '@overworld/types';
 
 // TODO: make async and import only necessary files later
 export const OverworldControllers = {
-  // 'overworld': require('@overworld/controllers/zones/chiba').default, // todo: remove when all zoned up
   'zone.chiba': require('@overworld/controllers/zones/chiba').default,
 } as Record<string, new () => OverworldController>;
 
