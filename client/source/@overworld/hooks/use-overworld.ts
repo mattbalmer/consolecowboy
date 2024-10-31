@@ -8,7 +8,10 @@ import { getOverworldControllerFor } from '@overworld/controllers';
 
 export type OverworldState = ReturnType<typeof useOverworld>;
 
-export const useOverworld = (page: OverworldPage, zone?: Zone['id']) => {
+export const useOverworld = (page: OverworldPage, zone?: Zone['id'], zoneState?: {
+  showConfirmTutorial: boolean,
+  setShowConfirmTutorial: ReturnType<typeof useState<boolean>>[1],
+}) => {
   const [player, setPlayer] = useCapsuleField(playerCapsule, 'player');
   const [extraction, setExtraction] = useCapsuleField(transitionsCapsule, 'extraction');
   const [dialog, setDialog] = useState<{
@@ -19,6 +22,8 @@ export const useOverworld = (page: OverworldPage, zone?: Zone['id']) => {
   }>(null);
   const [misc, setMisc] = useState({
     hasShownIntroDialog: false,
+    hasShownNewPlayerDialog: false,
+    hasShownSkippedTutorialDialog: false,
     hasShownDeadDialog: false,
     hasShownFeedbackDialog: false,
   });
@@ -28,6 +33,8 @@ export const useOverworld = (page: OverworldPage, zone?: Zone['id']) => {
     extraction, setExtraction,
     dialog, setDialog,
     misc, setMisc,
+    showConfirmTutorial: zoneState?.showConfirmTutorial,
+    setShowConfirmTutorial: zoneState?.setShowConfirmTutorial,
   };
 
   const controller = useMemo(() => getOverworldControllerFor(page, zone), [page, zone]);

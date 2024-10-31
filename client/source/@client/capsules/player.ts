@@ -44,6 +44,9 @@ export const getInitialPlayerProps = (): Player => {
     implants: ['JackOnoSendai1'],
     deck: Decks.OnoSendai(),
     lastZone: 'chiba',
+    misc: {
+      skippedTutorial: undefined,
+    },
   };
 }
 

@@ -27,10 +27,13 @@ export const ZoneScreen = ({
   levels: string[],
 }) => {
   const [showConfirmReset, setShowConfirmReset] = React.useState<boolean>(false);
+  const [showConfirmTutorial, setShowConfirmTutorial] = React.useState<boolean>(false);
   const {
     player, setPlayer,
     dialog, setDialog,
-  } = useOverworld('zone', zone.id);
+  } = useOverworld('zone', zone.id, {
+    showConfirmTutorial, setShowConfirmTutorial
+  });
 
   const adjacent = useMemo(() => {
     return (zone.adjacent as ZoneID[]).map(adjacentID => {
@@ -59,7 +62,7 @@ export const ZoneScreen = ({
     playerCapsule.flush();
     transitionsCapsule.flush();
     vendorsCapsule.flush();
-    window.location.reload();
+    window.location.href = '/play';
   };
 
   return <FlexCol sx={{ flexGrow: 1, p: 2 }}>
@@ -128,7 +131,7 @@ export const ZoneScreen = ({
       onClose={dialog?.onFinish}
     >{dialog?.body}</SimpleDialog>
     <ConfirmDialog
-      id={'overworld-confirm-dialog'}
+      id={'overworld-confirm-reset-dialog'}
       isOpen={showConfirmReset}
       title={'Reset Game'}
       onCancel={() => setShowConfirmReset(false)}
@@ -137,5 +140,24 @@ export const ZoneScreen = ({
       confirmText={'Reset'}
       color={'error'}
     >Are you sure you want to reset the game?</ConfirmDialog>
+    <ConfirmDialog
+      id={'overworld-confirm-tutorial-dialog'}
+      isOpen={showConfirmTutorial}
+      title={'New Player?'}
+      onCancel={() => {
+        setShowConfirmTutorial(false);
+        setPlayer({ ...player, misc: { ...player.misc, skippedTutorial: true } });
+      }}
+      onConfirm={() => {
+        setShowConfirmTutorial(false);
+        setPlayer({ ...player, misc: { ...player.misc, skippedTutorial: false } });
+      }}
+      cancelText={'Skip Tutorial'}
+      confirmText={'Play Tutorial'}
+      color={'primary'}
+      autoFocus={'confirm'}
+    >
+      If you've played before, you can skip the Chiba (Tutorial) Zone and move on to your own adventure.
+    </ConfirmDialog>
   </FlexCol>
 }

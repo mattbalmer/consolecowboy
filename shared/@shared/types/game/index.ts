@@ -237,6 +237,9 @@ export type Player = {
   inventory: Inventory,
   implants: string[], // IDs
   lastZone: Zone['id'],
+  misc: {
+    skippedTutorial: undefined | boolean,
+  },
 }
 
 export type GameDie = {

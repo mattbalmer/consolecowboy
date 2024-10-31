@@ -13,6 +13,7 @@ export const ConfirmDialog = ({
   cancelText,
   confirmText,
   color,
+  autoFocus: autoFocusRaw,
 }: {
   id: string,
   title: string,
@@ -24,7 +25,9 @@ export const ConfirmDialog = ({
   cancelText?: string,
   confirmText?: string,
   color?: ButtonProps['color'],
+  autoFocus?: 'cancel' | 'confirm'
 }) => {
+  const autoFocus = autoFocusRaw ?? 'cancel';
 
   return <>
     {(shouldRender ?? true) &&
@@ -44,10 +47,10 @@ export const ConfirmDialog = ({
           }
         </DialogContent>
         <DialogActions>
-          <Button onClick={onCancel} autoFocus>
+          <Button onClick={onCancel} autoFocus={autoFocus === 'cancel'}>
             {cancelText ?? 'Cancel'}
           </Button>
-          <Button onClick={onConfirm} variant={'contained'} color={color ?? 'primary'}>
+          <Button onClick={onConfirm} variant={'contained'} color={color ?? 'primary'} autoFocus={autoFocus === 'confirm'}>
             {confirmText ?? 'Okay'}
           </Button>
         </DialogActions>
