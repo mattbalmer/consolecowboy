@@ -18,30 +18,30 @@ export const TradeManager = ({
   onPlayerBuy: (tradeable: Tradeable) => void,
   onPlayerSell: (tradeable: Tradeable) => void,
 }) => {
-  const [tab, setTab] = useState<'buying' | 'selling'>('selling');
+  const [tab, setTab] = useState<'buy' | 'sell'>('buy');
 
-  const buying = useMemo(() => {
+  const vendorBuying = useMemo(() => {
     return vendor.buying.map(tradeable => {
       const countOwned = vendor.inventory.find(t => t.urn === tradeable.urn)?.count ?? 0;
       return {
         ...tradeable,
-        count: tradeable.count === -1 ? -1 : tradeable.count - countOwned,
+        count: tradeable.count === -1 ? countOwned : tradeable.count - countOwned,
       }
     });
   }, [vendor.buying, vendor.inventory]);
 
-  const selling = useMemo(() => {
+  const vendorSelling = useMemo(() => {
     return vendor.inventory.map(tradeable => {
       const tradeableSelling = vendor.selling.find(t => t.urn === tradeable.urn);
       const countWillSell = tradeableSelling?.count ?? 0;
       return {
         ...tradeable,
-        count: countWillSell === -1 ? -1 : tradeable.count - countWillSell,
+        count: countWillSell === -1 ? tradeable.count : tradeable.count - countWillSell,
       }
     });
   }, [vendor.selling, vendor.inventory]);
 
-  const handleTabChange = (event: React.SyntheticEvent, newValue: 'buying' | 'selling') => {
+  const handleTabChange = (event: React.SyntheticEvent, newValue: 'buy' | 'sell') => {
     setTab(newValue);
   };
 
@@ -61,25 +61,25 @@ export const TradeManager = ({
       <TabContext value={tab}>
         <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
           <TabList onChange={handleTabChange} aria-label='vendor-tradeables'>
-            <Tab label='Selling' value='selling' />
-            <Tab label='Buying' value='buying' />
+            <Tab label='Buy' value='buy' />
+            <Tab label='Sell' value='sell' />
           </TabList>
         </Box>
-        <TabPanel value='buying'>
+        <TabPanel value='buy'>
           <Divider />
           <FlexRow sx={{ flexWrap: 'wrap' }}>
-            {buying.map((tradeable, i) => {
-              return <Box key={i} sx={{ m: 1 }} onClick={() => onPlayerSell(tradeable)}>
+            {vendorSelling.map((tradeable, i) => {
+              return <Box key={i} sx={{ m: 1 }} onClick={() => onPlayerBuy(tradeable)}>
                 <TradeableStack tradeable={tradeable} />
               </Box>
             })}
           </FlexRow>
         </TabPanel>
-        <TabPanel value='selling'>
+        <TabPanel value='sell'>
           <Divider />
           <FlexRow sx={{ flexWrap: 'wrap' }}>
-            {selling.map((tradeable, i) => {
-              return <Box key={i} sx={{ m: 1 }} onClick={() => onPlayerBuy(tradeable)}>
+            {vendorBuying.map((tradeable, i) => {
+              return <Box key={i} sx={{ m: 1 }} onClick={() => onPlayerSell(tradeable)}>
                 <TradeableStack tradeable={tradeable} />
               </Box>
             })}

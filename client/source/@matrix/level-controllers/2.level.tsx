@@ -1,5 +1,5 @@
-import { LevelController } from '@game/level-controllers/base';
-import { CoreCommand, Game } from '@game/types';
+import { LevelController } from '@matrix/level-controllers/base';
+import { CoreCommand, Game } from '@matrix/types';
 import { GameEffects } from '@shared/constants/effects';
 import { CLIArgs } from '@shared/types/game/cli';
 import { appendMessage } from '@shared/utils/game/cli';

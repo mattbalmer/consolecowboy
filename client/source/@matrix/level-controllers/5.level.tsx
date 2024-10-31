@@ -1,5 +1,5 @@
-import { LevelController } from '@game/level-controllers/base';
-import { Game } from '@game/types';
+import { LevelController } from '@matrix/level-controllers/base';
+import { Game } from '@matrix/types';
 import { GameEffects } from '@shared/constants/effects';
 
 export default class extends LevelController {

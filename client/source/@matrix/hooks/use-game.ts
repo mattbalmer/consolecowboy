@@ -2,8 +2,8 @@ import { Level } from '@shared/types/game/level';
 import { Game, GameDerived } from '@shared/types/game';
 import { useEffect, useMemo, useState } from 'react';
 import { gameFromLevel, getGameDerived } from '@shared/utils/game';
-import { getControllerFor } from '@game/level-controllers';
-import { useCommands } from '@game/hooks/use-commands';
+import { getControllerFor } from '@matrix/level-controllers';
+import { useCommands } from '@matrix/hooks/use-commands';
 import { GameEffects } from '@shared/constants/effects';
 
 export const useGame = ({

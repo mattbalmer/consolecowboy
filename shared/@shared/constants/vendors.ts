@@ -7,6 +7,11 @@ export const Vendors = {
     name: 'Johnny',
     canVisit: () => true,
     inventory: [{
+      type: 'item',
+      urn: `item:Money`,
+      count: 5e3,
+      price: getTradeablePrice(`item:Money`),
+    },{
       type: 'program',
       urn: `program:siphon1`,
       count: 1,
@@ -14,11 +19,21 @@ export const Vendors = {
     }],
     buying: [{
       type: 'item',
+      urn: `item:Money`,
+      count: -1,
+      price: getTradeablePrice(`item:Money`),
+    },{
+      type: 'item',
       urn: `item:UpgradeModule`,
       count: 10,
       price: getTradeablePrice(`item:UpgradeModule`),
     }],
     selling: [{
+      type: 'item',
+      urn: `item:Money`,
+      count: -1,
+      price: getTradeablePrice(`item:Money`),
+    },{
       type: 'program',
       urn: `program:siphon1`,
       count: -1,

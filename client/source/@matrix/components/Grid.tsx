@@ -1,9 +1,9 @@
 import { FlexCol } from '@client/components/FlexCol';
 import * as React from 'react';
 import { useMemo } from 'react';
-import { CoordString, Dir, EdgeString, Game, GameDerived } from '@game/types';
+import { CoordString, Dir, EdgeString, Game, GameDerived } from '@matrix/types';
 import { Box, Typography } from '@mui/material';
-import { coordToString } from '@game/utils/grid';
+import { coordToString } from '@matrix/utils/grid';
 import { FlexRow } from '@client/components/FlexRow';
 import { canExecute } from '@shared/utils/game/servers';
 

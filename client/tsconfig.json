@@ -13,7 +13,7 @@
         "jsx": "react-jsx",
         "paths": {
             "@client/*": ["./@client/*"],
-            "@game/*": ["./@game/*"],
+            "@matrix/*": ["./@matrix/*"],
             "@editor/*": ["./@editor/*"],
             "@overworld/*": ["./@overworld/*"],
             "@env/*": ["../../shared/@env/*"],

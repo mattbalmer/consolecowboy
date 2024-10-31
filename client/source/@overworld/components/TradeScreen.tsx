@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { FlexCol } from '@client/components/FlexCol';
 import { Box, Button, Divider, Typography } from '@mui/material';
 import { useOverworld } from '@overworld/hooks/use-overworld';
@@ -10,8 +10,19 @@ import { useCapsuleField } from '@client/hooks/use-capsule';
 import { vendorsCapsule } from '@client/capsules/vendors';
 import { VendorID } from '@shared/constants/vendors';
 import { TradeManager } from '@overworld/components/TradeManager';
-import { getTradeablePrice, toTradeable } from '@shared/utils/game/tradeables';
+import { toTradeable } from '@shared/utils/game/tradeables';
 import { TradeDialog } from '@overworld/components/TradeDialog';
+
+const getTradeableCostInTradeables = (tradeable: Tradeable): Tradeable[] => {
+  if (!tradeable) {
+    return [];
+  }
+
+  return (Object.entries(tradeable.price) as [TradeableURN, number][])
+    .map<Tradeable>(([urn, count]) => {
+      return toTradeable(urn, count);
+    });
+}
 
 export const TradeScreen = ({
   vendor: vendorInitial,
@@ -24,7 +35,8 @@ export const TradeScreen = ({
   } = useOverworld('vendor');
   const [vendor, setVendor] = useCapsuleField(vendorsCapsule, vendorInitial.id as VendorID);
   const [confirmTradeDirection, setConfirmTradeDirection] = React.useState<'buying' | 'selling' | null>(null);
-  const [confirmTradeTradeable, setConfirmTradeTradeable] = React.useState<Tradeable | null>(null);
+  const [confirmTradeFromPlayer, setConfirmTradeFromPlayer] = React.useState<Tradeable[]>([]);
+  const [confirmTradeFromVendor, setConfirmTradeFromVendor] = React.useState<Tradeable[]>([]);
 
   const playerSelling = useMemo(() => {
     const selling: Tradeable[] = [];
@@ -60,31 +72,25 @@ export const TradeScreen = ({
     return selling;
   }, [player.inventory, player.implants, player.deck.id, player.deck.programs, player.deck.scripts]);
 
-  const confirmTradeTradeablePrice = useMemo(() => {
-    return confirmTradeTradeable ?
-      (Object.entries(confirmTradeTradeable.price) as [TradeableURN, number][])
-        .map<Tradeable>(([urn, count]) => {
-          return toTradeable(urn, count);
-        })
-      : null;
-  }, [confirmTradeTradeable]);
-
   const handlePlayerBuy = (tradeable: Tradeable) => {
-    setConfirmTradeTradeable(tradeable);
+    setConfirmTradeFromVendor([tradeable]);
+    setConfirmTradeFromPlayer(getTradeableCostInTradeables(tradeable));
     setConfirmTradeDirection('buying');
   }
 
   const handlePlayerSell = (tradeable: Tradeable) => {
-    setConfirmTradeTradeable(tradeable);
+    setConfirmTradeFromVendor(getTradeableCostInTradeables(tradeable));
+    setConfirmTradeFromPlayer([tradeable]);
     setConfirmTradeDirection('selling');
   }
 
   const onConfirmTrade = (amount: number) => {
-    console.log('confirm', confirmTradeDirection, confirmTradeTradeable, confirmTradeTradeablePrice);
+    console.log('confirm', amount, confirmTradeDirection, confirmTradeFromPlayer, confirmTradeFromVendor);
   }
 
   const onCancelTrade = () => {
-    setConfirmTradeTradeable(null);
+    setConfirmTradeFromVendor([]);
+    setConfirmTradeFromPlayer([]);
     setConfirmTradeDirection(null);
   }
 
@@ -113,11 +119,11 @@ export const TradeScreen = ({
       acknowledge={dialog?.acknowledge}
       onClose={dialog?.onFinish}
     />
-    {!!confirmTradeDirection && !!confirmTradeTradeable && !!confirmTradeTradeablePrice &&
+    {!!confirmTradeDirection &&
       <TradeDialog
         isOpen={true}
-        selling={confirmTradeDirection === 'selling' ? [confirmTradeTradeable] : confirmTradeTradeablePrice}
-        buying={confirmTradeDirection === 'buying' ? [confirmTradeTradeable] : confirmTradeTradeablePrice}
+        fromPlayer={confirmTradeFromPlayer}
+        fromVendor={confirmTradeFromVendor}
         playerInventory={playerSelling}
         vendorInventory={vendor.inventory}
         direction={confirmTradeDirection}

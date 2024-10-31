@@ -13,7 +13,7 @@ export const TradeableStackForDialog = ({
 }) => {
   const [,id] = tradeable.urn.split(':');
   const amountNeeded = amountNeededRaw ?? tradeable.count;
-  const hasAmountNeeded = amountNeeded >= amountNeeded;
+  const hasAmountNeeded = tradeable.count >= amountNeeded;
 
   const amountAvailableFormatted = tradeable.type === 'item'
     ? formatItemCount(id, tradeable.count)
@@ -35,8 +35,9 @@ export const TradeableStackForDialog = ({
     <Typography variant={'caption'} sx={{
       alignSelf: 'flex-end',
     }}>{
-      amountNeededRaw === undefined
+      (amountNeededRaw === undefined)
         ? (tradeable.count === -1 ? <>&infin;</> : amountAvailableFormatted)
+        : hasAmountNeeded ? (amountNeeded === -1 ? <>&infin;</> : amountNeededFormatted)
         : <>
           {tradeable.count === -1 ? <>&infin;</> : amountAvailableFormatted} / {amountNeeded === -1 ? <>&infin;</> : amountNeededFormatted}
         </>

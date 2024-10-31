@@ -4,7 +4,7 @@ import { Box, Divider, TextField, Typography } from '@mui/material';
 import { FlexRow } from '@client/components/FlexRow';
 import { FlexCol } from '@client/components/FlexCol';
 import { Autocomplete } from '@mui/lab';
-import { CLIMessage, CoreCommand, CORE_COMMANDS, Game } from '@game/types';
+import { CLIMessage, CoreCommand, CORE_COMMANDS, Game } from '@matrix/types';
 
 const CLIHistoryEntry = ({
   line,

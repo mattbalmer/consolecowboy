@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useMemo, useState } from 'react';
 import { Level } from '@shared/types/game/level';
 import { FlexCol } from '@client/components/FlexCol';
-import { GameScreen } from '@game/components/GameScreen';
+import { GameScreen } from '@matrix/components/GameScreen';
 import { Game } from '@shared/types/game';
 import {
   Box,

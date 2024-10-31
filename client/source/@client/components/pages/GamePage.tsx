@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useEffect, useMemo, useState } from 'react';
 import { FlexCol } from '@client/components/FlexCol';
-import { GameScreen } from '@game/components/GameScreen';
+import { GameScreen } from '@matrix/components/GameScreen';
 import { NavBar } from '@client/components/NavBar';
 import { useParams } from 'react-router-dom';
 import { Game } from '@shared/types/game';
