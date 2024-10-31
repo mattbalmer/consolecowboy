@@ -22,6 +22,18 @@
         "status": "STANDBY",
         "key": "ExternalConnection"
       }
+    },
+    "2,0": {
+      "ice": {
+        "key": "NeuralKatana",
+        "status": "READY",
+        "args": null
+      },
+      "content": {
+        "type": "installation",
+        "status": "STANDBY",
+        "key": "ExternalConnection"
+      }
     }
   },
   "start": "A",

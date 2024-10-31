@@ -7,37 +7,23 @@ import { appendMessage } from '@shared/utils/game/cli';
 export default class extends LevelController {
   levelID: string = '3';
 
-  hasShownMultiX = false;
-  hasFinishedDraining = false;
   hasShownDice = false;
   hasShownDrill = false;
 
   onChange({ game }: { game: Game }) {
-    if (game.player.node === 'B' && !this.hasShownMultiX) {
-      this.hasShownMultiX = true;
-      game.stack = [
-        ...game.stack,
-        GameEffects.SimpleDialog({
-          title: 'Execute Command: Advanced',
-          body: `Some servers might not finish their code in one execution. Wallets, for example, drain $100 per execute. You'll have to use it multiple times to get all the money.`,
-        }),
-      ];
-    }
-
-    const walletAmount = game.nodes['B'].content?.['amount'];
-    if (game.player.node === 'B' && walletAmount < 1 && !this.hasFinishedDraining) {
-      this.hasFinishedDraining = true;
+    if (game.player.node === 'A' && !this.hasShownDice) {
       const nextDie = game.player.dice.find(d => d.isAvailable);
+      this.hasShownDice = true;
       game.stack = [
         ...game.stack,
         GameEffects.SimpleDialog({
           title: 'Dice Powered',
-          body: `Each action requires one or more Dice to perform. Until now, I've been secretly using them for you. From now on, you'll need to add "-d <dice>" to your commands to use them. (eg. "move c -d ${nextDie?.value || 3}")`,
+          body: `Each action requires one or more Dice to perform. Until now, I've been secretly using them for you. From now on, you'll need to add "-d <dice>" to your commands to use them. (eg. "move b -d ${nextDie?.value || 3}")`,
         }),
       ];
     }
 
-    if (game.player.node === 'C' && !this.hasShownDrill) {
+    if (game.player.node === 'B' && !this.hasShownDrill) {
       this.hasShownDrill = true;
       const nextDie = game.player.dice.find(d => d.isAvailable);
       game.stack = [
@@ -54,16 +40,6 @@ export default class extends LevelController {
 
 
   onCommand(game: Game, command: Command, args: CLIArgs) {
-    if (game.player.node === 'B' && !this.hasFinishedDraining && !['next', 'info', 'x'].includes(command)) {
-      return {
-        shouldContinue: false,
-        game: appendMessage(game, {
-          type: 'output',
-          value: `Finish draining the Wallet before moving on! Try "execute"`
-        })
-      }
-    }
-
     if (command === 'break') {
       return {
         shouldContinue: false,

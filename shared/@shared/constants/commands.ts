@@ -591,10 +591,7 @@ export const commandAlias = (command: Command): Command => {
   return command;
 }
 
-export const executeCommand = (commandOrAlias: Command, game: Game, args: CLIArgs, derived: GameDerived): Game => {
-  const command = commandAlias(
-    commandOrAlias as CoreCommand
-  );
+export const executeCommand = (command: Command, game: Game, args: CLIArgs, derived: GameDerived): Game => {
   const commandToProgram = commandMap(game.player.deck);
   const program = commandToProgram[command];
 

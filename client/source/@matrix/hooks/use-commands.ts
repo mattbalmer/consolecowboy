@@ -1,9 +1,9 @@
-import { CoreCommand, DebugCommand, Game, GameDerived } from '@shared/types/game';
+import { Command, CoreCommand, DebugCommand, Game, GameDerived } from '@shared/types/game';
 import { useCallback, useState } from 'react';
 import { CLIArgs } from '@shared/types/game/cli';
 import { appendMessage, appendMessages, parseArgs } from '@shared/utils/game/cli';
 import { LevelController } from '@matrix/level-controllers/base';
-import { executeCommand } from '@shared/constants/commands';
+import { commandAlias, executeCommand } from '@shared/constants/commands';
 import { executeDebugCommand } from '@shared/constants/debug-commands';
 import { getGameDerived } from '@shared/utils/game';
 import { getAutoDice } from '@shared/utils/game/dice';
@@ -26,7 +26,11 @@ export const useCommands = ({
 
   // to fix: immutable
 
-  return useCallback((command: CoreCommand, ...rawArgs: string[]) => {
+  return useCallback((commandOrAlias: string, ...rawArgs: string[]) => {
+    let command = commandAlias(
+      commandOrAlias as Command
+    );
+
     console.debug('oNCommand', command);
     // @ts-ignore
     if (window['DEBUG_COMMANDS_ENABLED'] && command === 'dbg') {

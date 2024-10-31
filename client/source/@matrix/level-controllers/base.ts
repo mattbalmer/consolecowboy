@@ -1,4 +1,4 @@
-import { CoreCommand, Game } from '@shared/types/game';
+import { Command, Game } from '@shared/types/game';
 import { CLIArgs } from '@shared/types/game/cli';
 import { useState } from 'react';
 
@@ -26,9 +26,9 @@ export abstract class LevelController {
   abstract onChange({ game, setGame }: OnChangeArgs): {
     game: Game,
   };
-  abstract onCommand(game: Game, command: CoreCommand, args: CLIArgs): {
+  abstract onCommand(game: Game, command: Command, args: CLIArgs): {
     game?: Game,
-    command?: CoreCommand,
+    command?: Command,
     args?: CLIArgs,
     shouldContinue: boolean,
   } | void;
