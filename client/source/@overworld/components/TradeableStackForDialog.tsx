@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Tradeable } from '@shared/types/game';
 import { FlexCol } from '@client/components/FlexCol';
 import { Typography } from '@mui/material';
-import { formatItemCount } from '@shared/utils/game/inventory';
+import { TradeableCount } from '@game/components/TradeableCount';
 
 export const TradeableStackForDialog = ({
   tradeable,
@@ -12,16 +12,9 @@ export const TradeableStackForDialog = ({
   amountNeeded?: number,
 }) => {
   const [,id] = tradeable.urn.split(':');
+  const amountAvailable = tradeable.count;
   const amountNeeded = amountNeededRaw ?? tradeable.count;
-  const hasAmountNeeded = tradeable.count >= amountNeeded;
-
-  const amountAvailableFormatted = tradeable.type === 'item'
-    ? formatItemCount(id, tradeable.count)
-    : `${tradeable.count}`;
-
-  const amountNeededFormatted = tradeable.type === 'item'
-    ? formatItemCount(id, amountNeeded)
-    : `${amountNeeded}`;
+  const hasAmountNeeded = amountAvailable >= amountNeeded;
 
   return <FlexCol sx={{
     borderRadius: 5,
@@ -35,11 +28,9 @@ export const TradeableStackForDialog = ({
     <Typography variant={'caption'} sx={{
       alignSelf: 'flex-end',
     }}>{
-      (amountNeededRaw === undefined)
-        ? (tradeable.count === -1 ? <>&infin;</> : amountAvailableFormatted)
-        : hasAmountNeeded ? (amountNeeded === -1 ? <>&infin;</> : amountNeededFormatted)
+      hasAmountNeeded ? <TradeableCount urn={tradeable.urn} count={amountNeeded} />
         : <>
-          {tradeable.count === -1 ? <>&infin;</> : amountAvailableFormatted} / {amountNeeded === -1 ? <>&infin;</> : amountNeededFormatted}
+          <TradeableCount urn={tradeable.urn} count={amountAvailable} /> / <TradeableCount urn={tradeable.urn} count={amountNeeded} />
         </>
     }</Typography>
   </FlexCol>
