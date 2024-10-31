@@ -1,37 +1,34 @@
 import { LevelController } from '@matrix/level-controllers/base';
 import { CoreCommand, Game } from '@matrix/types';
-import { GameEffects } from '@shared/constants/effects';
 import { CLIArgs } from '@shared/types/game/cli';
 import { appendMessage } from '@shared/utils/game/cli';
-import { canExecute } from '@shared/utils/game/servers';
+import { delayDialog } from '@matrix/level-controllers/utils';
+import { DialogContentText } from '@mui/material';
 
 export default class extends LevelController {
   levelID: string = '2';
 
-  hasShownOpen = false;
+  hasShownActionCost = false;
   hasShownOOA = false;
 
-  onChange({ game }: { game: Game }) {
-    if (game.player.node === 'B' && !this.hasShownOpen) {
-      this.hasShownOpen = true;
-      game.stack = [
-        ...game.stack,
-        GameEffects.SimpleDialog({
-          title: 'Bit o Coin',
-          body: `A great way to get some quick cash is to hack into your target's wallets. Use "execute" on a server run whatever asset is installed in it. Sometimes you might find money!`,
-        }),
-      ];
+  onChange({ game, setGame }) {
+    if (game.player.node === 'B' && !this.hasShownActionCost) {
+      this.hasShownActionCost = true;
+      delayDialog(setGame, {
+        title: 'Actions',
+        body: `Each round, you get 3 actions. Most commands cost 1 action (some, like "info", are free). You can see your remaining actions by the number of dice in the top right. (Don't worry about the values on the dice for now.)`
+      }, 0);
     }
 
     if (game.player.actions < 1 && !this.hasShownOOA) {
       this.hasShownOOA = true;
-      game.stack = [
-        ...game.stack,
-        GameEffects.SimpleDialog({
-          title: 'Out of Actions',
-          body: `Each round, you get 3 actions to perform. If you run out, run "next" to end your turn and get 3 new actions (don't worry about the dice values for now). (If you want, you can use "config autonext true" to automatically end your turn when you run out of actions). Be aware - each time you run "next", you take 1 Mental damage and the enemy net gets a turn to run any active defenses.`,
-        }),
-      ];
+      delayDialog(setGame, {
+        title: 'Out of Actions',
+        body: <DialogContentText>
+          When you use your last action - you can type "next" to end your turn and get 3 new actions. <br />
+          <i>(If you want, you can use "config autonext true" to automatically end your turn when you run out of actions)</i>
+        </DialogContentText>,
+      }, 0);
     }
 
     return { game };
@@ -44,16 +41,6 @@ export default class extends LevelController {
         game: appendMessage(game, {
           type: 'output',
           value: `the 'config' command is not enabled yet, keep playing to unlock it`
-        })
-      }
-    }
-
-    if (game.player.node === 'B' && canExecute(game, 'B', 'player') && !['x', 'execute', 'next', 'info', 'inv'].includes(command)) {
-      return {
-        shouldContinue: false,
-        game: appendMessage(game, {
-          type: 'output',
-          value: `You need to "execute" on a server to steal the wallet's contents.`
         })
       }
     }

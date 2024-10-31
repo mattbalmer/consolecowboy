@@ -6,6 +6,7 @@ import { appendMessage } from '@shared/utils/game/cli';
 import { DialogContentText } from '@mui/material';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import { delayDialog } from '@matrix/level-controllers/utils';
 
 export default class extends LevelController {
   levelID = '1';
@@ -15,7 +16,6 @@ export default class extends LevelController {
   hasShownMove = false;
   hasShownDrain = false;
   hasDrained = false;
-  hasShownDrainComplete = false;
   hasShownExit = false;
 
   onChange({ game, setGame }) {
@@ -61,38 +61,18 @@ export default class extends LevelController {
 
     if (game.player.node === 'A' && this.hasDoneInfo && !this.hasShownMove) {
       this.hasShownMove = true;
-      setTimeout(() => {
-        setGame(prev => {
-          return {
-            ...prev,
-            stack: [
-              ...prev.stack,
-              GameEffects.SimpleDialog({
-                title: 'Moving',
-                body: `Damn! External Connections close behind you, so you'll have to find your way to another one. Let's move on. Use the "move" command to move to any adjacent Server. Try "move B".`,
-              }),
-            ]
-          }
-        })
-      }, 500);
+      delayDialog(setGame, {
+        title: 'Moving',
+        body: `Damn! External Connections close behind you, so you'll have to find your way to another one. Let's move on. Use the "move" command to move to any adjacent Server. Try "move B".`,
+      });
     }
 
     if (game.player.node === 'B' && !this.hasShownDrain) {
       this.hasShownDrain = true;
-      setTimeout(() => {
-        setGame(prev => {
-          return {
-            ...prev,
-            stack: [
-              ...prev.stack,
-              GameEffects.SimpleDialog({
-                title: 'Something Interesting',
-                body: `Well hang on - this Server has something installed in it. Use "info" to see what, and type "execute" (or "x" for short) to execute the code on the server.`,
-              }),
-            ]
-          }
-        })
-      }, 500);
+      delayDialog(setGame, {
+        title: 'Something Interesting',
+        body: `Well hang on - this Server has something installed in it. Use "info" to see what, and type "execute" (or "x" for short) to execute the code on the server.`,
+      });
     }
 
     if (game.player.node === 'C' && !this.hasShownExit) {

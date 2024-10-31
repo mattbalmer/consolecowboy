@@ -11,7 +11,8 @@
         ]
       }
     },
-    "1,0": {
+    "1,0": {},
+    "2,0": {
       "content": {
         "type": "installation",
         "status": "STANDBY",
@@ -21,7 +22,7 @@
         }
       }
     },
-    "2,0": {
+    "2,1": {
       "content": {
         "type": "installation",
         "status": "STANDBY",
