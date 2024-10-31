@@ -15,7 +15,9 @@ export const useGameEffects = ({
   game: Game,
   setGame: ReturnType<typeof useState<Game>>[1],
   setDialog: ReturnType<typeof useState<
-    Omit<ComponentProps<typeof SimpleDialog>, 'id'>
+    Omit<ComponentProps<typeof SimpleDialog>, 'id' | 'children'> & {
+      body: ComponentProps<typeof SimpleDialog>['children']
+    }
   >>[1],
   onExtract: (success: boolean) => void,
 }) => {

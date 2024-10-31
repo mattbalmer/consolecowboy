@@ -5,7 +5,7 @@ import { ButtonProps } from '@mui/material/Button/Button';
 export const ConfirmDialog = ({
   id,
   title,
-  body,
+  children,
   shouldRender,
   isOpen,
   onCancel,
@@ -16,7 +16,7 @@ export const ConfirmDialog = ({
 }: {
   id: string,
   title: string,
-  body: string,
+  children: React.JSX.Element[] | React.JSX.Element | string,
   shouldRender?: boolean,
   isOpen?: boolean,
   onCancel: () => void,
@@ -36,9 +36,12 @@ export const ConfirmDialog = ({
       >
         <DialogTitle id={`confirm-dialog-title__${id}`}>{title}</DialogTitle>
         <DialogContent>
-          <DialogContentText id={`confirm-dialog-description__${id}`}>
-            {body}
-          </DialogContentText>
+          {typeof children === 'string' ?
+            <DialogContentText id={`confirm-dialog-description__${id}`}>
+              {children}
+            </DialogContentText>
+            : children
+          }
         </DialogContent>
         <DialogActions>
           <Button onClick={onCancel} autoFocus>

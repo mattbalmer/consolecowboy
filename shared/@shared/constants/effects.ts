@@ -4,6 +4,7 @@ import { generate } from '@shared/utils/arrays';
 import { executeContent } from '@shared/utils/game/servers';
 import { GameError } from '@shared/errors/GameError';
 import { mergeInventory } from '@shared/utils/game/inventory';
+import * as React from 'react';
 
 export const GameEffects = {
   AddNoise: ({
@@ -280,7 +281,7 @@ export const GameEffects = {
   }),
   SimpleDialog: ({ title, body, acknowledge, onClose }: {
     title: string,
-    body: string,
+    body: React.JSX.Element[] | React.JSX.Element | string,
     acknowledge?: string,
     onClose?: () => void,
   }) => ({

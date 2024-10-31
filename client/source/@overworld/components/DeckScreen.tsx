@@ -36,9 +36,8 @@ export const DeckScreen = ({
       id={'deck-dialog'}
       isOpen={!!dialog}
       title={dialog?.title}
-      body={dialog?.body}
       acknowledge={dialog?.acknowledge}
       onClose={dialog?.onFinish}
-    />
+    >{dialog?.body}</SimpleDialog>
   </FlexCol>
 }

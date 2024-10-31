@@ -1,13 +1,13 @@
-import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import * as React from 'react';
+import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 
-export const SimpleDialog = ({ id, shouldRender, isOpen, onClose, title, body, acknowledge }: {
+export const SimpleDialog = ({ id, shouldRender, isOpen, onClose, title, children, acknowledge }: {
   id: string,
   shouldRender?: boolean,
   isOpen?: boolean,
   onClose?: () => void,
   title: string,
-  body: string,
+  children: React.JSX.Element[] | React.JSX.Element | string,
   acknowledge?: string,
 }) => {
   const handleClose = () => {
@@ -26,9 +26,12 @@ export const SimpleDialog = ({ id, shouldRender, isOpen, onClose, title, body, a
       >
         <DialogTitle id={`simple-dialog-title__${id}`}>{title}</DialogTitle>
         <DialogContent>
-          <DialogContentText id={`simple-dialog-description__${id}`}>
-            {body}
-          </DialogContentText>
+          {typeof children === 'string' ?
+            <DialogContentText id={`simple-dialog-description__${id}`}>
+              {children}
+            </DialogContentText>
+            : children
+          }
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} autoFocus>

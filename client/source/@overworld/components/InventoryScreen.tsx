@@ -39,9 +39,8 @@ export const InventoryScreen = ({
       id={'inventory-dialog'}
       isOpen={!!dialog}
       title={dialog?.title}
-      body={dialog?.body}
       acknowledge={dialog?.acknowledge}
       onClose={dialog?.onFinish}
-    />
+    >{dialog?.body}</SimpleDialog>
   </FlexCol>
 }

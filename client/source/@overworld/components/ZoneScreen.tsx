@@ -124,20 +124,18 @@ export const ZoneScreen = ({
       id={'overworld-dialog'}
       isOpen={!!dialog}
       title={dialog?.title}
-      body={dialog?.body}
       acknowledge={dialog?.acknowledge}
       onClose={dialog?.onFinish}
-    />
+    >{dialog?.body}</SimpleDialog>
     <ConfirmDialog
       id={'overworld-confirm-dialog'}
       isOpen={showConfirmReset}
       title={'Reset Game'}
-      body={'Are you sure you want to reset the game?'}
       onCancel={() => setShowConfirmReset(false)}
       onConfirm={handleReset}
       cancelText={'Cancel'}
       confirmText={'Reset'}
       color={'error'}
-    />
+    >Are you sure you want to reset the game?</ConfirmDialog>
   </FlexCol>
 }

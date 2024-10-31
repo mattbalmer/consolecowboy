@@ -3,6 +3,9 @@ import { CoreCommand, Game } from '@matrix/types';
 import { GameEffects } from '@shared/constants/effects';
 import { CLIArgs } from '@shared/types/game/cli';
 import { appendMessage } from '@shared/utils/game/cli';
+import { DialogContentText } from '@mui/material';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 export default class extends LevelController {
   levelID = '1';
@@ -39,7 +42,9 @@ export default class extends LevelController {
         ...game.stack,
         GameEffects.SimpleDialog({
           title: 'Hostile Nets',
-          body: `Welcome to your first Hostile Net. Grab as much as you can, then exit through an external connection. First things first - find the terminal at the bottom of the page. You can focus it (and navigate your input history) using the Up/Down Arrow Keys.`,
+          body: <DialogContentText>
+            Welcome to your first Hostile Net. Grab as much as you can, then exit through an external connection. First things first - find the terminal at the bottom of the page. You can focus it (and navigate your input history) using the <KeyboardArrowUpIcon sx={{ verticalAlign: 'middle' }} />/<KeyboardArrowDownIcon sx={{ verticalAlign: 'middle' }} /> Arrow Keys.
+          </DialogContentText>,
           onClose: () => {
             // todo: jank af
             setTimeout(() => {

@@ -60,7 +60,9 @@ export const GameScreen = ({
   bindKeyboardShortcuts?: boolean,
 }) => {
   const [dialog, setDialog] = useState<
-    Omit<ComponentProps<typeof SimpleDialog>, 'id'>
+    Omit<ComponentProps<typeof SimpleDialog>, 'id' | 'children'> & {
+      body: ComponentProps<typeof SimpleDialog>['children']
+    }
   >(null);
   const {
     game,
@@ -173,10 +175,9 @@ export const GameScreen = ({
         id={'game-effect-dialog'}
         isOpen={!!dialog}
         title={dialog?.title}
-        body={dialog?.body}
         acknowledge={dialog?.acknowledge}
         onClose={dialog?.onClose}
-      />
+      >{dialog?.body}</SimpleDialog>
     </FlexCol>
   </>
 }
