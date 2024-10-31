@@ -4,7 +4,7 @@ import { generate } from '@shared/utils/arrays';
 export const Zones: Record<string, Zone> = {
   chiba: {
     id: 'chiba',
-    name: 'Chiba',
+    name: 'Tokyo > Chiba',
     description: 'A gloomy district of Tokyo',
     levels: generate(10, i => `${i + 1}`),
     vendors: [],
@@ -13,7 +13,7 @@ export const Zones: Record<string, Zone> = {
   },
   shinjuku: {
     id: 'shinjuku',
-    name: 'Shinjuku',
+    name: 'Tokyo > Shinjuku',
     description: 'A bustling district of Tokyo',
     levels: generate(10, i => `${i + 11}`),
     vendors: ['Johnny'],
