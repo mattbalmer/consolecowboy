@@ -44,32 +44,45 @@ export const Programs = {
       },
     },
     value: 1e2,
+    props: {
+      minDiceValue: 5,
+      maxStrength: 6,
+    },
     commands: [
       ProgramKeywords.drill,
     ],
-    onExecute: ({ game, command, args, derived }) => {
+    onExecute({ game, command, args, derived }) {
       if (args.help) {
         return appendMessages(game, [{
           type: 'output',
           value: `Usage: drill [-d <dice>]`
         }, {
           type: 'output',
-          value: `Drills through the ICE on the current node. Suffer any effects from still active layers.`
+          value: `Drills through the ICE on the current node. Suffer any effects from still active layers. Requires a 5 or higher. Can drill up to strength 6.`
+        }, {
+          type: 'output',
+          value: `Generates noise equal to DICE_POWER - ICE_STRENGTH + 2`
         }]);
       }
 
       const { hoveredNode } = derived;
       const RAM_COST = 1;
+      const diceValue = args.d?.[0];
+      const targetIce = hoveredNode?.ice;
 
       ensure(hoveredNode?.ice, `No ICE to drill`);
       ensure(hoveredNode.ice.status === 'ACTIVE', `ICE is not active`);
       ensure(game.player.actions > 0, `No actions left`);
       ensure(game.player.ram.current >= RAM_COST, `Not enough RAM to drill ICE`);
+      ensure(diceValue >= this.props.minDiceValue, `Need to supply a ${this.props.minDiceValue} or higher to operate`);
+      ensure(this.props.maxStrength >= targetIce.strength, `ICE (str ${targetIce.strength}) is too strong to drill (break power ${this.props.maxStrength})`);
 
       game = consumeDice(game, args);
 
       // complete all layers of ice
       game = hoveredNode.ice.complete(game);
+
+      const noiseGenerated = Math.max(0, diceValue - targetIce.strength) + 2;
 
       return {
         ...game,
@@ -97,7 +110,7 @@ export const Programs = {
             node: game.player.node,
             source: 'program',
             actor: 'player',
-            amount: 1,
+            amount: noiseGenerated - 1,
             round: game.round,
             duration: 2,
           }),

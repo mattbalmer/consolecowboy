@@ -24,7 +24,7 @@ export const parseArgs = (args: string[]): CLIArgs => {
           if (name === 'd') {
             named.d = value.split(',').map(_ => parseInt(_, 10));
           }
-        } else if (args.length >= i + 1 || isNamed(args[i+1])) {
+        } else if (args.length < i + 1 || isNamed(args[i+1])) {
           named[name] = true;
         } else {
           named[name] = args[i + 1];

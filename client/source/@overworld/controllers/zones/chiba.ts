@@ -34,6 +34,16 @@ export default class extends OverworldController {
       state.setMisc({ ...state.misc, hasShownSkippedTutorialDialog: true });
       state.setPlayer({
         ...state.player,
+        deck: {
+          ...state.player.deck,
+          programs: {
+            ...state.player.deck.programs,
+            4: {
+              type: 'program',
+              content: `siphon1`,
+            },
+          },
+        },
         history: {
           1: [1,1],
           2: [1,1],

@@ -71,6 +71,8 @@ export const useCommands = ({
 
     let commandArgs = parseArgs(rawArgs);
 
+    console.log('auto dice wtf', commandArgs.d, getAutoDice(game));
+
     // Auto use a dice
     if (!commandArgs.d) {
       commandArgs.d = [getAutoDice(game)];
